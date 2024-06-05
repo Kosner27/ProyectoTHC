@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Vistas.RegistrarInstitucion">
+  <grid id="27dc6" binding="PanelMain" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="58" width="755" height="362"/>
+    </constraints>
+    <properties>
+      <maximumSize width="1440" height="1024"/>
+      <preferredSize width="1300" height="1010"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="989bc" class="javax.swing.JMenuBar" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-10115519"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="48" class="javax.swing.JMenuItem" binding="RegistrarInstitucion">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <borderPainted value="false"/>
+              <text value="Registrar Institución"/>
+            </properties>
+          </component>
+          <component id="fec46" class="javax.swing.JMenuItem" binding="RegistrarEmisión">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Registrar Emisión"/>
+            </properties>
+          </component>
+          <component id="ac328" class="javax.swing.JMenuItem" binding="Calcular">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Calcular"/>
+            </properties>
+          </component>
+          <component id="c2987" class="javax.swing.JMenuItem" binding="Informes">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Informes"/>
+            </properties>
+          </component>
+          <component id="173c5" class="javax.swing.JMenuItem" binding="Graficos">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Gráficos"/>
+            </properties>
+          </component>
+          <component id="ccb85" class="javax.swing.JMenuItem" binding="Reducir">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Reducir"/>
+            </properties>
+          </component>
+          <component id="d1a10" class="javax.swing.JMenuItem" binding="MasInformacion">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Más información"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="5cd42" layout-manager="GridLayoutManager" row-count="9" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <visible value="true"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <vspacer id="262ba">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <component id="3911a" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="55" height="17"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="Cuántas hectareas de árboles tiene la institución"/>
+            </properties>
+          </component>
+          <component id="13838" class="javax.swing.JButton" binding="inicioButton" default-binding="true">
+            <constraints>
+              <grid row="8" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="55" height="34"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="Inicio"/>
+            </properties>
+          </component>
+          <component id="8817a" class="javax.swing.JTextField" binding="nombre">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="f124e" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Nombre Institución"/>
+            </properties>
+          </component>
+          <component id="58a02" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Municipio"/>
+            </properties>
+          </component>
+          <component id="e3dcc" class="javax.swing.JComboBox" binding="municipio">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <model>
+                <item value=""/>
+                <item value="Abejorral"/>
+                <item value="Ábrego"/>
+                <item value="Abriaquí"/>
+                <item value="Acacías"/>
+                <item value="Acandí"/>
+                <item value="Acevedo"/>
+                <item value="Achí"/>
+                <item value="Agrado"/>
+                <item value="Agua de Dios"/>
+                <item value="Aguachica"/>
+                <item value="Aguada"/>
+                <item value="Aguadas"/>
+                <item value="Aguazul"/>
+                <item value="Agustín Codazzi"/>
+                <item value="Aipe"/>
+                <item value="Albán"/>
+                <item value="Albania"/>
+                <item value="Albania"/>
+                <item value="Albania"/>
+                <item value="Alcalá"/>
+                <item value="Aldana"/>
+                <item value="Alejandría"/>
+                <item value="Algarrobo"/>
+                <item value="Algeciras"/>
+                <item value="Almaguer"/>
+                <item value="Almeida"/>
+                <item value="Alpujarra"/>
+                <item value="Altamira"/>
+                <item value="Alto Baudó"/>
+                <item value="Altos del Rosario"/>
+                <item value="Alvarado"/>
+                <item value="Amagá"/>
+                <item value="Amalfi"/>
+                <item value="Ambalema"/>
+                <item value="Anapoima"/>
+                <item value="Ancuya"/>
+                <item value="Andalucía"/>
+                <item value="Andes"/>
+                <item value="Angelópolis"/>
+                <item value="Angostura"/>
+                <item value="Anolaima"/>
+                <item value="Anorí"/>
+                <item value="Anserma"/>
+                <item value="Ansermanuevo"/>
+                <item value="Anzá"/>
+                <item value="Anzoátegui"/>
+                <item value="Apartadó"/>
+                <item value="Apía"/>
+                <item value="Apulo"/>
+                <item value="Aquitania"/>
+                <item value="Aracataca"/>
+                <item value="Aranzazu"/>
+                <item value="Aratoca"/>
+                <item value="Arauca"/>
+                <item value="Arauquita"/>
+                <item value="Arbeláez"/>
+                <item value="Arboleda"/>
+                <item value="Arboledas"/>
+                <item value="Arboletes"/>
+                <item value="Arcabuco"/>
+                <item value="Arenal"/>
+                <item value="Argelia"/>
+                <item value="Argelia"/>
+                <item value="Argelia"/>
+                <item value="Ariguaní"/>
+                <item value="Arjona"/>
+                <item value="Armenia"/>
+                <item value="Armenia"/>
+                <item value="Armero"/>
+                <item value="Arroyohondo"/>
+                <item value="Astrea"/>
+                <item value="Ataco"/>
+                <item value="Ayapel"/>
+                <item value="Bagadó"/>
+                <item value="Bahía Solano"/>
+              </model>
+            </properties>
+          </component>
+          <component id="9e7df" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="55" height="17"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="NIT Institución"/>
+            </properties>
+          </component>
+          <component id="da203" class="javax.swing.JTextField" binding="nit">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="eea31" class="javax.swing.JTextField" binding="hectareas">
+            <constraints>
+              <grid row="3" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <hspacer id="ce35e">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="5f2f3">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <scrollpane id="2a081" binding="Contenedor">
+            <constraints>
+              <grid row="4" column="2" row-span="4" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <visible value="true"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="20b87" class="javax.swing.JTable" binding="Institucion">
+                <constraints/>
+                <properties>
+                  <visible value="false"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <component id="a6f4a" class="javax.swing.JButton" binding="registrarButton" default-binding="true">
+            <constraints>
+              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Registrar"/>
+            </properties>
+          </component>
+          <component id="9d762" class="javax.swing.JButton" binding="button1" default-binding="true">
+            <constraints>
+              <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Button"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <component id="785db" class="javax.swing.JButton" binding="button3" default-binding="true">
+            <constraints>
+              <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Button"/>
+            </properties>
+          </component>
+          <component id="3c4a1" class="javax.swing.JButton" binding="button2" default-binding="true">
+            <constraints>
+              <grid row="6" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Button"/>
+            </properties>
+          </component>
+          <component id="68e8c" class="javax.swing.JComboBox" binding="departamento">
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="200" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <model>
+                <item value=""/>
+                <item value="Amazonas"/>
+                <item value="Antioquia"/>
+                <item value="Arauca"/>
+                <item value="Atlántico"/>
+                <item value="Bolívar"/>
+                <item value="Boyacá"/>
+                <item value="Caldas"/>
+                <item value="Caquetá"/>
+                <item value="Casanare"/>
+                <item value="Cauca"/>
+                <item value="Cesar"/>
+                <item value="Chocó"/>
+                <item value="Córdoba"/>
+                <item value="Cundinamarca"/>
+                <item value="Guainía"/>
+                <item value="Guaviare"/>
+                <item value="Huila"/>
+                <item value="La Guajira"/>
+                <item value="Magdalena"/>
+                <item value="Meta"/>
+                <item value="Nariño"/>
+                <item value="Norte de Santander"/>
+                <item value="Putumayo"/>
+                <item value="Quindío"/>
+                <item value="Risaralda"/>
+                <item value="San Andrés y Providencia"/>
+                <item value="Santander"/>
+                <item value="Sucre"/>
+                <item value="Tolima"/>
+                <item value="Valle del Cauca"/>
+                <item value="Vaupés"/>
+                <item value="Vichada"/>
+              </model>
+            </properties>
+          </component>
+          <component id="23fbe" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Departamento"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <vspacer id="3e2ed">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+    </children>
+  </grid>
+</form>
