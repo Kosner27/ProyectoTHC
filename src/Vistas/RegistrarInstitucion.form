@@ -151,84 +151,7 @@
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="Abejorral"/>
-                <item value="Ábrego"/>
-                <item value="Abriaquí"/>
-                <item value="Acacías"/>
-                <item value="Acandí"/>
-                <item value="Acevedo"/>
-                <item value="Achí"/>
-                <item value="Agrado"/>
-                <item value="Agua de Dios"/>
-                <item value="Aguachica"/>
-                <item value="Aguada"/>
-                <item value="Aguadas"/>
-                <item value="Aguazul"/>
-                <item value="Agustín Codazzi"/>
-                <item value="Aipe"/>
-                <item value="Albán"/>
-                <item value="Albania"/>
-                <item value="Albania"/>
-                <item value="Albania"/>
-                <item value="Alcalá"/>
-                <item value="Aldana"/>
-                <item value="Alejandría"/>
-                <item value="Algarrobo"/>
-                <item value="Algeciras"/>
-                <item value="Almaguer"/>
-                <item value="Almeida"/>
-                <item value="Alpujarra"/>
-                <item value="Altamira"/>
-                <item value="Alto Baudó"/>
-                <item value="Altos del Rosario"/>
-                <item value="Alvarado"/>
-                <item value="Amagá"/>
-                <item value="Amalfi"/>
-                <item value="Ambalema"/>
-                <item value="Anapoima"/>
-                <item value="Ancuya"/>
-                <item value="Andalucía"/>
-                <item value="Andes"/>
-                <item value="Angelópolis"/>
-                <item value="Angostura"/>
-                <item value="Anolaima"/>
-                <item value="Anorí"/>
-                <item value="Anserma"/>
-                <item value="Ansermanuevo"/>
-                <item value="Anzá"/>
-                <item value="Anzoátegui"/>
-                <item value="Apartadó"/>
-                <item value="Apía"/>
-                <item value="Apulo"/>
-                <item value="Aquitania"/>
-                <item value="Aracataca"/>
-                <item value="Aranzazu"/>
-                <item value="Aratoca"/>
-                <item value="Arauca"/>
-                <item value="Arauquita"/>
-                <item value="Arbeláez"/>
-                <item value="Arboleda"/>
-                <item value="Arboledas"/>
-                <item value="Arboletes"/>
-                <item value="Arcabuco"/>
-                <item value="Arenal"/>
-                <item value="Argelia"/>
-                <item value="Argelia"/>
-                <item value="Argelia"/>
-                <item value="Ariguaní"/>
-                <item value="Arjona"/>
-                <item value="Armenia"/>
-                <item value="Armenia"/>
-                <item value="Armero"/>
-                <item value="Arroyohondo"/>
-                <item value="Astrea"/>
-                <item value="Ataco"/>
-                <item value="Ayapel"/>
-                <item value="Bagadó"/>
-                <item value="Bahía Solano"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="9e7df" class="javax.swing.JLabel">
@@ -324,41 +247,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="Amazonas"/>
-                <item value="Antioquia"/>
-                <item value="Arauca"/>
-                <item value="Atlántico"/>
-                <item value="Bolívar"/>
-                <item value="Boyacá"/>
-                <item value="Caldas"/>
-                <item value="Caquetá"/>
-                <item value="Casanare"/>
-                <item value="Cauca"/>
-                <item value="Cesar"/>
-                <item value="Chocó"/>
-                <item value="Córdoba"/>
-                <item value="Cundinamarca"/>
-                <item value="Guainía"/>
-                <item value="Guaviare"/>
-                <item value="Huila"/>
-                <item value="La Guajira"/>
-                <item value="Magdalena"/>
-                <item value="Meta"/>
-                <item value="Nariño"/>
-                <item value="Norte de Santander"/>
-                <item value="Putumayo"/>
-                <item value="Quindío"/>
-                <item value="Risaralda"/>
-                <item value="San Andrés y Providencia"/>
-                <item value="Santander"/>
-                <item value="Sucre"/>
-                <item value="Tolima"/>
-                <item value="Valle del Cauca"/>
-                <item value="Vaupés"/>
-                <item value="Vichada"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="23fbe" class="javax.swing.JLabel">

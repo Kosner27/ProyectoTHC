@@ -125,7 +125,7 @@ public class Emision extends JFrame {
                 String alcance = (String)Alcance.getSelectedItem();
                 String factor = Factor.getText();
                 String Nombre= nombre.getText();
-                if(!fuente.isEmpty()&& !estado.isEmpty() && !unidad.isEmpty() && !alcance.isEmpty() && !factor.isEmpty() && !Nombre.isEmpty()){
+                if(!fuente.isEmpty() && !unidad.isEmpty() && !alcance.isEmpty() && !factor.isEmpty() && !Nombre.isEmpty()){
                     String[] rows ={fuente,estado,Nombre, unidad, factor, alcance};
 
                     tableModel.addRow(rows);
@@ -146,6 +146,9 @@ public class Emision extends JFrame {
                     JOptionPane.showMessageDialog(PanelMain, "Llene todos los campos");
                 }
 
+                if(!estado.isEmpty()){
+                  Estado.setVisible(false);
+                }
             }
         });
         Fuente.addActionListener(new ActionListener() {

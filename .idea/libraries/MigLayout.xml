@@ -4,11 +4,13 @@
       <root url="jar://$PROJECT_DIR$/lib/miglayout-swing.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/miglayout-core.jar!/" />
       <root url="jar://$APPLICATION_HOME_DIR$/lib/jfreechart-1.5.4-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mysql-connector-j-8.4.0.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/lib/miglayout-swing-javadoc.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/miglayout-core-javadoc.jar!/" />
       <root url="jar://$APPLICATION_HOME_DIR$/lib/jcommon-1.0.24-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jar_files.zip!/" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/lib/miglayout-swing-sources.jar!/" />
