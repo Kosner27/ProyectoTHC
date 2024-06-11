@@ -11,6 +11,8 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
@@ -22,7 +24,6 @@ public class Graficos extends JFrame {
     private JMenuItem RegistrarEmisión;
     private JMenuItem Calcular;
     private JMenuItem Informes;
-    private JMenuItem Graficos;
     private JMenuItem Reducir;
     private JMenuItem MasInformacion;
     private JPanel PanelMain; // Asegúrate de declararlo como privado
@@ -33,22 +34,32 @@ public class Graficos extends JFrame {
     private JPanel PanelGrafico2;
     private JButton buscarButton;
     private JButton inicioButton;
-    private JLabel Comparar;
-    private JLabel Tendencia;
+    private JLabel imagen;
+    private JMenuBar bar;
+    private JMenu Graficos;
+    private JLabel titulo;
 
 
     public Graficos(){
         setTitle("Graficos");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(650, 300);
-
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
         setContentPane(PanelMain);
-
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
 
         buscarButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                imagen.setVisible(false);
                 super.mouseClicked(e);
                 int alc1 = 500000;
                 int alc2 = 303455;
@@ -121,26 +132,35 @@ public class Graficos extends JFrame {
 
             }
         });
-        Comparar.addMouseListener(new MouseAdapter() {
+
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-               new CompararOtrarInstituciones();
-               setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
             }
         });
-        Comparar.setVisible(true);
 
-        Tendencia.addMouseListener(new MouseAdapter() {
+        GraficoHistorico.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new GraficoTendencia();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
             }
-
         });
-        Tendencia.setVisible(true);
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
+            }
+        });
+
+
         RegistrarInstitucion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

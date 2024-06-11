@@ -8,6 +8,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -25,16 +27,24 @@ public class GraficoComparar extends JFrame {
     private JButton descargarButton;
     private JButton atrasButton;
     private JButton inicioButton;
+    private JMenuBar bar;
 
     public GraficoComparar(){
         setTitle("grafico comparar");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1000,900);
+        setSize(1000,600);
+        setLocationRelativeTo(null);
         setContentPane(PanelMain);
         int n1=303455;
         int n2=200000;
         int n3=300000;
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
         DefaultCategoryDataset datos= new DefaultCategoryDataset();
         datos.setValue(n1,"ACPM","Institucion universitaria de envigado");
         datos.setValue(n1,"Gasolina Corriente","Institucion universitaria de envigado");
@@ -71,15 +81,7 @@ public class GraficoComparar extends JFrame {
                 JOptionPane.showMessageDialog(null, "Se descargo satisfactoriamente");
             }
         });
-        atrasButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new CompararOtrarInstituciones();
-                setVisible(false);
-            }
-        });
-        atrasButton.setVisible(true);
+
         inicioButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -109,7 +111,36 @@ public class GraficoComparar extends JFrame {
 
             }
         });
+
         RegistrarEmisión.setVisible(true);
+
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
+            }
+        });
+
         Calcular.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -137,15 +168,7 @@ public class GraficoComparar extends JFrame {
             }
         });
         Informes.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
-            }
-        });
-        Graficos.setVisible(true);
+
 
 
         Reducir.addMouseListener(new MouseAdapter() {

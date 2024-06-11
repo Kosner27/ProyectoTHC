@@ -2,6 +2,8 @@ package Vistas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import org.jfree.chart.ChartFactory;
@@ -22,20 +24,34 @@ public class GraficoTendencia extends  JFrame {
     private JButton verButton;
     private JPanel PanelMain;
     private JButton inicioButton;
-    private JButton atrasButton;
+    private JMenuBar bar;
+    private JLabel image;
+    private JPanel content;
+    private JLabel titulo;
 
     public  GraficoTendencia(){
-        setTitle("Tendencia");
+        setTitle("Historico");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(650, 500);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
         setContentPane(PanelMain);
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
 
         verButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if(institucion.getSelectedItem()!=""){
+                    image.setVisible(false);
+                    content.setVisible(false);
                     int n1= 2000000;
                     int n2= 3000000;
                     int n3= 4000000;
@@ -65,7 +81,8 @@ public class GraficoTendencia extends  JFrame {
                     );
                     ChartPanel panel = new ChartPanel(chart);
                     panel.setMouseWheelEnabled(true);
-                    panel.setPreferredSize(new Dimension(400,400));
+                    setSize(1000, 600);
+                    panel.setPreferredSize(new Dimension(500,500));
                     Grafico.setLayout(new BorderLayout());
                     Grafico.add(panel,BorderLayout.NORTH);
                     pack();
@@ -74,6 +91,33 @@ public class GraficoTendencia extends  JFrame {
                 }else{
                     JOptionPane.showMessageDialog(PanelMain, "Seleccione una institución");
                 }
+            }
+        });
+
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
             }
         });
         inicioButton.addMouseListener(new MouseAdapter() {
@@ -86,15 +130,7 @@ public class GraficoTendencia extends  JFrame {
         });
 
         inicioButton.setVisible(true);
-        atrasButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
-            }
-        });
-        atrasButton.setVisible(true);
+
         RegistrarInstitucion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -142,15 +178,7 @@ public class GraficoTendencia extends  JFrame {
             }
         });
         Informes.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
-            }
-        });
-        Graficos.setVisible(true);
+
 
 
         Reducir.addMouseListener(new MouseAdapter() {

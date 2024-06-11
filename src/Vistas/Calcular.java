@@ -3,6 +3,8 @@ package Vistas;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -10,7 +12,6 @@ public class Calcular extends JFrame{
     private JPanel PanelMain;
     private JMenuItem RegistrarInstitucion;
     private JMenuItem RegistrarEmisión;
-    private JMenuItem Calcular;
     private JMenuItem Informes;
     private JMenuItem Graficos;
     private JMenuItem Reducir;
@@ -25,8 +26,10 @@ public class Calcular extends JFrame{
     private JButton inicioButton;
     private JScrollPane Contenedor;
     private JComboBox fuente;
-    private JButton button1;
-    private JButton button2;
+    private JMenuBar bar;
+    private JMenuItem Calcular;
+    private JButton guardarCalculoButton;
+    private JLabel titulo;
 
     public Calcular(){
 
@@ -34,8 +37,16 @@ public class Calcular extends JFrame{
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
         setContentPane(PanelMain);
-
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
         Emisiones.setPreferredScrollableViewportSize(new Dimension(300, 300));
         Contenedor.setSize(200,200);
         String[] columnNames = {"Nombre fuente emision", "Estado", "Alcance","Carga ambiental", "Unidad de medida","FactorEmision"," Co2 Aportado"};
@@ -126,15 +137,32 @@ public class Calcular extends JFrame{
             }
         });
         Informes.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
             }
         });
-        Graficos.setVisible(true);
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
+            }
+        });
 
 
         Reducir.addMouseListener(new MouseAdapter() {

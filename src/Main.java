@@ -1,20 +1,20 @@
+import Controlador.InstitucionControlador;
+import Modelo.ConsultasInstitucion;
+import Modelo.InstitucionModelo;
 import Vistas.Inicio;
+import Vistas.RegistrarInstitucion;
 
-import javax.swing.*;
-
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame Inicio = new JFrame();
-                Inicio.setVisible(true);
-                Inicio.setContentPane(new Inicio().getContentPane());
 
 
-            }
-        });
-        }
+    public static void main(String[]args){
+        InstitucionModelo mod = new InstitucionModelo();
+        ConsultasInstitucion consul = new ConsultasInstitucion();
+        RegistrarInstitucion view = new RegistrarInstitucion();
+        InstitucionControlador controlador = new InstitucionControlador(mod, consul,view);
+        controlador.iniciar();
+        view.setVisible(true);
+        Inicio in = new Inicio();
+        in.setVisible(true);
+}
 }

@@ -1,20 +1,21 @@
-package Conexiones;
+package Modelo;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 public class Conexion {
+    private final String user = "root";
+    private final String password = "willmar";
+    private final String url = "jdbc:mysql://localhost:3306/ProyectoTHDC";
+    private Connection conn;
 
-    public static final String URL = "jdbc:mysql://localhost:3306/ProyectoTHDC"; // Cambia esto a tu URL de conexión
-    public static final String USER = "root"; // Cambia esto a tu usuario de la base de datos
-    public static final String PASSWORD = "willmar"; // Cambia esto a tu contraseña de la base de datos
-   public Connection connection;
-
-    public Conexion() {
+    public Connection getConection() {
         try {
             // Intentamos cargar el controlador de MySQL
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Intentamos establecer la conexión
-            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            this.conn = DriverManager.getConnection(url, user, password);
             System.out.println("Conexión exitosa a la base de datos");
         } catch (ClassNotFoundException e) {
             System.err.println("Error al cargar el controlador de MySQL");
@@ -23,16 +24,17 @@ public class Conexion {
             System.err.println("Error al conectar a la base de datos");
             e.printStackTrace();
         }
+        return conn;
     }
 
-    public Connection getConnection() {
-        return connection;
+    public Connection getConn() {
+        return conn;
     }
 
     public void closeConnection() {
-        if (connection != null) {
+        if (conn != null) {
             try {
-                connection.close();
+                conn.close();
                 System.out.println("Conexión cerrada");
             } catch (SQLException e) {
                 System.err.println("Error al cerrar la conexión");
@@ -45,7 +47,7 @@ public class Conexion {
         // Crear una instancia de la clase Conexion
         Conexion conexion = new Conexion();
         // Obtener la conexión para realizar operaciones con la base de datos
-        Connection conn = conexion.getConnection();
+        Connection conn = conexion.getConection();
         // Cerrar la conexión
         conexion.closeConnection();
     }

@@ -3,6 +3,8 @@ package Vistas;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -10,7 +12,6 @@ public class Informe extends JFrame {
     private JMenuItem RegistrarInstitucion;
     private JMenuItem RegistrarEmisión;
     private JMenuItem Calcular;
-    private JMenuItem Informes;
     private JMenuItem Graficos;
     private JMenuItem Reducir;
     private JMenuItem MasInformacion;
@@ -23,17 +24,29 @@ public class Informe extends JFrame {
     private JButton inicioButton;
     private JButton descargarButton;
     private JTextField total;
+    private JMenuBar bar;
+    private JMenuItem Informes;
+    private JLabel titulo;
 
 
     public Informe(){
         setTitle("Informes");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1000, 500);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
         setContentPane(PanelMain);
-        Emisiones.setPreferredScrollableViewportSize(new Dimension(300, 300));
+        Emisiones.setPreferredScrollableViewportSize(new Dimension(400, 400));
         Contenedor.setSize(1000,200);
         Contenedor.setVisible(true);
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
         buscarButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -109,15 +122,32 @@ public class Informe extends JFrame {
             }
         });
         MasInformacion.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
             }
         });
-        Graficos.setVisible(true);
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
+            }
+        });
 
 
         Reducir.addMouseListener(new MouseAdapter() {

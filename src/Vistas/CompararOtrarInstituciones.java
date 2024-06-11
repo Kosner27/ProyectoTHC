@@ -3,6 +3,8 @@
     import javax.swing.*;
     import javax.swing.table.DefaultTableModel;
     import java.awt.*;
+    import java.awt.event.ActionEvent;
+    import java.awt.event.ActionListener;
     import java.awt.event.MouseAdapter;
     import java.awt.event.MouseEvent;
 
@@ -22,19 +24,28 @@
         private JScrollPane Contenedor;
         private JButton añadirButton;
         private JButton compararButton;
-        private JButton atrasButton;
         private JButton inicioButton;
+        private JMenuBar bar;
+        private JLabel titulo;
 
         public CompararOtrarInstituciones(){
             setTitle("Comparar con otras instituciones");
             setVisible(true);
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            setSize(900, 500);
+            setSize(1000, 500);
+            Font font = new Font("Arial", Font.PLAIN, 14);
+            titulo.setFont(font);
+            setLocationRelativeTo(null);
             setContentPane(PanelMain);
             Instituciones.setPreferredScrollableViewportSize(new Dimension(500, 300));
             Instituciones.setFillsViewportHeight(true);
 
-
+            JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+            JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+            JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+            Graficos.add(GraficoPrincipal);
+            Graficos.add(GraficosCompararInstitucion);
+            Graficos.add(GraficoHistorico);
 
 
 
@@ -85,7 +96,32 @@
             });
             compararButton.setVisible(true);
 
+            GraficosCompararInstitucion.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                    comIns.setVisible(true);
+                    dispose();
+                }
+            });
 
+            GraficoHistorico.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    GraficoTendencia graf = new GraficoTendencia();
+                    graf.setVisible(true);
+                    dispose();
+                }
+            });
+
+            GraficoPrincipal.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Vistas.Graficos graficos = new Graficos();
+                    graficos.setVisible(true);
+                    dispose();
+                }
+            });
 
         RegistrarInstitucion.addMouseListener(new MouseAdapter() {
             @Override
@@ -134,15 +170,7 @@
             }
         });
         Informes.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
-            }
-        });
-        Graficos.setVisible(true);
+
 
 
         Reducir.addMouseListener(new MouseAdapter() {
@@ -153,15 +181,7 @@
                 setVisible(false);
             }
         });Reducir.setVisible(true);
-        atrasButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
-            }
-        });
-        atrasButton.setVisible(true);
+
         inicioButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

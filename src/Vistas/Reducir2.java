@@ -2,6 +2,8 @@ package Vistas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -11,7 +13,6 @@ public class Reducir2 extends JFrame {
     private JMenuItem Calcular;
     private JMenuItem Informes;
     private JMenuItem Graficos;
-    private JMenuItem Reducir;
     private JMenuItem MasInformacion;
     private JComboBox Institucion;
     private JComboBox anio;
@@ -21,14 +22,26 @@ public class Reducir2 extends JFrame {
     private JLabel Texto1;
     private JPanel PanelMain;
     private JScrollPane Contenedor;
+    private JMenuBar bar;
+    private JMenuItem Reducir;
+    private JLabel titulo;
+    private JButton inicioButton;
 
     public Reducir2() {
         setTitle("Reducir");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1050,300);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
         setContentPane(PanelMain);
-
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
 
 
         RegistrarInstitucion.addMouseListener(new MouseAdapter() {
@@ -78,15 +91,32 @@ public class Reducir2 extends JFrame {
             }
         });
         Informes.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
+        GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Graficos();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                comIns.setVisible(true);
+                dispose();
             }
         });
-        Graficos.setVisible(true);
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GraficoTendencia graf = new GraficoTendencia();
+                graf.setVisible(true);
+                dispose();
+            }
+        });
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Vistas.Graficos graficos = new Graficos();
+                graficos.setVisible(true);
+                dispose();
+            }
+        });
         generarPlanDeAccion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -197,6 +227,15 @@ public class Reducir2 extends JFrame {
 
             }
         });
+        inicioButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Inicio();
+                setVisible(false);
+            }
+        });
+        Inicio.getWindows();
     }
     public static void  main(String[]args ){
 
