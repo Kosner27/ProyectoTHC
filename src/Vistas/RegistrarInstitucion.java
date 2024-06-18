@@ -1,5 +1,10 @@
 package Vistas;
 
+import Controlador.CalcularControlador;
+import Controlador.EmisionControlador;
+import Controlador.InstitucionControlador;
+import Modelo.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -66,25 +71,39 @@ public class RegistrarInstitucion extends JFrame {
         Inicio.getWindows();
 
 
-        RegistrarEmisión.addMouseListener(new MouseAdapter() {
+        RegistrarInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Emision();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                RegistrarInstitucion registrarInstitucionView = new RegistrarInstitucion();
+                InstitucionModelo modelo = new InstitucionModelo();
+                ConsultasInstitucion consultas = new ConsultasInstitucion();
+                InstitucionControlador controlador = new InstitucionControlador(modelo, consultas, registrarInstitucionView);
+                controlador.iniciar();
+                registrarInstitucionView.setVisible(true);
+                dispose(); // Cerrar la vista actual
+            }
+        });
+
+        RegistrarEmisión.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Emision emisionView = new Emision();
+                EmisionModelo mod = new EmisionModelo();
+                ConsultasEmision consul = new ConsultasEmision();
+                EmisionControlador controlador = new EmisionControlador(mod,consul, emisionView);
+                controlador.iniciar();
+                emisionView.setVisible(true);
+                dispose();
+            }
+        });
+        Calcular.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
 
             }
         });
-        RegistrarEmisión.setVisible(true);
-        Calcular.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Calcular();
-                setVisible(false);
-            }
-        });
-        Calcular.setVisible(true);
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

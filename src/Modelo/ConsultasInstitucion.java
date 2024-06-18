@@ -33,4 +33,10 @@ public class ConsultasInstitucion {
             }
         }
     }
+
+public static void main (String []arg){
+
+
+}
+
 }

@@ -1,5 +1,10 @@
 package Vistas;
 
+import Controlador.CalcularControlador;
+import Controlador.EmisionControlador;
+import Controlador.InstitucionControlador;
+import Modelo.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -9,27 +14,27 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Calcular extends JFrame{
-    private JPanel PanelMain;
-    private JMenuItem RegistrarInstitucion;
-    private JMenuItem RegistrarEmisión;
-    private JMenuItem Informes;
-    private JMenuItem Graficos;
-    private JMenuItem Reducir;
-    private JMenuItem MasInformacion;
-    private JPanel SubMain;
-    private JComboBox institucion;
-    private JTextField anio;
-    private JButton añadirLeFuenteButton;
-    private JTable Emisiones;
-    private JTextField total;
-    private JButton guardarButton;
-    private JButton inicioButton;
-    private JScrollPane Contenedor;
-    private JComboBox fuente;
-    private JMenuBar bar;
-    private JMenuItem Calcular;
-    private JButton guardarCalculoButton;
-    private JLabel titulo;
+    public JPanel PanelMain;
+    public JMenuItem RegistrarInstitucion;
+    public JMenuItem RegistrarEmisión;
+    public JMenuItem Informes;
+    public JMenuItem Graficos;
+    public JMenuItem Reducir;
+    public JMenuItem MasInformacion;
+    public JPanel SubMain;
+    public JComboBox institucion;
+    public JTextField anio;
+    public JButton añadirLeFuenteButton;
+    public JTable Emisiones;
+    public JTextField total;
+    public JButton guardarButton;
+    public JButton inicioButton;
+    public JScrollPane Contenedor;
+    public JComboBox fuente;
+    public JMenuBar bar;
+    public JMenuItem Calcular;
+    public JButton guardarCalculoButton;
+    public JLabel titulo;
 
     public Calcular(){
 
@@ -51,12 +56,14 @@ public class Calcular extends JFrame{
         Contenedor.setSize(200,200);
         String[] columnNames = {"Nombre fuente emision", "Estado", "Alcance","Carga ambiental", "Unidad de medida","FactorEmision"," Co2 Aportado"};
         DefaultTableModel tableModel;
+
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 3; // Hacer editable solo la columna "Carga ambiental"
             }
         };
+        Emisiones.setModel(tableModel);
         inicioButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -73,60 +80,39 @@ public class Calcular extends JFrame{
 
             }
         });
-        añadirLeFuenteButton.addMouseListener(new MouseAdapter() {
+
+        RegistrarInstitucion.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                    if(institucion.getSelectedItem() != null && !anio.getText().isEmpty() && fuente.getSelectedItem() != null){
-                        String[] rows = {"ACPM", "liquido", "1", "", "gal", "10.15", "26832.1445"};
+            public void actionPerformed(ActionEvent e) {
+                RegistrarInstitucion registrarInstitucionView = new RegistrarInstitucion();
+                InstitucionModelo modelo = new InstitucionModelo();
+                ConsultasInstitucion consultas = new ConsultasInstitucion();
+                InstitucionControlador controlador = new InstitucionControlador(modelo, consultas, registrarInstitucionView);
+                controlador.iniciar();
+                registrarInstitucionView.setVisible(true);
+                dispose(); // Cerrar la vista actual
+            }
+        });
 
-                        tableModel.addRow(rows);
-                        total.setText("26832.1445");
-                        Emisiones.setModel(tableModel);
+        RegistrarEmisión.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Emision emisionView = new Emision();
+                EmisionModelo mod = new EmisionModelo();
+                ConsultasEmision consul = new ConsultasEmision();
+                EmisionControlador controlador = new EmisionControlador(mod,consul, emisionView);
+                controlador.iniciar();
+                emisionView.setVisible(true);
+                dispose();
+            }
+        });
+        Calcular.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-                        SwingUtilities.invokeLater(() -> {
-                            int row = tableModel.getRowCount() - 1;
-                            Emisiones.changeSelection(row, 3, false, false);
-                            Emisiones.editCellAt(row, 3);
-                            Component editor = Emisiones.getEditorComponent();
-
-                            if (editor != null) {
-                                editor.requestFocus();
-                            }
-                        });
-                        Emisiones.getColumnModel().getColumn(0).setPreferredWidth(100);
-                        Emisiones.getColumnModel().getColumn(3).setPreferredWidth(100);
-                        Emisiones.getColumnModel().getColumn(4).setPreferredWidth(100);
-                        Emisiones.getColumnModel().getColumn(5).setPreferredWidth(100);
-                        Emisiones.repaint();
-
-                    }else {
-                        JOptionPane.showMessageDialog(PanelMain, "Llenar Todos los campos");
-                    }
 
             }
         });
-        RegistrarInstitucion.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new RegistrarInstitucion();
-                setVisible(false);}
-        });
-        RegistrarInstitucion.setVisible(true);
-
-
-        RegistrarEmisión.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Emision();
-                setVisible(false);
-
-            }
-        });
-        RegistrarEmisión.setVisible(true);
-
         MasInformacion.setVisible(true);
         Informes.addMouseListener(new MouseAdapter() {
             @Override

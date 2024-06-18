@@ -1,5 +1,10 @@
     package Vistas;
 
+    import Controlador.CalcularControlador;
+    import Controlador.EmisionControlador;
+    import Controlador.InstitucionControlador;
+    import Modelo.*;
+
     import javax.swing.*;
     import javax.swing.table.DefaultTableModel;
     import java.awt.*;
@@ -123,35 +128,7 @@
                 }
             });
 
-        RegistrarInstitucion.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new RegistrarInstitucion();
-                setVisible(false);}
-        });
-        RegistrarInstitucion.setVisible(true);
 
-
-        RegistrarEmisión.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Emision();
-                setVisible(false);
-
-            }
-        });
-        RegistrarEmisión.setVisible(true);
-        Calcular.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Calcular();
-                setVisible(false);
-            }
-        });
-        Calcular.setVisible(true);
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

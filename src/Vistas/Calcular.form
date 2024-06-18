@@ -60,12 +60,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="IUE"/>
-                <item value="Pascual bravo"/>
-                <item value="UDEA"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="cd771" class="javax.swing.JLabel">

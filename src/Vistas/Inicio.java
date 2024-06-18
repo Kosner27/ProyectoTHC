@@ -1,12 +1,8 @@
 package Vistas;
 
 
-import Controlador.EmisionControlador;
-import Controlador.InstitucionControlador;
-import Modelo.ConsultasEmision;
-import Modelo.ConsultasInstitucion;
-import Modelo.EmisionModelo;
-import Modelo.InstitucionModelo;
+import Controlador.*;
+import Modelo.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,20 +49,19 @@ GraficosCompararInstitucion.addActionListener(new ActionListener() {
         GraficoHistorico.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GraficoTendencia graf = new GraficoTendencia();
-                graf.setVisible(true);
+                Conexion con = new Conexion();
+               TendenciaModelo mod = new TendenciaModelo();
+                ConsultasTendencias consult = new ConsultasTendencias(con);
+                GraficoTendencia view = new GraficoTendencia();
+                TendenciaControlador control = new TendenciaControlador(mod,consult,view);
+                view.setVisible(true);
+                control.iniciar();
                 dispose();
+
             }
         });
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Vistas.Graficos graficos = new Graficos();
-                graficos.setVisible(true);
-                dispose();
-            }
-        });
+
         RegistrarInstitucion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -83,6 +78,7 @@ GraficosCompararInstitucion.addActionListener(new ActionListener() {
 RegistrarEmisión.addActionListener(new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
+
         Emision emisionView = new Emision();
         EmisionModelo mod = new EmisionModelo();
         ConsultasEmision consul = new ConsultasEmision();
@@ -92,15 +88,37 @@ RegistrarEmisión.addActionListener(new ActionListener() {
         dispose();
     }
 });
-        Calcular.addMouseListener(new MouseAdapter() {
+        Calcular.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Calcular();
-                setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                Vistas.Calcular view = new Calcular();
+                CalcularModelo mod = new CalcularModelo();
+                InstitucionModelo modelo = new InstitucionModelo();
+                CalcularConsultas consul = new CalcularConsultas(con);
+                CalcularControlador controlador = new CalcularControlador(mod,consul,view,modelo);
+                controlador.iniciar();
+                view.setVisible(true);
+                dispose();
             }
         });
-        Calcular.setVisible(true);
+
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                GraficoConsulta consul = new GraficoConsulta(con);
+                Vistas.Graficos view = new Graficos();
+                GraficorModelo mod = new GraficorModelo();
+                InstitucionModelo modelo = new InstitucionModelo();
+                GraficoControlador contro = new GraficoControlador(mod,consul, view,modelo);
+                contro.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });
+
+
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

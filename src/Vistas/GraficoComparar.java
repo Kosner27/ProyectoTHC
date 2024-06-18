@@ -1,5 +1,9 @@
 package Vistas;
 
+import Controlador.CalcularControlador;
+import Controlador.EmisionControlador;
+import Controlador.InstitucionControlador;
+import Modelo.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -46,18 +50,24 @@ public class GraficoComparar extends JFrame {
         Graficos.add(GraficosCompararInstitucion);
         Graficos.add(GraficoHistorico);
         DefaultCategoryDataset datos= new DefaultCategoryDataset();
-        datos.setValue(n1,"ACPM","Institucion universitaria de envigado");
-        datos.setValue(n1,"Gasolina Corriente","Institucion universitaria de envigado");
-        datos.setValue(n1,"Diesel","Institucion universitaria de envigado");
-        datos.setValue(n1,"Gasolina Extra","Institucion universitaria de envigado");
-        datos.setValue(n1,"ACPM","Pascual Bravo");
-        datos.setValue(n1,"Gasolina Corriente","Pascual Bravo");
-        datos.setValue(n2,"Diesel","Pascual Bravo");
-        datos.setValue(n2,"Gasolina Extra","Pascual Bravo");
-        datos.setValue(n3,"Gasolina Corriente","UDEA");
-        datos.setValue(n1,"Diesel","UDEA");
-        datos.setValue(n1,"Gasolina Extra","UDEA");
-        datos.setValue(n1,"ACPM","UDEA");
+        datos.setValue(n1,"Institucion universitaria de envigado","ACPM");
+        datos.setValue(n1,"Pascual Bravo","ACPM");
+        datos.setValue(n1,"UDEA","ACPM");
+
+
+        datos.setValue(n1,"Institucion universitaria de envigado","Gasolina Corriente");
+        datos.setValue(n1,"Pascual Bravo","Gasolina Corriente");
+        datos.setValue(n3,"UDEA","Gasolina Corriente");
+
+        datos.setValue(n1,"Institucion universitaria de envigado","Gasolina Extra");
+        datos.setValue(n1,"UDEA","Gasolina Extra");
+        datos.setValue(n2,"Pascual Bravo","Gasolina Extra");
+
+        datos.setValue(n2,"Pascual Bravo","Diesel");
+        datos.setValue(n1,"Institucion universitaria de envigado","Diesel");
+        datos.setValue(n1,"UDEA","Diesel");
+
+
 
         JFreeChart barras =  ChartFactory.createBarChart(
                 "Comparativa entre instituciones por alcance especificando sus fuentes de emision",
@@ -92,27 +102,6 @@ public class GraficoComparar extends JFrame {
         });
         inicioButton.setVisible(true);
 
-        RegistrarInstitucion.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new RegistrarInstitucion();
-                setVisible(false);}
-        });
-        RegistrarInstitucion.setVisible(true);
-
-
-        RegistrarEmisión.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Emision();
-                setVisible(false);
-
-            }
-        });
-
-        RegistrarEmisión.setVisible(true);
 
         GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
@@ -141,15 +130,7 @@ public class GraficoComparar extends JFrame {
             }
         });
 
-        Calcular.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Calcular();
-                setVisible(false);
-            }
-        });
-        Calcular.setVisible(true);
+
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

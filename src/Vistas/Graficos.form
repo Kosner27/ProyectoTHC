@@ -31,12 +31,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="IUE"/>
-                <item value="Pascual Bravo"/>
-                <item value="UDEA"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="f9df5" class="javax.swing.JLabel">
@@ -64,12 +59,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="2024"/>
-                <item value="2023"/>
-                <item value="2022"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <grid id="6861b" binding="PanelGrafico" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

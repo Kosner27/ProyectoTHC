@@ -1188,9 +1188,9 @@ INSERT INTO municipio VALUES (99001, 'Puerto Carreño', 99),
 (99524, 'La Primavera', 99),
 (99624, 'Santa Rosalía', 99),
 (99773, 'Cumaribo', 99);
-
-select * from  institucion ;
 use  ProyectoTHDC;
+select * from  institucion inner join municipio on institucion.idMunicipio=municipio.idMunicipio ;
+
 CALL SeleccionarDepartamento();
 CALL BuscarMunicipio('Guaviare');
 call insertarInstitucion('Medellin',2,'upb',2222);

@@ -1,5 +1,9 @@
 package Vistas;
 
+import Controlador.CalcularControlador;
+import Controlador.EmisionControlador;
+import Controlador.InstitucionControlador;
+import Modelo.*;
 import org.jfree.chart.ChartPanel;
 
 import javax.swing.*;
@@ -20,24 +24,24 @@ import java.text.NumberFormat;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Graficos extends JFrame {
-    private JMenuItem RegistrarInstitucion;
-    private JMenuItem RegistrarEmisión;
-    private JMenuItem Calcular;
-    private JMenuItem Informes;
-    private JMenuItem Reducir;
-    private JMenuItem MasInformacion;
-    private JPanel PanelMain; // Asegúrate de declararlo como privado
-    private JComboBox institucion;
-    private JComboBox anio;
-    private JPanel Submain;
-    private JPanel PanelGrafico;
-    private JPanel PanelGrafico2;
-    private JButton buscarButton;
-    private JButton inicioButton;
-    private JLabel imagen;
-    private JMenuBar bar;
-    private JMenu Graficos;
-    private JLabel titulo;
+    public JMenuItem RegistrarInstitucion;
+    public JMenuItem RegistrarEmisión;
+    public JMenuItem Calcular;
+    public JMenuItem Informes;
+    public JMenuItem Reducir;
+    public JMenuItem MasInformacion;
+    public JPanel PanelMain; // Asegúrate de declararlo como privado
+    public JComboBox institucion;
+    public JComboBox anio;
+    public JPanel Submain;
+    public JPanel PanelGrafico;
+    public JPanel PanelGrafico2;
+    public JButton buscarButton;
+    public JButton inicioButton;
+    public JLabel imagen;
+    public JMenuBar bar;
+    public JMenu Graficos;
+    public JLabel titulo;
 
 
     public Graficos(){
@@ -56,7 +60,7 @@ public class Graficos extends JFrame {
         Graficos.add(GraficosCompararInstitucion);
         Graficos.add(GraficoHistorico);
 
-        buscarButton.addMouseListener(new MouseAdapter() {
+       /* buscarButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 imagen.setVisible(false);
@@ -131,7 +135,7 @@ public class Graficos extends JFrame {
 
 
             }
-        });
+        });*/
 
         GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
@@ -161,35 +165,6 @@ public class Graficos extends JFrame {
         });
 
 
-        RegistrarInstitucion.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new RegistrarInstitucion();
-                setVisible(false);}
-        });
-        RegistrarInstitucion.setVisible(true);
-
-
-        RegistrarEmisión.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Emision();
-                setVisible(false);
-
-            }
-        });
-        RegistrarEmisión.setVisible(true);
-        Calcular.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Calcular();
-                setVisible(false);
-            }
-        });
-        Calcular.setVisible(true);
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

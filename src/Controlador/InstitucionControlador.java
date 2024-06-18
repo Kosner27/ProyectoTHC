@@ -37,6 +37,7 @@ private RegistrarInstitucion view;
         view.setLocationRelativeTo(null);
         CargarDepartamento();
         cargarMunicipio();
+
     }
 
     @Override
@@ -95,6 +96,7 @@ private RegistrarInstitucion view;
     }
 
     public void CargarDepartamento(){
+
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         String sql = "CALL SeleccionarDepartamento()";

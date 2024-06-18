@@ -33,6 +33,19 @@
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
   </component>
+  <component name="DBNavigator.Project.MethodExecutionManager">
+    <method-browser />
+    <execution-history>
+      <group-entries value="true" />
+      <execution-inputs>
+        <execution-input execution-timeout="30" debug-execution-timeout="600" session-id="MAIN" context-expanded="false" enable-logging="false" commit-after-execution="false" connection-id="135a818a-fb1d-459c-a57d-08e26ddb30dd" object-ref="schemas/proyectothdc/procedures/LlenarTablaCalcular" execution-schema="proyectothdc">
+          <argument-values />
+        </execution-input>
+      </execution-inputs>
+      <selection connection-id="135a818a-fb1d-459c-a57d-08e26ddb30dd" object-ref="schemas/proyectothdc/procedures/LlenarTablaCalcular" />
+    </execution-history>
+    <argument-values-cache />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />
