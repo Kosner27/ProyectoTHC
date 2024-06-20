@@ -57,12 +57,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="2024"/>
-                <item value="2023"/>
-                <item value="2022"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="e47d1" class="javax.swing.JComboBox" binding="alcance">
@@ -111,12 +106,7 @@
               </grid>
             </constraints>
             <properties>
-              <model>
-                <item value=""/>
-                <item value="IUE"/>
-                <item value="Pascual Bravo"/>
-                <item value="UDEA"/>
-              </model>
+              <model/>
             </properties>
           </component>
           <component id="7023e" class="javax.swing.JLabel">

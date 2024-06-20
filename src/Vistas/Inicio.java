@@ -41,7 +41,12 @@ GraficosCompararInstitucion.addActionListener(new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
         CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
-        comIns.setVisible(true);
+        GraficoComparar view = new GraficoComparar();
+        Conexion conn = new Conexion();
+        GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
+        GraficoCompararModelo mod = new GraficoCompararModelo();
+        ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view);
+        contro.iniciar();
         dispose();
     }
 });
