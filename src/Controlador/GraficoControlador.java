@@ -3,6 +3,17 @@ package Controlador;
 import Modelo.*;
 
 import Vistas.Graficos;
+import com.itextpdf.awt.PdfGraphics2D;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImage;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.orsonpdf.PDFDocument;
+import com.orsonpdf.PDFGraphics2D;
+import com.orsonpdf.Page;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -14,6 +25,9 @@ import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,8 +35,12 @@ import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GraficoControlador {
     private final GraficorModelo mod;
@@ -37,7 +55,20 @@ public class GraficoControlador {
         this.view = view;
 
         this.view.buscarButton.addActionListener(this::actionPerformed);
+        this.view.Descargar.addActionListener(this::actionPerformed);
     }
+
+    private File capturarPanelComoImagen(JPanel panel, String nombreArchivo) throws IOException {
+        BufferedImage imagen = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = imagen.createGraphics();
+        panel.paint(g2d);
+        g2d.dispose();
+
+        File archivo = new File(nombreArchivo);
+        ImageIO.write(imagen, "png", archivo);
+        return archivo;
+    }
+
 
     public void iniciar() {
         view.setTitle("Grafico principal");
@@ -56,16 +87,16 @@ public class GraficoControlador {
                 DefaultPieDataset datosAlcance = new DefaultPieDataset();
                 DefaultPieDataset datosFuente = new DefaultPieDataset();
                 List<GraficorModelo> datos = consul.GraficoDato(nombreInstitucion, anioBase);
-                List<CalcularModelo> datos2 = consul.GraficoDato2(nombreInstitucion,anioBase);
-                for(CalcularModelo dato : datos2){
-                        String fuente = dato.getNombreFuente();
-                        Double total = dato.getTotal1();
+                List<CalcularModelo> datos2 = consul.GraficoDato2(nombreInstitucion, anioBase);
+                for (CalcularModelo dato : datos2) {
+                    String fuente = dato.getNombreFuente();
+                    Double total = dato.getTotal1();
 
-                        if(fuente!=null && total !=null){
-                            datosFuente.setValue(fuente,total);
-                        }else{
-                            System.out.println("Datos incorectos "+ fuente + total);
-                        }
+                    if (fuente != null && total != null) {
+                        datosFuente.setValue(fuente, total);
+                    } else {
+                        System.out.println("Datos incorectos " + fuente + total);
+                    }
                 }
                 for (GraficorModelo dato : datos) {
                     String alcance = dato.getAlcance();
@@ -87,10 +118,88 @@ public class GraficoControlador {
 
                 mostrarGrafico(grafico);
                 mostrarGrafico2(grafico2);
+
+
             } else {
                 JOptionPane.showMessageDialog(null, "Debe seleccionar una institución y un año base.");
             }
         }
+
+        if (e.getSource() == view.Descargar) {
+            view.imagen.setVisible(false);
+            String nombreInstitucion = view.institucion.getSelectedItem().toString();
+            String anioBase = view.anio.getSelectedItem().toString();
+
+            if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty()) {
+                DefaultPieDataset datosAlcance = new DefaultPieDataset();
+                DefaultPieDataset datosFuente = new DefaultPieDataset();
+                List<GraficorModelo> datos = consul.GraficoDato(nombreInstitucion, anioBase);
+                List<CalcularModelo> datos2 = consul.GraficoDato2(nombreInstitucion, anioBase);
+                for (CalcularModelo dato : datos2) {
+                    String fuente = dato.getNombreFuente();
+                    Double total = dato.getTotal1();
+
+                    if (fuente != null && total != null) {
+                        datosFuente.setValue(fuente, total);
+                    } else {
+                        System.out.println("Datos incorectos " + fuente + total);
+                    }
+                }
+                for (GraficorModelo dato : datos) {
+                    String alcance = dato.getAlcance();
+                    Double total = dato.getTotal();
+
+                    // Verificar si alguno de los valores es nulo
+                    if (alcance != null && total != null) {
+                        datosAlcance.setValue(alcance, total);
+                    } else {
+                        System.out.println("Alcance o Total es nulo: Alcance = " + alcance + ", Total = " + total);
+                    }
+                }
+                String fecha = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+                String b = view.institucion.getSelectedItem().toString() + fecha;
+
+                JFileChooser f = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF Files", "pdf");
+                f.setFileFilter(filter);
+                f.setDialogTitle("Guardar archivo PDF");
+                f.setSelectedFile(new File(b + ".pdf"));
+                int userSelection = f.showSaveDialog(null);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File c = f.getSelectedFile();
+                    ExportarGraficos(datosAlcance, datosFuente, c);
+                }
+
+            }
+
+        }
+    }
+
+    private void ExportarGraficos(DefaultPieDataset datosAlcance, DefaultPieDataset datosFuente,  File r) {
+        JFreeChart chart = crearGraficoCircular(datosAlcance);
+        JFreeChart chart2 = crearGraficoCircular(datosFuente);
+
+        PDFDocument pdfDpc = new PDFDocument();
+        try {
+
+
+            // Crear y dibujar la primera página
+            Page page = pdfDpc.createPage(new Rectangle(612, 792));
+            PDFGraphics2D g2 = page.getGraphics2D();
+            chart.draw(g2, new Rectangle(150, 0, 312, 168));
+
+            // Crear y dibujar la segunda página
+            Page page1 = pdfDpc.createPage(new Rectangle(612, 468));
+            PDFGraphics2D g1 = page1.getGraphics2D();
+            chart2.draw(g1, new Rectangle(0, 0, 612, 468));
+
+            // Guardar el PDF en el archivo especificado
+            pdfDpc.writeToFile(r);
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
     private JFreeChart crearGraficoFuente (DefaultPieDataset dataset){
         JFreeChart chart = ChartFactory.createPieChart(

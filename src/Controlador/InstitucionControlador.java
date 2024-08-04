@@ -23,6 +23,8 @@ private RegistrarInstitucion view;
         this.view=view;
         this.view.registrarButton.addActionListener(this);
         this.view.inicioButton.addActionListener(this);
+        this.view.editarButton.addActionListener(this);
+        this.view.buscarPorNombreButton.addActionListener(this);
         this.view.departamento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -84,6 +86,28 @@ private RegistrarInstitucion view;
                 JOptionPane.showMessageDialog(null, "Por favor, llene todos los campos.");
             }
         }
+if(e.getSource()==view.buscarPorNombreButton){
+    view.Institucion.setVisible(false);
+    mod.setNombreInstitucion(view.nombre.getText());
+    if(!view.nombre.getText().isEmpty() && consul.buscarInstitucion(mod)){
+        view.nit.setText(mod.getNit());
+        view.departamento.setSelectedItem(mod.getDepartamento());
+        view.municipio.setSelectedItem(mod.getMunicipio());
+        view.hectareas.setText(String.valueOf(mod.getHectareas()));
+
+    }
+
+}
+
+        /*if(e.getSource()==view.editarButton){
+            mod.setNombreInstitucion(view.nombre.getText());
+            if(!mod.getNombreInstitucion().isEmpty()){
+                System.out.println("hola");
+            }else{
+                System.out.println("erorr");
+            }
+        }*/
+
     }
 
 

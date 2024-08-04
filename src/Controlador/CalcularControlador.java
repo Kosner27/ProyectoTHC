@@ -22,9 +22,8 @@ private InstitucionModelo mod2;
         this.consul = consul;
         this.view = view;
         this.mod2=mod2;
-        this.view.guardarButton.addActionListener(this);
-        this.view.añadirLeFuenteButton.addActionListener(this);
         this.view.guardarCalculoButton.addActionListener(this);
+        this.view.fuente.addActionListener(this::comboBoxActionPerformed);
     }
 
     public void iniciar() {
@@ -48,6 +47,7 @@ private InstitucionModelo mod2;
             }
         });
     }
+
 
     private void calcularTotal() {
         DefaultTableModel model = (DefaultTableModel) view.Emisiones.getModel();
@@ -73,49 +73,52 @@ private InstitucionModelo mod2;
 
         view.total.setText(String.valueOf(total));
     }
+public void comboBoxActionPerformed(ActionEvent e){
+    JComboBox<String> comboBox = (JComboBox<String>) e.getSource();
+    String selectedItem = (String) comboBox.getSelectedItem();
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == view.añadirLeFuenteButton) {
-            DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
+    if (selectedItem != null && !selectedItem.isEmpty()) {
+        DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
 
-                String fuenteSeleccionada = view.fuente.getSelectedItem().toString();
-                List<EmisionModelo> emisiones = consul.getEmisiones(fuenteSeleccionada);
+        String fuenteSeleccionada = view.fuente.getSelectedItem().toString();
+        List<EmisionModelo> emisiones = consul.getEmisiones(fuenteSeleccionada);
 
-
-
-            for (EmisionModelo emision : emisiones) {
-                // Verificar si la fila ya existe
-                boolean exists = false;
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-                    if (tableModel.getValueAt(i, 0).equals(emision.getNombreFuente())) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) {
-                    Object[] rowData = {emision.getNombreFuente(), emision.getEstadoFuente(),
-                            emision.getAlcance(), "", emision.getUnidadMedidad(), emision.getFactorEmision()};
-                    tableModel.addRow(rowData);
+        for (EmisionModelo emision : emisiones) {
+            // Verificar si la fila ya existe
+            boolean exists = false;
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (tableModel.getValueAt(i, 0).equals(emision.getNombreFuente())) {
+                    exists = true;
+                    break;
                 }
             }
-
-
-            view.Emisiones.setModel(tableModel);
-                view.Emisiones.setVisible(true);
-                view.Contenedor.setVisible(true);
-
-                SwingUtilities.invokeLater(() -> {
-                    view.Emisiones.getColumnModel().getColumn(0).setPreferredWidth(150);
-                    view.Emisiones.getColumnModel().getColumn(2).setPreferredWidth(150);
-                    view.Emisiones.getColumnModel().getColumn(3).setPreferredWidth(150);
-                    view.Emisiones.getColumnModel().getColumn(4).setPreferredWidth(150);
-                    view.Emisiones.repaint();
-                });
-
-
-
+            if (!exists) {
+                Object[] rowData = {emision.getNombreFuente(), emision.getEstadoFuente(),
+                        emision.getAlcance(), "", emision.getUnidadMedidad(), emision.getFactorEmision()};
+                tableModel.addRow(rowData);
+            }
         }
+
+
+        view.Emisiones.setModel(tableModel);
+        view.Emisiones.setVisible(true);
+        view.Contenedor.setVisible(true);
+
+        SwingUtilities.invokeLater(() -> {
+            view.Emisiones.getColumnModel().getColumn(0).setPreferredWidth(150);
+            view.Emisiones.getColumnModel().getColumn(2).setPreferredWidth(150);
+            view.Emisiones.getColumnModel().getColumn(3).setPreferredWidth(150);
+            view.Emisiones.getColumnModel().getColumn(4).setPreferredWidth(150);
+            view.Emisiones.repaint();
+        });
+
+
+
+    }
+}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
 
         if (e.getSource() == view.guardarCalculoButton) {
             System.out.println("Botón guardarCalculoButton presionado"); // Mensaje de depuración
@@ -214,5 +217,7 @@ private InstitucionModelo mod2;
                 e.printStackTrace();
             }
         }
+
+
     }
 }

@@ -10,16 +10,16 @@ import java.awt.event.*;
 
 
 public class Inicio extends JFrame {
-    private JPanel panel1;
-    private JMenuItem RegistrarInstitucion;
-    private JMenuItem RegistrarEmisión;
-    private JMenuItem Calcular;
-    private JMenuItem Informes;
-    private JMenuItem Graficos;
-    private JMenuItem Reducir;
-    private JMenuItem MasInformacion;
-    private JMenuBar bar;
-    private JLabel imagen;
+    public JPanel panel1;
+    public JMenuItem RegistrarInstitucion;
+    public JMenuItem RegistrarEmisión;
+    public JMenuItem Calcular;
+    public JMenuItem Informes;
+    public JMenuItem Graficos;
+    public JMenuItem Reducir;
+    public JMenuItem MasInformacion;
+    public JMenuBar bar;
+    public JLabel imagen;
 
 
     public Inicio() {
@@ -124,6 +124,22 @@ RegistrarEmisión.addActionListener(new ActionListener() {
         });
 
 
+
+       Informes.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               Conexion con = new Conexion();
+               InstitucionModelo mod2 = new InstitucionModelo();
+               ConsultaInforme consul = new ConsultaInforme(con);
+               ModeloInforme mod = new ModeloInforme();
+               Informe view = new Informe();
+               ControladorInforme contro = new ControladorInforme(view,mod,consul);
+               contro.iniciar();
+               view.setVisible(true);
+               dispose();
+           }
+       });
+
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -133,18 +149,6 @@ RegistrarEmisión.addActionListener(new ActionListener() {
             }
         });
         MasInformacion.setVisible(true);
-        Informes.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Informe();
-                setVisible(false);
-            }
-        });
-        Informes.setVisible(true);
-
-
-
         Reducir.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -153,15 +157,7 @@ RegistrarEmisión.addActionListener(new ActionListener() {
                 setVisible(false);
             }
         });Reducir.setVisible(true);
-        Graficos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                super.mouseWheelMoved(e);
 
-            }
-        });
-        Graficos.addMouseListener(new MouseAdapter() {
-        });
     }
 public static void  main(String[]args ){
 

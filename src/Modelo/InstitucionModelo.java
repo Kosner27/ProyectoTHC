@@ -1,11 +1,14 @@
 package Modelo;
 
 public class InstitucionModelo {
-public String Nit;
-public String NombreInstitucion;
-public String departamento;
-public String municipio;
-public int hectareas;
+private String Nit;
+private String NombreInstitucion;
+private String departamento;
+private String municipio;
+private int hectareas;
+
+    public InstitucionModelo() {
+    }
 
     public String getNombreInstitucion() {
         return NombreInstitucion;

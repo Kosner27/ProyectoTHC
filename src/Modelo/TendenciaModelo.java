@@ -5,6 +5,11 @@ public class TendenciaModelo {
     private  Integer AnioBase;
     private Double co2;
     private String alcance;
+
+
+    public TendenciaModelo(){
+
+    }
     public Double getCo2() {
         return co2;
     }
@@ -29,9 +34,7 @@ public class TendenciaModelo {
         AnioBase = anioBase;
     }
 
-    public TendenciaModelo(){
 
-    }
     public String getNombre() {
         return Nombre;
     }

@@ -3,8 +3,8 @@ package Modelo;
 
 
 public class CalcularModelo extends EmisionModelo {
-public Double CantidadConsumidad;
-public Double Total1;
+private Double CantidadConsumidad;
+private Double Total1;
 public int anioBase;
     public CalcularModelo(){
         super();

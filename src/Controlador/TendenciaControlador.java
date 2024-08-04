@@ -8,6 +8,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.ui.ApplicationFrame;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -76,9 +77,14 @@ public class TendenciaControlador {
                 "Tendencia de la huella de carbono",   // Título del gráfico
                 "año",       // Etiqueta del eje X
                 "Cantidad de co2",       // Etiqueta del eje Y
-                dataset   // Conjunto de datos
+                dataset  // Conjunto de datos
         );
-             return chart;
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.getRenderer().setSeriesPaint(0, Color.RED);
+        plot.getRenderer().setSeriesPaint(1, Color.BLUE);
+        plot.getRenderer().setSeriesPaint(2, Color.BLACK);
+        plot.getRenderer().setSeriesPaint(3, Color.MAGENTA);
+        return chart;
     }
 
     private void mostrarGrafico(JFreeChart chart) {

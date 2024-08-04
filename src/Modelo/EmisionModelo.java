@@ -1,12 +1,12 @@
 package Modelo;
 
 public class EmisionModelo {
- public String NombreFuente;
- public String TipoFuente;
- public String EstadoFuente;
- public String Alcance;
- public Double  FactorEmision;
- public String UnidadMedidad;
+ private String NombreFuente;
+ private String TipoFuente;
+ private String EstadoFuente;
+ private String Alcance;
+ private Double  FactorEmision;
+ private String UnidadMedidad;
 
     public EmisionModelo(){
 
