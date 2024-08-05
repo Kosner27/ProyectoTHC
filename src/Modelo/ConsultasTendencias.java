@@ -41,6 +41,37 @@ public class ConsultasTendencias {
         return emisiones;
 
     }
+    public List<ModeloInforme> datos(String nombre){
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<ModeloInforme> instituciones = new ArrayList<>();
+
+        try {
+            ps = conn.prepareStatement("CALL institucion(?)");
+            ps.setString(1, nombre);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ModeloInforme institucion = new ModeloInforme();
+                institucion.setMunicipio(rs.getString("NombreMunicipio"));
+                institucion.setDepartamento(rs.getString("NombreDepartamento"));
+                institucion.setNit(rs.getString("Nit"));
+
+
+                instituciones.add(institucion);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return instituciones;
+    }
 
 
 

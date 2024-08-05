@@ -3,50 +3,50 @@ package Controlador;
 import Modelo.*;
 
 import Vistas.Graficos;
-import com.itextpdf.awt.PdfGraphics2D;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfImage;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.Image;
+
 import com.itextpdf.text.pdf.PdfWriter;
-import com.orsonpdf.PDFDocument;
-import com.orsonpdf.PDFGraphics2D;
-import com.orsonpdf.Page;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.ui.ApplicationFrame;
+
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+
 
 public class GraficoControlador {
     private final GraficorModelo mod;
     private final GraficoConsulta consul;
     private final Graficos view;
     private final InstitucionModelo mod2;
+
+
 
     public GraficoControlador(GraficorModelo mod, GraficoConsulta consul, Graficos view, InstitucionModelo mod2) {
         this.mod = mod;
@@ -58,16 +58,7 @@ public class GraficoControlador {
         this.view.Descargar.addActionListener(this::actionPerformed);
     }
 
-    private File capturarPanelComoImagen(JPanel panel, String nombreArchivo) throws IOException {
-        BufferedImage imagen = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = imagen.createGraphics();
-        panel.paint(g2d);
-        g2d.dispose();
 
-        File archivo = new File(nombreArchivo);
-        ImageIO.write(imagen, "png", archivo);
-        return archivo;
-    }
 
 
     public void iniciar() {
@@ -176,64 +167,135 @@ public class GraficoControlador {
     }
 
     private void ExportarGraficos(DefaultPieDataset datosAlcance, DefaultPieDataset datosFuente,  File r) {
-        JFreeChart chart = crearGraficoCircular(datosAlcance);
-        JFreeChart chart2 = crearGraficoCircular(datosFuente);
-
-        PDFDocument pdfDpc = new PDFDocument();
         try {
+            //Se creo lo graficos
+            JFreeChart chartAlcance = crearGraficoCircular(datosAlcance);
+            JFreeChart chartFuente = crearGraficoFuente(datosFuente);
 
+            // se pasason a imagenes
+            ByteArrayOutputStream chartStreamAlcance = new ByteArrayOutputStream();
+            ChartUtils.writeBufferedImageAsPNG(chartStreamAlcance, chartAlcance.createBufferedImage(400, 200));
+            byte[] chartBytesAlcance = chartStreamAlcance.toByteArray();
 
-            // Crear y dibujar la primera página
-            Page page = pdfDpc.createPage(new Rectangle(612, 792));
-            PDFGraphics2D g2 = page.getGraphics2D();
-            chart.draw(g2, new Rectangle(150, 0, 312, 168));
+            ByteArrayOutputStream chartStreamFuente = new ByteArrayOutputStream();
+            ChartUtils.writeBufferedImageAsPNG(chartStreamFuente, chartFuente.createBufferedImage(400, 200));
+            byte[] chartBytesFuente = chartStreamFuente.toByteArray();
 
-            // Crear y dibujar la segunda página
-            Page page1 = pdfDpc.createPage(new Rectangle(612, 468));
-            PDFGraphics2D g1 = page1.getGraphics2D();
-            chart2.draw(g1, new Rectangle(0, 0, 612, 468));
+            // Crear el PDF
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(r));
+            document.open();
+            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString());
+            String fechaActual = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
-            // Guardar el PDF en el archivo especificado
-            pdfDpc.writeToFile(r);
+            // Añadir la fecha al documento
+            Paragraph fecha = new Paragraph("Fecha de creación: " + fechaActual);
+            fecha.setAlignment(Element.ALIGN_RIGHT);
+            document.add(fecha);
+            document.add(new Paragraph(" ")); // Añadir espacio entre la fecha y la tabla
+            String nombre = view.institucion.getSelectedItem().toString();
+            Paragraph nombreInstitucion = new Paragraph("Nombre de la Institucion: " + nombre);
+            nombreInstitucion.setAlignment(Element.ALIGN_LEFT);
+            document.add(new Paragraph(("")));
+            document.add(nombreInstitucion);
+            document.add(new Paragraph("  "));
+            for (ModeloInforme info : a) {
+                String m = info.getMunicipio();
+                Paragraph municipio = new Paragraph("Municipio: " + m);
+                municipio.setAlignment(Element.ALIGN_LEFT);
+                document.add(municipio);
+                document.add(new Paragraph("  "));
+                //////////////////////////////
+                String d = info.getDepartamento();
+                Paragraph departamento = new Paragraph("Departamento: " + d);
+                departamento.setAlignment(Element.ALIGN_LEFT);
+                document.add(departamento);
+                document.add(new Paragraph("  "));
+                ///////////////////////////////7
+                String i = info.getNit();
+                Paragraph nit = new Paragraph("Nit de la institución: " + i);
+                nit.setAlignment(Element.ALIGN_LEFT);
+                document.add(nit);
+                document.add(new Paragraph("  "));
+            }
+            // Añadir los gráficos al PDF
+            Image chartImageAlcance = Image.getInstance(chartBytesAlcance);
+            chartImageAlcance.setAlignment(Element.ALIGN_CENTER);
+            Paragraph textoALcance = new Paragraph( "En el siguiente vamos apreciar lo siguiente una suma total de las fuentes de emisión discriminada por alcance el cual se describe asi.\n" +
+                    "Alcance 1: Corresponde al consumo de combustibles fósiles, y de refrigerantes.\n" +
+                    "Alcance 2: Corresponde al consumo de la energía eléctrica.\n" +
+                    "Alcance 3: Otras emisiones indirectas, consumo de materias primas e insumos, ademas de los viajes de negocios.\n");
 
+            textoALcance.setAlignment(Element.ALIGN_LEFT);
+            document.add(textoALcance);
+            document.add(chartImageAlcance);
+            document.add(new Paragraph("\n")); // Espacio entre gráficos
+
+            Image chartImageFuente = Image.getInstance(chartBytesFuente);
+            chartImageFuente.setAlignment(Element.ALIGN_CENTER);
+            document.add(new Paragraph("En el siguiente grafico encontraremos todas las fuentes de emision que corresponden a la institución seleccionada con su respectivo año base, ademas se muestra el porcentaje de consumo de la fuente de emisión"));
+            document.add(chartImageFuente);
+
+            document.close();
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
 
     }
-    private JFreeChart crearGraficoFuente (DefaultPieDataset dataset){
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Emisiones por fuente",
-                dataset,
-                true,
-                true,
-                false
-        );
-        PiePlot plot2 = (PiePlot)chart.getPlot();
-        PieSectionLabelGenerator labelGenerator2 = new StandardPieSectionLabelGenerator(
-                "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance());
-        plot2.setLabelGenerator(labelGenerator2);
-        return chart;
-    }
     private JFreeChart crearGraficoCircular(DefaultPieDataset dataset) {
         JFreeChart chart = ChartFactory.createPieChart(
-                "Emisiones por Alcance",
+                "Emisiones por Alcance",  // Título del gráfico
                 dataset,
                 true,
                 true,
                 false
         );
-        PiePlot plot2 = (PiePlot)chart.getPlot();
-        PieSectionLabelGenerator labelGenerator2 = new StandardPieSectionLabelGenerator(
-                "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance());
-        plot2.setLabelGenerator(labelGenerator2);
+        PiePlot plot = (PiePlot) chart.getPlot();
+
+
+
+        // Formato personalizado para porcentaje con 3 decimales
+        NumberFormat numberFormat = new DecimalFormat("0.000000%");
+
+        // Generador de etiquetas para mostrar nombre de sección, valor absoluto y porcentaje
+        PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator(
+                "{0}=({2})", numberFormat, numberFormat);
+        plot.setLabelGenerator(labelGenerator);
+
+        // Configurar para ignorar valores cero
+        plot.setIgnoreZeroValues(true);
+
+        return chart;
+    }
+
+    private JFreeChart crearGraficoFuente(DefaultPieDataset dataset) {
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Emisiones por Fuente",  // Título del gráfico
+                dataset,
+                true,
+                true,
+                false
+        );
+        PiePlot plot = (PiePlot) chart.getPlot();
+
+        // Formato personalizado para porcentaje con 3 decimales
+        NumberFormat numberFormat = new DecimalFormat("0.000000%");
+
+        // Generador de etiquetas para mostrar nombre de sección, valor absoluto y porcentaje
+        PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator(
+                "{0}=({2})", numberFormat, numberFormat);
+        plot.setLabelGenerator(labelGenerator);
+
+        // Configurar para ignorar valores cero
+        plot.setIgnoreZeroValues(true);
+
         return chart;
     }
 
     private void mostrarGrafico(JFreeChart chart) {
         ChartPanel panel2 = new ChartPanel(chart);
         panel2.setMouseWheelEnabled(true);
-        panel2.setPreferredSize(new Dimension(300, 200));
+        panel2.setPreferredSize(new Dimension(600, 400));
 
         view.PanelGrafico2.setLayout(new BorderLayout());
         view.PanelGrafico2.removeAll(); // Remove any existing components
@@ -247,7 +309,7 @@ public class GraficoControlador {
     private void mostrarGrafico2(JFreeChart chart){
         ChartPanel panel = new ChartPanel(chart);
         panel.setMouseWheelEnabled(true);
-        panel.setPreferredSize(new Dimension(300,200));
+        panel.setPreferredSize(new Dimension(600,400));
         view.PanelGrafico.setLayout(new BorderLayout());
         view.PanelGrafico.removeAll();
         view.PanelGrafico.add(panel, BorderLayout.CENTER);

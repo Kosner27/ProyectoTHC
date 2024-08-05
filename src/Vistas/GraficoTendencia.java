@@ -28,6 +28,7 @@ public class GraficoTendencia extends  JFrame {
     public  JLabel image;
     public  JPanel content;
     public  JLabel titulo;
+    public  JButton descargarButton;
 
     public  GraficoTendencia(){
         setTitle("Historico");
