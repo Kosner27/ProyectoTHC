@@ -1,6 +1,8 @@
-package Modelo;
+package Modelo.Consultas;
 
-import java.sql.CallableStatement;
+import Modelo.Conexion;
+import Modelo.modelo.EmisionModelo;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

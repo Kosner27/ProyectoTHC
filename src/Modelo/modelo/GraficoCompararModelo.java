@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.modelo;
 
 public class GraficoCompararModelo {
     private String NombreInstitucion;

@@ -1,36 +1,37 @@
 package Controlador;
-
-
 import Modelo.Conexion;
-import Modelo.Consultas.ConsultasInstitucion;
-import Modelo.modelo.InstitucionModelo;
-import Vistas.RegistrarInstitucion;
+import Modelo.modelo.UsuarioModel;
+import Vistas.RegistrarUsuario;
+import Modelo.Consultas.ConsultaUsuario;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.Objects;
 
-public class InstitucionControlador implements ActionListener {
-private final InstitucionModelo mod;
-private final ConsultasInstitucion consul;
-private final RegistrarInstitucion view;
 
-    public InstitucionControlador (InstitucionModelo mod,ConsultasInstitucion consul, RegistrarInstitucion view){
-        this.mod=mod;
-        this.consul=consul;
-        this.view=view;
-        this.view.registrarButton.addActionListener(this);
-        this.view.inicioButton.addActionListener(this);
-        this.view.editarButton.addActionListener(this);
-        this.view.buscarPorNombreButton.addActionListener(this);
+public class ControladoRegistrarUsuario {
+    private final UsuarioModel mod;
+    private final RegistrarUsuario view;
+    private final ConsultaUsuario consul;
+
+    public ControladoRegistrarUsuario(UsuarioModel mod, RegistrarUsuario view, ConsultaUsuario consul) {
+        this.mod = mod;
+        this.view = view;
+        this.consul = consul;
         this.view.departamento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (view.departamento.getItemCount() > 0) {
                     cargarMunicipio();
+                }
+            }
+        });
+        this.view.municipio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(view.municipio.getItemCount()>0){
+                    cargarInstitucion();
                 }
             }
         });
@@ -40,66 +41,8 @@ private final RegistrarInstitucion view;
         view.setLocationRelativeTo(null);
         CargarDepartamento();
         cargarMunicipio();
-
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == view.registrarButton) {
-            mod.setNit(view.nit.getText());
-            mod.setMunicipio(Objects.requireNonNull(view.municipio.getSelectedItem()).toString());
-            mod.setNombreInstitucion(view.nombre.getText());
-            mod.setHectareas(Integer.parseInt(view.hectareas.getText()));
-
-            String nombreInstitucion = view.nombre.getText();
-            String NIT = view.nit.getText();
-            String Hectareas = view.hectareas.getText();
-            String seleccionado = (String) view.departamento.getSelectedItem();
-            String seleccionado2 = (String) view.municipio.getSelectedItem();
-
-            if (!view.nombre.getText().isEmpty() && !view.nit.getText().isEmpty() && !view.hectareas.getText().isEmpty() && !seleccionado2.isEmpty() && !seleccionado.isEmpty()) {
-                String[] row = {nombreInstitucion, NIT, Hectareas, seleccionado, seleccionado2};
-
-                // Obtener el modelo de la tabla existente
-                DefaultTableModel tableModel = (DefaultTableModel) view.Institucion.getModel();
-                tableModel.addRow(row);
-
-                view.Institucion.setModel(tableModel);
-                view.Institucion.setVisible(true);
-                view.Contenedor.setVisible(true);
-
-                SwingUtilities.invokeLater(() -> {
-                    view.Institucion.getColumnModel().getColumn(0).setPreferredWidth(200);
-                    view.Institucion.getColumnModel().getColumn(1).setPreferredWidth(150);
-                    view.Institucion.getColumnModel().getColumn(2).setPreferredWidth(150);
-                    view.Institucion.getColumnModel().getColumn(3).setPreferredWidth(150);
-                    view.Institucion.repaint();
-                });
-
-                if (consul.registrarInstitucion(mod)) {
-                    JOptionPane.showMessageDialog(null, "Registro guardado");
-                    Limpiar();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error");
-                    Limpiar();
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Por favor, llene todos los campos.");
-            }
-        }
-
-
-
-
-    }
-
-
-    public void Limpiar(){
-        view.departamento.setSelectedIndex(0);
-        view.municipio.setSelectedIndex(0);
-        view.nit.setText(null);
-        view.hectareas.setText(null);
-        view.nombre.setText(null);
+        cargarInstitucion();
+        CargarRoles();
     }
 
     public void CargarDepartamento(){
@@ -171,7 +114,7 @@ private final RegistrarInstitucion view;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(view.Principal, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } finally {
                 // Asegúrate de cerrar la conexión
                 if (conn != null) {
@@ -185,6 +128,76 @@ private final RegistrarInstitucion view;
         }
     }
 
+    public void cargarInstitucion(){
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        view.Institucion.removeAllItems();
+        view.Institucion.addItem(" ");
+        String municipio = view.municipio.getSelectedItem().toString();
+        if(municipio != null && !municipio.isEmpty()){
+            try{
+                if(conn != null){
+                    String procedureCall = "call BuscarInstitucion(?)";
+                    try(CallableStatement statement = conn.prepareCall(procedureCall)){
+                        statement.setString(1, municipio); // Establecer el valor del parámetro
 
+                        // Ejecutar la consulta
+                        ResultSet rs = statement.executeQuery();
 
+                        if(!rs.isBeforeFirst()){
+                            JOptionPane.showMessageDialog(null,"No se encontro Universidad y/o institucion para el municipio seleccionado");
+                        }else{
+                         while (rs.next()){
+                             String NombreInstitucion = rs.getString("NombreInstitucion");
+                             view.Institucion.addItem(NombreInstitucion);
+                         }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(view.Principal, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                // Asegúrate de cerrar la conexión
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public void CargarRoles(){
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        view.Rol.addItem(" ");
+        if(conn != null ){
+            String procedureCall = "call CargarRoles()";
+            try(CallableStatement statement = conn.prepareCall(procedureCall)){
+
+                ResultSet rs = statement.executeQuery();
+                while(rs.next()){
+                    String rol = rs.getString("tipoUsuario");
+                    view.Rol.addItem(rol);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            finally {
+                // Asegúrate de cerrar la conexión si es necesario
+                try {
+                    if (conn != null && !conn.isClosed()) {
+                        conn.close();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
 }

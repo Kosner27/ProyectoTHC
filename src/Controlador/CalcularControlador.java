@@ -1,6 +1,10 @@
 package Controlador;
 
 import Modelo.*;
+import Modelo.Consultas.CalcularConsultas;
+import Modelo.modelo.CalcularModelo;
+import Modelo.modelo.EmisionModelo;
+import Modelo.modelo.InstitucionModelo;
 import Vistas.Calcular;
 
 import javax.swing.*;
@@ -13,19 +17,21 @@ import java.sql.*;
 import java.util.List;
 
 public class CalcularControlador implements ActionListener {
-    private CalcularModelo mod;
-    private CalcularConsultas consul;
-    private Calcular view;
-private InstitucionModelo mod2;
-    public CalcularControlador(CalcularModelo mod, CalcularConsultas consul, Calcular view,InstitucionModelo mod2) {
+    private final CalcularModelo mod;
+    private final CalcularConsultas consul;
+    private final Calcular view;
+    private final InstitucionModelo mod2;
+    public CalcularControlador(CalcularModelo mod, CalcularConsultas consul, Calcular view, InstitucionModelo mod2) {
         this.mod = mod;
         this.consul = consul;
         this.view = view;
-        this.mod2=mod2;
-        this.view.guardarCalculoButton.addActionListener(this);
-        this.view.fuente.addActionListener(this::comboBoxActionPerformed);
+        this.mod2 = mod2;
+        inciarListeners();
     }
-
+private void inciarListeners() {
+    this.view.guardarCalculoButton.addActionListener(this);
+    this.view.fuente.addActionListener(this::comboBoxActionPerformed);
+}
     public void iniciar() {
         view.setTitle("Calcular Emision");
         view.setLocationRelativeTo(null);
@@ -38,9 +44,10 @@ private InstitucionModelo mod2;
         view.Emisiones.getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                if (e.getColumn() == 3 && e.getType() == TableModelEvent.UPDATE) { // Columna "Carga ambiental"
+                int a =3;
+                if (e.getColumn() == a && e.getType() == TableModelEvent.UPDATE) { // Columna "Carga ambiental"
                     int row = e.getFirstRow();
-                    String cargaAmbiental = view.Emisiones.getValueAt(row, 3).toString();
+                    String cargaAmbiental = view.Emisiones.getValueAt(row, a).toString();
                     calcularTotal();
                     System.out.println("Carga ambiental en fila " + row + ": " + cargaAmbiental);
                 }
@@ -52,17 +59,19 @@ private InstitucionModelo mod2;
     private void calcularTotal() {
         DefaultTableModel model = (DefaultTableModel) view.Emisiones.getModel();
         double total = 0.0;
-
+        int a = 3;
+        int b = 5;
         for (int row = 0; row < model.getRowCount(); row++) {
-            String valor1Str = model.getValueAt(row, 3).toString();
-            String valor2Str = model.getValueAt(row, 5).toString();
+            String valor1Str = model.getValueAt(row, a).toString();
+            String valor2Str = model.getValueAt(row, b).toString();
 
             if (!valor1Str.isEmpty() && !valor2Str.isEmpty()) {
+                int c= 6;
                 try {
-                    double valor1 = Double.parseDouble(valor1Str); // Primer valor
-                    double valor2 = Double.parseDouble(valor2Str); // Segundo valor
+                    double valor1 = Double.parseDouble( valor1Str ); // Primer valor
+                    double valor2 = Double.parseDouble( valor2Str ); // Segundo valor
                     double resultado = valor1 * valor2;
-                    model.setValueAt(resultado, row, 6); // Agregar el resultado en la tercera columna
+                    model.setValueAt(resultado, row, c); // Agregar el resultado en la tercera columna
                     System.out.println( row);
                     total += resultado;
                 } catch (NumberFormatException e) {

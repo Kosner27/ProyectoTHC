@@ -3,9 +3,10 @@ package Vistas;
 
 import Controlador.*;
 import Modelo.*;
+import Modelo.Consultas.*;
+import Modelo.modelo.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 

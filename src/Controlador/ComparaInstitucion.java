@@ -1,6 +1,9 @@
 package Controlador;
 
 import Modelo.*;
+import Modelo.Consultas.GraficoCompararConsultas;
+import Modelo.modelo.GraficoCompararModelo;
+import Modelo.modelo.InstitucionModelo;
 import Vistas.CompararOtrarInstituciones;
 import Vistas.GraficoComparar;
 import com.itextpdf.text.*;
@@ -13,7 +16,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

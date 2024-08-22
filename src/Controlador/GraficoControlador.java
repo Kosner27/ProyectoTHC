@@ -2,6 +2,11 @@ package Controlador;
 
 import Modelo.*;
 
+import Modelo.Consultas.GraficoConsulta;
+import Modelo.modelo.CalcularModelo;
+import Modelo.modelo.GraficorModelo;
+import Modelo.modelo.InstitucionModelo;
+import Modelo.modelo.ModeloInforme;
 import Vistas.Graficos;
 
 import com.itextpdf.text.*;

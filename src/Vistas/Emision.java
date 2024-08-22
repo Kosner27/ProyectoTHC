@@ -4,6 +4,12 @@ import Controlador.EmisionControlador;
 import Controlador.InstitucionControlador;
 import Modelo.*;
 import Diccionario.*;
+import Modelo.Consultas.CalcularConsultas;
+import Modelo.Consultas.ConsultasEmision;
+import Modelo.Consultas.ConsultasInstitucion;
+import Modelo.modelo.CalcularModelo;
+import Modelo.modelo.EmisionModelo;
+import Modelo.modelo.InstitucionModelo;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -100,7 +106,15 @@ public class Emision extends JFrame {
         Calcular.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                Conexion con = new Conexion();
+                Vistas.Calcular view = new Calcular();
+                CalcularModelo mod = new CalcularModelo();
+                InstitucionModelo modelo = new InstitucionModelo();
+                CalcularConsultas consul = new CalcularConsultas(con);
+                CalcularControlador controlador = new CalcularControlador(mod,consul,view,modelo);
+                controlador.iniciar();
+                view.setVisible(true);
+                dispose();
             }
         });
         MasInformacion.addMouseListener(new MouseAdapter() {

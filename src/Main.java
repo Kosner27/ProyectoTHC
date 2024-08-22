@@ -1,6 +1,6 @@
 import Controlador.InstitucionControlador;
-import Modelo.ConsultasInstitucion;
-import Modelo.InstitucionModelo;
+import Modelo.Consultas.ConsultasInstitucion;
+import Modelo.modelo.InstitucionModelo;
 import Vistas.Inicio;
 import Vistas.RegistrarInstitucion;
 

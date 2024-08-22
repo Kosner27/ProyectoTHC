@@ -1,9 +1,8 @@
 package Controlador;
 
 import Modelo.Conexion;
-import Modelo.ConsultaInforme;
-import Modelo.InstitucionModelo;
-import Modelo.ModeloInforme;
+import Modelo.Consultas.ConsultaInforme;
+import Modelo.modelo.ModeloInforme;
 import Vistas.Informe;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -14,18 +13,15 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

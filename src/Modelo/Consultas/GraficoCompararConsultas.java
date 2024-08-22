@@ -1,5 +1,9 @@
-package Modelo;
-import Vistas.GraficoComparar;
+package Modelo.Consultas;
+
+
+import Modelo.Conexion;
+import Modelo.modelo.GraficoCompararModelo;
+import Modelo.modelo.InstitucionModelo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,8 +53,8 @@ public class GraficoCompararConsultas {
 
     public List<GraficoCompararModelo> LlenarGrafico(String Instituciones, String anio, String alcance) {
         List<GraficoCompararModelo> resultados = new ArrayList<>();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        PreparedStatement ps;
+        ResultSet rs;
         try {
             String sql = "{CALL CompararEmisionesInstituciones(?, ?, ?)}";
             ps = conn.prepareStatement(sql);

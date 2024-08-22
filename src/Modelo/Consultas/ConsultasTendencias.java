@@ -1,4 +1,8 @@
-package Modelo;
+package Modelo.Consultas;
+import Modelo.Conexion;
+import Modelo.modelo.ModeloInforme;
+import Modelo.modelo.TendenciaModelo;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

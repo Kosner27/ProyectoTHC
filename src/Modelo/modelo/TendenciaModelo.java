@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.modelo;
 
 public class TendenciaModelo {
     private String Nombre;

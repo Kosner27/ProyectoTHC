@@ -2,6 +2,8 @@ package Vistas;
 
 import Controlador.*;
 import Modelo.*;
+import Modelo.Consultas.*;
+import Modelo.modelo.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

@@ -1,6 +1,6 @@
-package Modelo;
+package Modelo.modelo;
 
-public class ModeloInforme extends EmisionModelo{
+public class ModeloInforme extends EmisionModelo {
     private Double CantidadConsumidad;
     private Double CargaAmnbiental;
     private Integer AnioBase;

@@ -1,6 +1,6 @@
-package Modelo;
+package Modelo.modelo;
 
-public class GraficorModelo extends InstitucionModelo  {
+public class GraficorModelo extends InstitucionModelo {
     public String Alcance;
     public Double Total;
 

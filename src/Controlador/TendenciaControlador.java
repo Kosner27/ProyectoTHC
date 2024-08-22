@@ -1,13 +1,12 @@
 package Controlador;
 import Modelo.Conexion;
-import Modelo.ConsultasTendencias;
-import Modelo.ModeloInforme;
-import Modelo.TendenciaModelo;
+import Modelo.Consultas.ConsultasTendencias;
+import Modelo.modelo.ModeloInforme;
+import Modelo.modelo.TendenciaModelo;
 import Vistas.GraficoTendencia;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.orsonpdf.Page;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;

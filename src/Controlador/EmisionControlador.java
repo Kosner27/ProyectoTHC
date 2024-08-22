@@ -1,7 +1,7 @@
 package Controlador;
 import Diccionario.Diccionario;
-import Modelo.ConsultasEmision;
-import Modelo.EmisionModelo;
+import Modelo.Consultas.ConsultasEmision;
+import Modelo.modelo.EmisionModelo;
 import Vistas.Emision;
 
 
@@ -11,7 +11,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
 
 public class EmisionControlador implements ActionListener {
     private EmisionModelo mod;
