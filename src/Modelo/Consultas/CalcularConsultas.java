@@ -52,12 +52,13 @@ public class CalcularConsultas {
     public boolean registrarCargaAmbienta(CalcularModelo mod, InstitucionModelo mod2) {
         PreparedStatement ps = null;
         try {
-            ps = conn.prepareStatement("CALL insertarEmisionInstitucion(?,?,?,?,?)");
+            ps = conn.prepareStatement("CALL insertarEmisionInstitucion(?,?,?,?,?,?)");
             ps.setInt(1, mod.getAnioBase());
             ps.setDouble(2, mod.getCantidadConsumidad());
             ps.setString(3, mod2.getNombreInstitucion());
             ps.setString(4, mod.getNombreFuente());
-            ps.setDouble(5,mod.getTotal1());
+            ps.setDouble(5, mod.getTotal1());
+            ps.setString(6, mod2.getMunicipio());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {

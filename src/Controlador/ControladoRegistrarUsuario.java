@@ -1,5 +1,7 @@
 package Controlador;
 import Modelo.Conexion;
+import Modelo.modelo.HASH;
+import Modelo.modelo.Rol;
 import Modelo.modelo.UsuarioModel;
 import Vistas.RegistrarUsuario;
 import Modelo.Consultas.ConsultaUsuario;
@@ -14,11 +16,13 @@ public class ControladoRegistrarUsuario {
     private final UsuarioModel mod;
     private final RegistrarUsuario view;
     private final ConsultaUsuario consul;
-
-    public ControladoRegistrarUsuario(UsuarioModel mod, RegistrarUsuario view, ConsultaUsuario consul) {
+    private  final Rol rol;
+    public ControladoRegistrarUsuario(UsuarioModel mod, Rol rol,RegistrarUsuario view, ConsultaUsuario consul) {
         this.mod = mod;
+        this.rol=rol;
         this.view = view;
         this.consul = consul;
+        this.view.Registrar.addActionListener(this::actionPerformed);
         this.view.departamento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -44,7 +48,66 @@ public class ControladoRegistrarUsuario {
         cargarInstitucion();
         CargarRoles();
     }
+    public void actionPerformed(ActionEvent e ){
+        String Nombre= view.Nombre.getText().toString();
+        String apellido =view.Apellido.getText().toString();
+        String Correo = view.Correo.getText().toString();
+        String pass = new String(view.Contrasena.getPassword());
+        String newpass = new String(view.NewPass.getPassword());
+        String Departamento = view.departamento.getSelectedItem().toString();
+        String Municipio = view.municipio.getSelectedItem().toString();
+        String Institucion = view.Institucion.getSelectedItem().toString();
+        String Rol = view.Rol.getSelectedItem().toString();
 
+        if(e.getSource() == view.Registrar) {
+
+            if (!Nombre.isEmpty() && !apellido.isEmpty() && !Correo.isEmpty() && !Departamento.isEmpty() && !Municipio.isEmpty()
+                    && !Institucion.isEmpty() && !Rol.isEmpty() && !pass.isEmpty() && !newpass.isEmpty()) {
+                if (pass.equals(newpass)) {
+                    if(consul.ExisteUsuario(Correo)==0){
+                        if(consul.esEmail(Correo)){
+                        String passCifrado = HASH.sha1(pass);
+                        mod.setNombre(Nombre);
+                        mod.setApellido(apellido);
+                        mod.setCorreo(Correo);
+                        mod.setContrasena(passCifrado);
+                        mod.setIdInstitucion(Institucion);
+                        rol.setTipoUsuario(Rol);
+                        if (consul.insersartUsuario(Municipio, mod, rol)) {
+                            JOptionPane.showMessageDialog(null, "Se registro el usuario\n " + Nombre
+                                    + " de manera correcta");
+                            Limpiar();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error al registrar usuario");
+                            Limpiar();
+                        }
+                        }else{
+                            JOptionPane.showMessageDialog(null, "El correo no tiene el formato valido");
+                        }
+                    }else {
+                        JOptionPane.showMessageDialog(null,"El correo ya ha sido registrado");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null,"Las contraseñas no coinciden") ;
+                }
+
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Complete todos los campos ");
+            }
+        }
+    }
+public void Limpiar(){
+     view.Nombre.setText(null);
+    view.Apellido.setText(null);
+    view.Correo.setText(null);
+    view.Contrasena.setText(null);
+    view.NewPass.setText(null);
+    view.departamento.setSelectedIndex(0);
+    view.municipio.setSelectedIndex(0);
+    view.Institucion.setSelectedIndex(0);
+    view.Rol.setSelectedIndex(0);
+}
     public void CargarDepartamento(){
 
         Conexion conexion = new Conexion();
@@ -137,7 +200,7 @@ public class ControladoRegistrarUsuario {
         if(municipio != null && !municipio.isEmpty()){
             try{
                 if(conn != null){
-                    String procedureCall = "call BuscarInstitucion(?)";
+                    String procedureCall = "call BuscarInstitucion2(?)";
                     try(CallableStatement statement = conn.prepareCall(procedureCall)){
                         statement.setString(1, municipio); // Establecer el valor del parámetro
 
@@ -177,7 +240,7 @@ public class ControladoRegistrarUsuario {
         Connection conn = conexion.getConection();
         view.Rol.addItem(" ");
         if(conn != null ){
-            String procedureCall = "call CargarRoles()";
+            String procedureCall = "Select * from Roles ";
             try(CallableStatement statement = conn.prepareCall(procedureCall)){
 
                 ResultSet rs = statement.executeQuery();

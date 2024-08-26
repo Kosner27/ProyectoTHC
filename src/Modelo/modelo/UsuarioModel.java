@@ -6,7 +6,7 @@ public class UsuarioModel {
     private String Correo;
     private String contrasena;
     private String idInstitucion;
-    private String idRol;
+
 
     public UsuarioModel() {
     }
@@ -51,11 +51,5 @@ public class UsuarioModel {
         this.idInstitucion = idInstitucion;
     }
 
-    public String getIdRol() {
-        return idRol;
-    }
 
-    public void setIdRol(String idRol) {
-        this.idRol = idRol;
-    }
 }

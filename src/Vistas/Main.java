@@ -1,7 +1,9 @@
 package Vistas;
 
 import Controlador.ControladoRegistrarUsuario;
+import Modelo.Conexion;
 import Modelo.Consultas.ConsultaUsuario;
+import Modelo.modelo.Rol;
 import Modelo.modelo.UsuarioModel;
 
 import javax.swing.*;
@@ -26,9 +28,11 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RegistrarUsuario registro = new RegistrarUsuario();
+                Rol rol = new Rol();
+                Conexion conn = new Conexion();
                 UsuarioModel mod = new UsuarioModel();
-                ConsultaUsuario consul = new ConsultaUsuario();
-                ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(mod,registro, consul);
+                ConsultaUsuario consul = new ConsultaUsuario(conn);
+                ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(mod,rol,registro, consul);
                 contro.iniciar();
                 registro.setVisible(true);
                 dispose();

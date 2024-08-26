@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CalcularControlador implements ActionListener {
@@ -82,49 +83,50 @@ private void inciarListeners() {
 
         view.total.setText(String.valueOf(total));
     }
-public void comboBoxActionPerformed(ActionEvent e){
-    JComboBox<String> comboBox = (JComboBox<String>) e.getSource();
-    String selectedItem = (String) comboBox.getSelectedItem();
+    public void comboBoxActionPerformed(ActionEvent e) {
+        JComboBox<String> comboBox = (JComboBox<String>) e.getSource();
+        String selectedItem = (String) comboBox.getSelectedItem();
 
-    if (selectedItem != null && !selectedItem.isEmpty()) {
-        DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
+        if (selectedItem != null && !selectedItem.isEmpty()) {
+            DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
 
-        String fuenteSeleccionada = view.fuente.getSelectedItem().toString();
-        List<EmisionModelo> emisiones = consul.getEmisiones(fuenteSeleccionada);
+            String fuenteSeleccionada = view.fuente.getSelectedItem().toString();
+            List<EmisionModelo> emisiones = consul.getEmisiones(fuenteSeleccionada);
 
-        for (EmisionModelo emision : emisiones) {
-            // Verificar si la fila ya existe
-            boolean exists = false;
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                if (tableModel.getValueAt(i, 0).equals(emision.getNombreFuente())) {
-                    exists = true;
-                    break;
+            for (EmisionModelo emision : emisiones) {
+                // Verificar si la fuente ya existe en la tabla
+                boolean exists = false;
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    String fuenteEnTabla = (String) tableModel.getValueAt(i, 0); // Asumiendo que el nombre de la fuente está en la primera columna
+                    if (fuenteEnTabla.equals(emision.getNombreFuente())) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    // Si la fuente no existe, agregarla a la tabla
+                    Object[] rowData = {emision.getNombreFuente(), emision.getEstadoFuente(),
+                            emision.getAlcance(), "", emision.getUnidadMedidad(), emision.getFactorEmision()};
+                    tableModel.addRow(rowData);
                 }
             }
-            if (!exists) {
-                Object[] rowData = {emision.getNombreFuente(), emision.getEstadoFuente(),
-                        emision.getAlcance(), "", emision.getUnidadMedidad(), emision.getFactorEmision()};
-                tableModel.addRow(rowData);
-            }
+
+            // Actualizar la tabla y sus configuraciones
+            view.Emisiones.setModel(tableModel);
+            view.Emisiones.setVisible(true);
+            view.Contenedor.setVisible(true);
+
+            SwingUtilities.invokeLater(() -> {
+                view.Emisiones.getColumnModel().getColumn(0).setPreferredWidth(150);
+                view.Emisiones.getColumnModel().getColumn(2).setPreferredWidth(150);
+                view.Emisiones.getColumnModel().getColumn(3).setPreferredWidth(150);
+                view.Emisiones.getColumnModel().getColumn(4).setPreferredWidth(150);
+                view.Emisiones.repaint();
+            });
         }
-
-
-        view.Emisiones.setModel(tableModel);
-        view.Emisiones.setVisible(true);
-        view.Contenedor.setVisible(true);
-
-        SwingUtilities.invokeLater(() -> {
-            view.Emisiones.getColumnModel().getColumn(0).setPreferredWidth(150);
-            view.Emisiones.getColumnModel().getColumn(2).setPreferredWidth(150);
-            view.Emisiones.getColumnModel().getColumn(3).setPreferredWidth(150);
-            view.Emisiones.getColumnModel().getColumn(4).setPreferredWidth(150);
-            view.Emisiones.repaint();
-        });
-
-
-
     }
-}
+
     @Override
     public void actionPerformed(ActionEvent e) {
 

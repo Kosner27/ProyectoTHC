@@ -18,6 +18,7 @@ public class RegistrarUsuario extends JFrame{
     public JComboBox departamento;
     public JComboBox municipio;
     public JButton inicio;
+    public JPasswordField NewPass;
 
     public RegistrarUsuario(){
         setTitle("Registrar Usuario");
