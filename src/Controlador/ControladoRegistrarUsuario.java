@@ -16,10 +16,10 @@ public class ControladoRegistrarUsuario {
     private final UsuarioModel mod;
     private final RegistrarUsuario view;
     private final ConsultaUsuario consul;
-    private  final Rol rol;
-    public ControladoRegistrarUsuario(UsuarioModel mod, Rol rol,RegistrarUsuario view, ConsultaUsuario consul) {
+
+    public ControladoRegistrarUsuario(UsuarioModel mod,RegistrarUsuario view, ConsultaUsuario consul) {
         this.mod = mod;
-        this.rol=rol;
+
         this.view = view;
         this.consul = consul;
         this.view.Registrar.addActionListener(this::actionPerformed);
@@ -72,8 +72,8 @@ public class ControladoRegistrarUsuario {
                         mod.setCorreo(Correo);
                         mod.setContrasena(passCifrado);
                         mod.setIdInstitucion(Institucion);
-                        rol.setTipoUsuario(Rol);
-                        if (consul.insersartUsuario(Municipio, mod, rol)) {
+                        mod.setTipoUsuario(Rol);
+                        if (consul.insersartUsuario(Municipio, mod)) {
                             JOptionPane.showMessageDialog(null, "Se registro el usuario\n " + Nombre
                                     + " de manera correcta");
                             Limpiar();

@@ -6,6 +6,9 @@ public class UsuarioModel {
     private String Correo;
     private String contrasena;
     private String idInstitucion;
+    private String TipoUsuario;
+    private Integer idUsuario;
+
 
 
     public UsuarioModel() {
@@ -31,6 +34,14 @@ public class UsuarioModel {
         return Correo;
     }
 
+    public Integer getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public void setCorreo(String correo) {
         Correo = correo;
     }
@@ -51,5 +62,11 @@ public class UsuarioModel {
         this.idInstitucion = idInstitucion;
     }
 
+    public String getTipoUsuario() {
+        return TipoUsuario;
+    }
 
+    public void setTipoUsuario(String tipoUsuario) {
+        TipoUsuario = tipoUsuario;
+    }
 }

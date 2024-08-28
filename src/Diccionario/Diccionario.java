@@ -35,13 +35,6 @@ public class Diccionario {
         factorEmision.put("ENERGIA",0.136);
 
     }
-    public Double getFactorEmision(Double clave) {
-        return factorEmision.get(clave);
-    }
-
-    public void setFactorEmision(String tipos, Double Factor) {
-        factorEmision.put(tipos,Factor);
-    }
 
     public Double buscarClave(String texto) {
         String textoMayus = texto.toUpperCase(); // Convertir el texto a mayúsculas

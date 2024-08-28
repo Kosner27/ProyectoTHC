@@ -1,6 +1,7 @@
 package Vistas;
 
 import Controlador.ControladoRegistrarUsuario;
+import Controlador.ControladorLogin;
 import Modelo.Conexion;
 import Modelo.Consultas.ConsultaUsuario;
 import Modelo.modelo.Rol;
@@ -14,7 +15,6 @@ public class Main extends JFrame {
     private JPanel Principal;
     private JButton iniciarSesionButton;
     private JButton registrarseButton;
-
     public Main(){
         setTitle("Inicio");
         setVisible(true);
@@ -28,11 +28,10 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RegistrarUsuario registro = new RegistrarUsuario();
-                Rol rol = new Rol();
                 Conexion conn = new Conexion();
                 UsuarioModel mod = new UsuarioModel();
                 ConsultaUsuario consul = new ConsultaUsuario(conn);
-                ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(mod,rol,registro, consul);
+                ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(mod,registro, consul);
                 contro.iniciar();
                 registro.setVisible(true);
                 dispose();
@@ -43,7 +42,11 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LogIn inicio = new LogIn();
-                inicio.setVisible(true);
+                Conexion conn = new Conexion();
+                UsuarioModel mod = new UsuarioModel();
+                ConsultaUsuario consul = new ConsultaUsuario(conn);
+                ControladorLogin login = new ControladorLogin (mod,inicio, consul);
+                login.Iniciar();
                 dispose();
             }
         });
