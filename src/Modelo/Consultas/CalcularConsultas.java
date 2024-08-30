@@ -4,6 +4,7 @@ import Modelo.modelo.CalcularModelo;
 import Modelo.Conexion;
 import Modelo.modelo.EmisionModelo;
 import Modelo.modelo.InstitucionModelo;
+import Modelo.modelo.municipio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,16 +50,16 @@ public class CalcularConsultas {
         return emisiones;
     }
 
-    public boolean registrarCargaAmbienta(CalcularModelo mod, InstitucionModelo mod2) {
+    public boolean registrarCargaAmbienta(CalcularModelo mod, String nombreInstitucion, String nombreMunicipio) {
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement("CALL insertarEmisionInstitucion(?,?,?,?,?,?)");
             ps.setInt(1, mod.getAnioBase());
             ps.setDouble(2, mod.getCantidadConsumidad());
-            ps.setString(3, mod2.getNombreInstitucion());
+            ps.setString(3, nombreInstitucion);
             ps.setString(4, mod.getNombreFuente());
             ps.setDouble(5, mod.getTotal1());
-            ps.setString(6, mod2.getMunicipio());
+            ps.setString(6, nombreMunicipio);
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -71,5 +72,31 @@ public class CalcularConsultas {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String Institucion(String ins, String m){
+        PreparedStatement ps = null;
+        String nombre = null;
+        ResultSet rs = null;
+        try{
+            ps = conn.prepareStatement("Select i.NombreInstitucion, m.NombreMunicipio from institucion i  inner join municipio m on i.idMunicipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
+            ps.setString(1,ins);
+            ps.setString(2,m);
+            rs= ps.executeQuery();
+            while(rs.next()){
+
+              nombre =  rs.getString("NombreInstitucion");
+
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }return nombre;
     }
 }

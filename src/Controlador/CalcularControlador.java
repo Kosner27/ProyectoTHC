@@ -2,15 +2,15 @@ package Controlador;
 
 import Modelo.*;
 import Modelo.Consultas.CalcularConsultas;
-import Modelo.modelo.CalcularModelo;
-import Modelo.modelo.EmisionModelo;
-import Modelo.modelo.InstitucionModelo;
+import Modelo.Consultas.ConsultaUsuario;
+import Modelo.modelo.*;
 import Vistas.Calcular;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -22,11 +22,18 @@ public class CalcularControlador implements ActionListener {
     private final CalcularConsultas consul;
     private final Calcular view;
     private final InstitucionModelo mod2;
-    public CalcularControlador(CalcularModelo mod, CalcularConsultas consul, Calcular view, InstitucionModelo mod2) {
+    private final ConsultaUsuario consultaUsuario;
+    private final UsuarioModel modUser;
+    private municipio m;
+    public CalcularControlador(CalcularModelo mod, CalcularConsultas consul,
+                               Calcular view, InstitucionModelo mod2,ConsultaUsuario consultaUsuario,UsuarioModel modUser,municipio m) {
         this.mod = mod;
         this.consul = consul;
         this.view = view;
         this.mod2 = mod2;
+        this.consultaUsuario = consultaUsuario;
+        this.modUser=modUser;
+        this.m=m;
         inciarListeners();
     }
 private void inciarListeners() {
@@ -88,6 +95,7 @@ private void inciarListeners() {
         String selectedItem = (String) comboBox.getSelectedItem();
 
         if (selectedItem != null && !selectedItem.isEmpty()) {
+
             DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
 
             String fuenteSeleccionada = view.fuente.getSelectedItem().toString();
@@ -110,18 +118,36 @@ private void inciarListeners() {
                             emision.getAlcance(), "", emision.getUnidadMedidad(), emision.getFactorEmision()};
                     tableModel.addRow(rowData);
                 }
+                view.fuente.setEnabled(false);
+                view.anio.setEditable(false);
             }
-
+            view.fuente.setEnabled(false);
+            view.anio.setEditable(false);
             // Actualizar la tabla y sus configuraciones
             view.Emisiones.setModel(tableModel);
             view.Emisiones.setVisible(true);
             view.Contenedor.setVisible(true);
 
             SwingUtilities.invokeLater(() -> {
-                view.Emisiones.getColumnModel().getColumn(0).setPreferredWidth(150);
-                view.Emisiones.getColumnModel().getColumn(2).setPreferredWidth(150);
-                view.Emisiones.getColumnModel().getColumn(3).setPreferredWidth(150);
-                view.Emisiones.getColumnModel().getColumn(4).setPreferredWidth(150);
+                TableColumnModel columnModel = view.Emisiones.getColumnModel();
+                int columnCount = columnModel.getColumnCount();
+                System.out.println("Número de columnas en la tabla: " + columnCount);
+
+                for (int i = 0; i < columnCount; i++) {
+                    System.out.println("Columna " + i + ": " + columnModel.getColumn(i).getHeaderValue());
+                }
+
+                if (columnCount > 4) {
+                    columnModel.getColumn(0).setPreferredWidth(150);
+                    columnModel.getColumn(1).setPreferredWidth(150);
+                    columnModel.getColumn(2).setPreferredWidth(150);
+                    columnModel.getColumn(3).setPreferredWidth(150);
+                    columnModel.getColumn(4).setPreferredWidth(150);
+                    columnModel.getColumn(5).setPreferredWidth(150);
+                    columnModel.getColumn(6).setPreferredWidth(150);
+                } else {
+                    System.out.println("La tabla no tiene suficientes columnas");
+                }
                 view.Emisiones.repaint();
             });
         }
@@ -132,12 +158,13 @@ private void inciarListeners() {
 
 
         if (e.getSource() == view.guardarCalculoButton) {
+            view.fuente.setEditable(true);
             System.out.println("Botón guardarCalculoButton presionado"); // Mensaje de depuración
             try {
                 mod.setAnioBase(Integer.parseInt(view.anio.getText()));
                 mod.setNombreFuente(view.fuente.getSelectedItem().toString());
-                mod2.setNombreInstitucion(view.institucion.getSelectedItem().toString());
-
+                String nombre= view.Institucion.getText();
+                String nombreM = m.getNombreM();
                 DefaultTableModel model = (DefaultTableModel) view.Emisiones.getModel();
                 int lastRow = model.getRowCount() - 1; // Obtener el índice de la última fila
 
@@ -151,9 +178,12 @@ private void inciarListeners() {
 
                     mod.setCantidadConsumidad(cargaAmbiental);
                     mod.setTotal1(total1);
-
-                    if (consul.registrarCargaAmbienta(mod, mod2)) {
+                    System.out.println(nombre);
+                    System.out.println(nombreM);
+                    if (consul.registrarCargaAmbienta(mod, nombre,nombreM)) {
                         JOptionPane.showMessageDialog(null, "Registro guardado");
+                        view.fuente.setEnabled(true);
+                        view.anio.setEditable(true);
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al guardar el registro");
                     }
@@ -169,34 +199,11 @@ private void inciarListeners() {
     }
 
     public void cargarInstitucion() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        String sql = "CALL Seleccionarinstitucion()";
-
-        view.institucion.removeAllItems();
-        if (conn != null) {
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.institucion.removeAllItems();
-                view.institucion.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("NombreInstitucion");
-                    view.institucion.addItem(nombre);
-                }
-                if (view.institucion.getItemCount() > 0) {
-                    view.institucion.setSelectedIndex(0);
-                } else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox departamento está vacío");
-                }
-
-                rst.close();
-                stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+     String nombre = mod2.getNombreInstitucion();
+     String municipio = m.getNombreM();
+     String n = consul.Institucion(nombre,municipio);
+     view.Institucion.setText(n);
+     view.Institucion.setEditable(false);
     }
 
     public void cargarFuentesPorNombre() {

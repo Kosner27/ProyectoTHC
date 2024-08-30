@@ -35,16 +35,35 @@ public class Calcular extends JFrame{
     public JMenuItem Calcular;
     public JButton guardarCalculoButton;
     public JLabel titulo;
+    public JTextField Institucion;
+    public JMenuItem Perfil;
 
-    public Calcular(){
+    UsuarioModel user;
+    InstitucionModelo ins;
+    municipio m;
 
-        setTitle("Calcular");
+    public Calcular(UsuarioModel user,InstitucionModelo ins, municipio m){
+        this.user=user;
+        this.m=m;
+        this.ins= ins;
+        if(user.getTipoUsuario().equals("Docente")){
+            System.out.println("Estoy en docente");
+            ventanasDocente();
+        }else {
+
+            VentanasAdministrador();
+        }
+
+    }
+
+
+    public void VentanasAdministrador(){
+        setTitle("Inicio");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1000, 600);
-        setLocationRelativeTo(null);
-        Font font = new Font("Arial", Font.PLAIN, 14);
-        titulo.setFont(font);
+        setLocationRelativeTo(null); // Centrar el JFrame en la pantalla
+
         setContentPane(PanelMain);
         JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
         JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
@@ -52,19 +71,8 @@ public class Calcular extends JFrame{
         Graficos.add(GraficoPrincipal);
         Graficos.add(GraficosCompararInstitucion);
         Graficos.add(GraficoHistorico);
-        Emisiones.setPreferredScrollableViewportSize(new Dimension(300, 300));
-        Contenedor.setSize(200,200);
-        String[] columnNames = {"Nombre fuente emision", "Estado", "Alcance","Carga ambiental", "Unidad de medida","FactorEmision"," Co2 Aportado"};
-        DefaultTableModel tableModel;
 
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3; // Hacer editable solo la columna "Carga ambiental"
-            }
-        };
-        Emisiones.setModel(tableModel);
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+       /* GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -76,7 +84,7 @@ public class Calcular extends JFrame{
                 contro.iniciar();
                 dispose();
             }
-        });
+        });*/
 
         GraficoHistorico.addActionListener(new ActionListener() {
             @Override
@@ -126,16 +134,16 @@ public class Calcular extends JFrame{
                 Conexion con = new Conexion();
                 Vistas.Calcular view = new Calcular();
                 CalcularModelo mod = new CalcularModelo();
-                InstitucionModelo modelo = new InstitucionModelo();
                 CalcularConsultas consul = new CalcularConsultas(con);
-                CalcularControlador controlador = new CalcularControlador(mod,consul,view,modelo);
+                ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+                CalcularControlador controlador = new CalcularControlador(mod,consul,view,ins,consultaUsuario,user,m);
                 controlador.iniciar();
                 view.setVisible(true);
                 dispose();
             }
         });*/
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
+       /* GraficoPrincipal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -148,11 +156,11 @@ public class Calcular extends JFrame{
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
 
 
-        Informes.addActionListener(new ActionListener() {
+       /* Informes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -165,7 +173,295 @@ public class Calcular extends JFrame{
                 view.setVisible(true);
                 dispose();
             }
+        });*/
+
+        MasInformacion.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new MasInformacion();
+                setVisible(false);
+            }
         });
+        MasInformacion.setVisible(true);
+        Reducir.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Reducir2();
+                setVisible(false);
+            }
+        });Reducir.setVisible(true);
+
+    }
+    public void ventanasDocente(){
+        setTitle("Calcular C02");
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        RegistrarInstitucion.setVisible(false);
+        setContentPane(PanelMain);
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Nombre Fuente");
+        model.addColumn("Estado Fuente");
+        model.addColumn("Alcance");
+        model.addColumn("Carga Ambiental");
+        model.addColumn("Unidad Medida");
+        model.addColumn("Factor Emisión");
+        model.addColumn("Co2 aportado");
+        Emisiones.setModel(model);
+        Perfil.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion conn = new Conexion();
+                Perfil view = new Perfil();
+                ConsultaUsuario consul  = new ConsultaUsuario(conn);
+                PerfilCOntrolador control= new PerfilCOntrolador (user,view,ins,m,consul);
+                control.Iniciar();
+                dispose();
+            }
+        });
+        inicioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        /*GraficosCompararInstitucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                GraficoComparar view = new GraficoComparar();
+                Conexion conn = new Conexion();
+                GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
+                GraficoCompararModelo mod = new GraficoCompararModelo();
+                ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view);
+                contro.iniciar();
+                dispose();
+            }
+        });*/
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                TendenciaModelo mod = new TendenciaModelo();
+                ConsultasTendencias consult = new ConsultasTendencias(con);
+                GraficoTendencia view = new GraficoTendencia();
+                TendenciaControlador control = new TendenciaControlador(mod,consult,view);
+                view.setVisible(true);
+                control.iniciar();
+                dispose();
+
+            }
+
+        });
+
+        RegistrarEmisión.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                Emision emisionView = new Emision();
+                EmisionModelo mod = new EmisionModelo();
+                ConsultasEmision consul = new ConsultasEmision();
+                EmisionControlador controlador = new EmisionControlador(mod,consul, emisionView);
+                controlador.iniciar();
+                emisionView.setVisible(true);
+                dispose();
+            }
+        });
+        Calcular.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                Vistas.Calcular view = new Calcular();
+                CalcularModelo mod = new CalcularModelo();
+                CalcularConsultas consul = new CalcularConsultas(con);
+                ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+                CalcularControlador controlador = new CalcularControlador(mod,consul,view,ins,consultaUsuario,user,m);
+                controlador.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });
+
+       /* GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                GraficoConsulta consul = new GraficoConsulta(con);
+                Vistas.Graficos view = new Graficos();
+                GraficorModelo mod = new GraficorModelo();
+                InstitucionModelo modelo = new InstitucionModelo();
+                GraficoControlador contro = new GraficoControlador(mod,consul, view,modelo);
+                contro.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });*/
+
+
+
+       /* Informes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                InstitucionModelo mod2 = new InstitucionModelo();
+                ConsultaInforme consul = new ConsultaInforme(con);
+                ModeloInforme mod = new ModeloInforme();
+                Informe view = new Informe();
+                ControladorInforme contro = new ControladorInforme(view,mod,consul);
+                contro.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });*/
+
+        MasInformacion.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new MasInformacion();
+                setVisible(false);
+            }
+        });
+        MasInformacion.setVisible(true);
+
+        Reducir.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Reducir2();
+                setVisible(false);
+            }
+        });Reducir.setVisible(true);
+    }
+
+    public Calcular(){
+
+        setTitle("Calcular");
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        titulo.setFont(font);
+        setContentPane(PanelMain);
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
+        Emisiones.setPreferredScrollableViewportSize(new Dimension(300, 300));
+        Contenedor.setSize(200,200);
+        String[] columnNames = {"Nombre fuente emision", "Estado", "Alcance","Carga ambiental", "Unidad de medida","FactorEmision"," Co2 Aportado"};
+        DefaultTableModel tableModel;
+
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 3; // Hacer editable solo la columna "Carga ambiental"
+            }
+        };
+        Emisiones.setModel(tableModel);
+
+        /*GraficosCompararInstitucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+                GraficoComparar view = new GraficoComparar();
+                Conexion conn = new Conexion();
+                GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
+                GraficoCompararModelo mod = new GraficoCompararModelo();
+                ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view);
+                contro.iniciar();
+                dispose();
+            }
+        });*/
+
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                TendenciaModelo mod = new TendenciaModelo();
+                ConsultasTendencias consult = new ConsultasTendencias(con);
+                GraficoTendencia view = new GraficoTendencia();
+                TendenciaControlador control = new TendenciaControlador(mod,consult,view);
+                view.setVisible(true);
+                control.iniciar();
+                dispose();
+
+            }
+        });
+
+
+        RegistrarInstitucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RegistrarInstitucion registrarInstitucionView = new RegistrarInstitucion();
+                InstitucionModelo modelo = new InstitucionModelo();
+                ConsultasInstitucion consultas = new ConsultasInstitucion();
+                InstitucionControlador controlador = new InstitucionControlador(modelo, consultas, registrarInstitucionView);
+                controlador.iniciar();
+                registrarInstitucionView.setVisible(true);
+                dispose(); // Cerrar la vista actual
+            }
+        });
+
+        RegistrarEmisión.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                Emision emisionView = new Emision();
+                EmisionModelo mod = new EmisionModelo();
+                ConsultasEmision consul = new ConsultasEmision();
+                EmisionControlador controlador = new EmisionControlador(mod,consul, emisionView);
+                controlador.iniciar();
+                emisionView.setVisible(true);
+                dispose();
+            }
+        });
+
+
+        /*GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                GraficoConsulta consul = new GraficoConsulta(con);
+                Vistas.Graficos view = new Graficos();
+                GraficorModelo mod = new GraficorModelo();
+                InstitucionModelo modelo = new InstitucionModelo();
+                GraficoControlador contro = new GraficoControlador(mod,consul, view,modelo);
+                contro.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });*/
+
+
+
+        /*Informes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Conexion con = new Conexion();
+                InstitucionModelo mod2 = new InstitucionModelo();
+                ConsultaInforme consul = new ConsultaInforme(con);
+                ModeloInforme mod = new ModeloInforme();
+                Informe view = new Informe();
+                ControladorInforme contro = new ControladorInforme(view,mod,consul);
+                contro.iniciar();
+                view.setVisible(true);
+                dispose();
+            }
+        });*/
 
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override

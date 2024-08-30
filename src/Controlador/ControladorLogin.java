@@ -2,6 +2,7 @@ package Controlador;
 
 import Modelo.Consultas.ConsultaUsuario;
 import Modelo.modelo.*;
+import Vistas.Calcular;
 import Vistas.Inicio;
 import Vistas.LogIn;
 import Vistas.Perfil;
@@ -42,10 +43,9 @@ public void Iniciar(){
                     mod.setContrasena(nuevPas);
 
                         if(consul.LogIn(mod,ins,m)){
-
-                            Inicio app = new Inicio(mod,ins,m);
-                            app.setVisible(true);
-                            view.setVisible(false);
+                            ControladoInicio controladoInicio = new ControladoInicio(ins,mod,m);
+                            controladoInicio.inicio();
+                            view.dispose();
                             JOptionPane.showMessageDialog(null, "Datos correcto");
                         }else{
                             JOptionPane.showMessageDialog(null, "Datos Incorrectos");

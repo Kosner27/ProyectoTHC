@@ -3,10 +3,7 @@ package Controlador;
 import Modelo.*;
 
 import Modelo.Consultas.GraficoConsulta;
-import Modelo.modelo.CalcularModelo;
-import Modelo.modelo.GraficorModelo;
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.ModeloInforme;
+import Modelo.modelo.*;
 import Vistas.Graficos;
 
 import com.itextpdf.text.*;
@@ -29,11 +26,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 
+import java.awt.event.ActionListener;
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -50,17 +45,26 @@ public class GraficoControlador {
     private final GraficoConsulta consul;
     private final Graficos view;
     private final InstitucionModelo mod2;
+    private municipio m ;
 
 
-
-    public GraficoControlador(GraficorModelo mod, GraficoConsulta consul, Graficos view, InstitucionModelo mod2) {
+    public GraficoControlador(GraficorModelo mod, GraficoConsulta consul, Graficos view, InstitucionModelo mod2,municipio m ) {
         this.mod = mod;
         this.mod2 = mod2;
         this.consul = consul;
         this.view = view;
-
+        this.m=m;
         this.view.buscarButton.addActionListener(this::actionPerformed);
         this.view.Descargar.addActionListener(this::actionPerformed);
+        this.view.institucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (view.institucion.getItemCount() > 0) {
+                    cargarAnioBase();
+                }
+            }
+        });
+
     }
 
 
@@ -190,7 +194,7 @@ public class GraficoControlador {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(r));
             document.open();
-            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString());
+            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString(),m.getNombreM());
             String fechaActual = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
             // Añadir la fecha al documento
@@ -240,7 +244,7 @@ public class GraficoControlador {
             chartImageFuente.setAlignment(Element.ALIGN_CENTER);
             document.add(new Paragraph("En el siguiente grafico encontraremos todas las fuentes de emision que corresponden a la institución seleccionada con su respectivo año base, ademas se muestra el porcentaje de consumo de la fuente de emisión"));
             document.add(chartImageFuente);
-
+            JOptionPane.showMessageDialog(null,"Pdf guardado correctamente ");
             document.close();
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -356,19 +360,20 @@ public class GraficoControlador {
 
     public void cargarAnioBase() {
         Conexion conexion = new Conexion();
+        ResultSet st = null;
         Connection conn = conexion.getConection();
-        String sql = "CALL SeleccionarAnioBase()";
-
+        String sql = " Select  ei.anioBase from emisioninstitucion ei inner join institucion i on ei.idInsititucion=i.idInstitucionAuto inner join emision e on ei.idEmision = e.idEmision where i.NombreInstitucion = ?  group by anioBase";
+        String nombre = view.institucion.getSelectedItem().toString();
+        view.anio.addItem(" ");
         view.anio.removeAllItems();
         if (conn != null) {
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.anio.removeAllItems();
-                view.anio.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("anioBase");
-                    view.anio.addItem(nombre);
+            try (PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1,nombre);
+                st = ps.executeQuery();
+                while (st.next()) {
+                    String anioBase = st.getString(1);
+                    view.anio.addItem(" ");
+                    view.anio.addItem(anioBase);
                 }
                 if (view.anio.getItemCount() > 0) {
                     view.anio.setSelectedIndex(0);
@@ -377,8 +382,8 @@ public class GraficoControlador {
                     System.out.println("El JComboBox año está vacío");
                 }
 
-                rst.close();
-                stmt.close();
+                st.close();
+                ps.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

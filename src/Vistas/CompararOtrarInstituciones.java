@@ -32,6 +32,7 @@
         public JButton inicioButton;
         public JMenuBar bar;
         public JLabel titulo;
+        public JComboBox Municipio;
 
         public CompararOtrarInstituciones() {
             setTitle("Comparar con otras instituciones");
@@ -55,7 +56,7 @@
             Graficos.add(GraficoHistorico);
 
 
-            GraficosCompararInstitucion.addActionListener(new ActionListener() {
+           /* GraficosCompararInstitucion.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -67,7 +68,7 @@
                     contro.iniciar();
                     dispose();
                 }
-            });
+            });*/
 
             GraficoHistorico.addActionListener(new ActionListener() {
                 @Override
@@ -111,7 +112,7 @@
                     dispose();
                 }
             });
-            Calcular.addActionListener(new ActionListener() {
+            /*Calcular.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Conexion con = new Conexion();
@@ -124,9 +125,9 @@
                     view.setVisible(true);
                     dispose();
                 }
-            });
+            });*/
 
-            GraficoPrincipal.addActionListener(new ActionListener() {
+           /* GraficoPrincipal.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Conexion con = new Conexion();
@@ -139,11 +140,11 @@
                     view.setVisible(true);
                     dispose();
                 }
-            });
+            });*/
 
 
 
-            Informes.addActionListener(new ActionListener() {
+           /* Informes.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Conexion con = new Conexion();
@@ -156,7 +157,7 @@
                     view.setVisible(true);
                     dispose();
                 }
-            });
+            });*/
 
             MasInformacion.addMouseListener(new MouseAdapter() {
                 @Override

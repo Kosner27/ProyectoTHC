@@ -7,7 +7,6 @@ import Modelo.Consultas.*;
 import Modelo.modelo.*;
 
 import javax.swing.*;
-import javax.swing.text.View;
 import java.awt.event.*;
 
 
@@ -23,11 +22,24 @@ public class Inicio extends JFrame {
     public JMenuBar bar;
     public JLabel imagen;
     public JMenuItem perfil;
+    public JButton CerraSesion;
     UsuarioModel user;
     InstitucionModelo ins;
     municipio m;
 
     public Inicio() {
+        setTitle("Inicio");
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        setContentPane(panel1);
+        JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+        JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+        JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+        Graficos.add(GraficoPrincipal);
+        Graficos.add(GraficosCompararInstitucion);
+        Graficos.add(GraficoHistorico);
         VentanasAdministrador();
 
 
@@ -60,7 +72,9 @@ public class Inicio extends JFrame {
                 Graficos.add(GraficoPrincipal);
                 Graficos.add(GraficosCompararInstitucion);
                 Graficos.add(GraficoHistorico);
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
+
+
+              /*  GraficosCompararInstitucion.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -72,7 +86,7 @@ public class Inicio extends JFrame {
                         contro.iniciar();
                         dispose();
                     }
-                });
+                });*/
 
                 GraficoHistorico.addActionListener(new ActionListener() {
                     @Override
@@ -122,16 +136,16 @@ public class Inicio extends JFrame {
                         Conexion con = new Conexion();
                         Vistas.Calcular view = new Calcular();
                         CalcularModelo mod = new CalcularModelo();
-                        InstitucionModelo modelo = new InstitucionModelo();
                         CalcularConsultas consul = new CalcularConsultas(con);
-                        CalcularControlador controlador = new CalcularControlador(mod,consul,view,modelo);
+                        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+                        CalcularControlador controlador = new CalcularControlador(mod,consul,view,ins,consultaUsuario,user,m);
                         controlador.iniciar();
                         view.setVisible(true);
                         dispose();
                     }
                 });
 
-                GraficoPrincipal.addActionListener(new ActionListener() {
+               /* GraficoPrincipal.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Conexion con = new Conexion();
@@ -144,11 +158,11 @@ public class Inicio extends JFrame {
                         view.setVisible(true);
                         dispose();
                     }
-                });
+                });*/
 
 
 
-                Informes.addActionListener(new ActionListener() {
+               /* Informes.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Conexion con = new Conexion();
@@ -156,12 +170,13 @@ public class Inicio extends JFrame {
                         ConsultaInforme consul = new ConsultaInforme(con);
                         ModeloInforme mod = new ModeloInforme();
                         Informe view = new Informe();
-                        ControladorInforme contro = new ControladorInforme(view,mod,consul);
+                        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+                        ControladorInforme contro = new ControladorInforme(view,mod,consul,ins);
                         contro.iniciar();
                         view.setVisible(true);
                         dispose();
                     }
-                });
+                });*/
 
                 MasInformacion.addMouseListener(new MouseAdapter() {
                     @Override
@@ -183,33 +198,34 @@ public class Inicio extends JFrame {
 
             }
             public void ventanasDocente(){
-                setTitle("Inicio");
-                setVisible(true);
-                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                setSize(1000, 600);
-                setLocationRelativeTo(null);
-                RegistrarInstitucion.setVisible(false);
-                setContentPane(panel1);
-                JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
-                JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
-                JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
-                Graficos.add(GraficoPrincipal);
-                Graficos.add(GraficosCompararInstitucion);
-                Graficos.add(GraficoHistorico);
 
-                perfil.addActionListener(new ActionListener() {
+
+
+                CerraSesion.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Conexion conn = new Conexion();
-                        Perfil view = new Perfil();
-                        ConsultaUsuario consul  = new ConsultaUsuario(conn);
-                        PerfilCOntrolador control= new PerfilCOntrolador (user,view,ins,m,consul);
-                        control.Iniciar();
+                     Main principal = new Main();
+                     principal.setVisible(true);
+                     dispose();
+                    }
+                });
+
+                Calcular.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Conexion con = new Conexion();
+                        Vistas.Calcular view = new Calcular(user,ins,m);
+                        CalcularModelo mod = new CalcularModelo();
+                        CalcularConsultas consul = new CalcularConsultas(con);
+                        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+                        CalcularControlador controlador = new CalcularControlador(mod,consul,view,ins,consultaUsuario,user,m);
+                        controlador.iniciar();
+                        view.setVisible(true);
                         dispose();
                     }
                 });
 
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
+                /*GraficosCompararInstitucion.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -217,13 +233,13 @@ public class Inicio extends JFrame {
                         Conexion conn = new Conexion();
                         GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
                         GraficoCompararModelo mod = new GraficoCompararModelo();
-                        ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view);
+                        ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view,ins,m);
                         contro.iniciar();
                         dispose();
                     }
-                });
+                });*/
 
-                GraficoHistorico.addActionListener(new ActionListener() {
+                /*GraficoHistorico.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Conexion con = new Conexion();
@@ -237,7 +253,7 @@ public class Inicio extends JFrame {
 
                     }
 
-                });
+                });*/
 
                 RegistrarEmisión.addActionListener(new ActionListener() {
                     @Override
@@ -252,22 +268,9 @@ public class Inicio extends JFrame {
                         dispose();
                     }
                 });
-                Calcular.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Conexion con = new Conexion();
-                        Vistas.Calcular view = new Calcular();
-                        CalcularModelo mod = new CalcularModelo();
-                        InstitucionModelo modelo = new InstitucionModelo();
-                        CalcularConsultas consul = new CalcularConsultas(con);
-                        CalcularControlador controlador = new CalcularControlador(mod,consul,view,modelo);
-                        controlador.iniciar();
-                        view.setVisible(true);
-                        dispose();
-                    }
-                });
 
-                GraficoPrincipal.addActionListener(new ActionListener() {
+
+                /*GraficoPrincipal.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Conexion con = new Conexion();
@@ -275,12 +278,12 @@ public class Inicio extends JFrame {
                         Vistas.Graficos view = new Graficos();
                         GraficorModelo mod = new GraficorModelo();
                         InstitucionModelo modelo = new InstitucionModelo();
-                        GraficoControlador contro = new GraficoControlador(mod,consul, view,modelo);
+                        GraficoControlador contro = new GraficoControlador(mod,consul, view,modelo,m);
                         contro.iniciar();
                         view.setVisible(true);
                         dispose();
                     }
-                });
+                });*/
 
 
 
@@ -292,7 +295,7 @@ public class Inicio extends JFrame {
                         ConsultaInforme consul = new ConsultaInforme(con);
                         ModeloInforme mod = new ModeloInforme();
                         Informe view = new Informe();
-                        ControladorInforme contro = new ControladorInforme(view,mod,consul);
+                        ControladorInforme contro = new ControladorInforme(view,mod,consul,m, ins);
                         contro.iniciar();
                         view.setVisible(true);
                         dispose();

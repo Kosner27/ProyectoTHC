@@ -4,6 +4,7 @@ import Modelo.*;
 import Modelo.Consultas.GraficoCompararConsultas;
 import Modelo.modelo.GraficoCompararModelo;
 import Modelo.modelo.InstitucionModelo;
+import Modelo.modelo.municipio;
 import Vistas.CompararOtrarInstituciones;
 import Vistas.GraficoComparar;
 import com.itextpdf.text.*;
@@ -22,11 +23,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,16 +38,28 @@ public class ComparaInstitucion {
     public GraficoCompararModelo mod;
     public CompararOtrarInstituciones view;
     public GraficoComparar view2;
+    public InstitucionModelo ins;
+    public municipio m;
     public Conexion conn = new Conexion();
 
-    public ComparaInstitucion(GraficoCompararModelo mod, GraficoCompararConsultas consul, CompararOtrarInstituciones view, GraficoComparar view2) {
+    public ComparaInstitucion(GraficoCompararModelo mod, GraficoCompararConsultas consul, CompararOtrarInstituciones view, GraficoComparar view2,InstitucionModelo ins,municipio m) {
         this.mod = mod;
         this.consul = consul;
         this.view = view;
         this.view2 = view2;
+        this.m=m;
         this.view.añadirButton.addActionListener(this::actionPerformed);
         this.view.compararButton.addActionListener(this::actionPerformed);
         this.view2.descargarButton.addActionListener(this::actionPerformed);
+        this.view.institucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (view.institucion.getItemCount() > 0) {
+                    cargarAnioBase();
+                    cargarMunicipio();
+                }
+            }
+        });
     }
 
     public void iniciar() {
@@ -61,16 +72,24 @@ public class ComparaInstitucion {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == view.añadirButton) {
             String nombreInstitucion = view.institucion.getSelectedItem().toString();
+            String nombreMunicipio = view.Municipio.getSelectedItem().toString();
             if (!nombreInstitucion.isEmpty()) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.Instituciones.getModel();
-                List<InstitucionModelo> datos = consul.llenarTabla(nombreInstitucion);
+
+                System.out.println("Nombre de la institución: " + nombreInstitucion);
+                System.out.println("Municipio del usuario: " + view.Municipio.getSelectedItem().toString());
+                // Obtener datos filtrados basados en el usuario y la institución
+                List<InstitucionModelo> datos = consul.llenarTabla(nombreInstitucion,nombreMunicipio );
+
+                // Verificar los datos obtenidos
+                System.out.println("Datos obtenidos para la institución " + nombreInstitucion + ": " + datos);
 
                 for (InstitucionModelo dato : datos) {
                     Object[] rowData = {
                             dato.getNombreInstitucion(),
                             dato.getNit(),
-                            dato.getMunicipio(),
-                            dato.getDepartamento()
+                            dato.getDepartamento(),
+                            dato.getMunicipio()
                     };
                     tableModel.addRow(rowData);
                 }
@@ -295,19 +314,20 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
 
     public void cargarAnioBase() {
         Conexion conexion = new Conexion();
+        ResultSet st = null;
         Connection conn = conexion.getConection();
-        String sql = "CALL SeleccionarAnioBase()";
-
+        String sql = " Select  ei.anioBase from emisioninstitucion ei inner join institucion i on ei.idInsititucion=i.idInstitucionAuto inner join emision e on ei.idEmision = e.idEmision where i.NombreInstitucion = ?  group by anioBase";
+        String nombre = view.institucion.getSelectedItem().toString();
+        view.anio.addItem(" ");
         view.anio.removeAllItems();
         if (conn != null) {
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.anio.removeAllItems();
-                view.anio.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("anioBase");
-                    view.anio.addItem(nombre);
+            try (PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1,nombre);
+                st = ps.executeQuery();
+                while (st.next()) {
+                    String anioBase = st.getString(1);
+                    view.anio.addItem(" ");
+                    view.anio.addItem(anioBase);
                 }
                 if (view.anio.getItemCount() > 0) {
                     view.anio.setSelectedIndex(0);
@@ -316,10 +336,59 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
                     System.out.println("El JComboBox año está vacío");
                 }
 
-                rst.close();
-                stmt.close();
+                st.close();
+                ps.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    public void cargarMunicipio() {
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        view.Municipio.removeAllItems(); // Limpiar los elementos del JComboBox
+        view.Municipio.addItem("");
+
+        // Obtener el departamento seleccionado directamente del JComboBox
+        String Institucion = (String) view.institucion.getSelectedItem();
+
+        if (Institucion != null && !Institucion.isEmpty()) {
+            try {
+                // Cerrar la conexión existente antes de abrir una nueva
+                if (conn != null) {
+                    // Crear una nueva conexión para obtener los municipios del departamento seleccionado
+                    String procedureCall = "Select NombreMunicipio from municipio m inner join institucion i on m.idMunicipio = i.idMunicipio where i.NombreInstitucion = ?";
+
+                    try (CallableStatement statement = conn.prepareCall(procedureCall)) {
+                        statement.setString(1, Institucion); // Establecer el valor del parámetro
+
+                        // Ejecutar la consulta
+                        ResultSet rs = statement.executeQuery();
+
+                        // Verificar si el ResultSet está vacío
+                        if (!rs.isBeforeFirst()) {
+                            System.out.println("No se encontraron municipios para el departamento seleccionado.");
+                        } else {
+                            // Llenar el JComboBox con los municipios obtenidos de la consulta
+                            while (rs.next()) {
+                                String nombreMunicipio = rs.getString("NombreMunicipio");
+                                view.Municipio.addItem(nombreMunicipio);
+                            }
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                // Asegúrate de cerrar la conexión
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }

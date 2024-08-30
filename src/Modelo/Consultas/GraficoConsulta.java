@@ -77,14 +77,15 @@ public class GraficoConsulta {
         return datos;
     }
 
-    public List<ModeloInforme> datos(String nombre){
+    public List<ModeloInforme> datos(String nombre, String nomMunicipio){
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<ModeloInforme> instituciones = new ArrayList<>();
 
         try {
-            ps = conn.prepareStatement("CALL institucion(?)");
-            ps.setString(1, nombre);
+            ps = conn.prepareStatement("Select * from institucion i inner join municipio m on i.idMunicipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+            ps.setString(1, nomMunicipio);
+            ps.setString(2, nombre);
             rs = ps.executeQuery();
 
             while (rs.next()) {

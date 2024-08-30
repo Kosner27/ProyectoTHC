@@ -103,7 +103,7 @@ public class Emision extends JFrame {
                 dispose();
             }
         });
-        Calcular.addActionListener(new ActionListener() {
+        /*Calcular.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -116,7 +116,7 @@ public class Emision extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
         MasInformacion.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

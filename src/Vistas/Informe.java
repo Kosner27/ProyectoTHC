@@ -65,7 +65,7 @@ public class Informe extends JFrame {
             }
         });
         Inicio.getWindows();
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+      /*  GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -77,7 +77,7 @@ public class Informe extends JFrame {
                 contro.iniciar();
                 dispose();
             }
-        });
+        });*/
 
         GraficoHistorico.addActionListener(new ActionListener() {
             @Override
@@ -121,7 +121,7 @@ public class Informe extends JFrame {
                 dispose();
             }
         });
-        Calcular.addActionListener(new ActionListener() {
+       /* Calcular.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -134,9 +134,9 @@ public class Informe extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
+       /* GraficoPrincipal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -149,11 +149,11 @@ public class Informe extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
 
 
-        Informes.addActionListener(new ActionListener() {
+        /*Informes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -166,7 +166,7 @@ public class Informe extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
 
         MasInformacion.addMouseListener(new MouseAdapter() {

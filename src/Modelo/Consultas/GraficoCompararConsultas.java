@@ -18,13 +18,14 @@ public class GraficoCompararConsultas {
         this.conn = conexion.getConection();
     }
 
-    public List<InstitucionModelo> llenarTabla(String NombreSeleccionado) {
+    public List<InstitucionModelo> llenarTabla(String NombreSeleccionado, String nombreMunicipio) {
         List<InstitucionModelo> Comparar = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("CALL LlenartablaInstitucion(?)");
-            ps.setString(1, NombreSeleccionado);
+            ps = conn.prepareStatement("Select * from institucion i inner join municipio m on i.idMunicipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+            ps.setString(1, nombreMunicipio);
+            ps.setString(2, NombreSeleccionado);
             rs = ps.executeQuery();
 
             while (rs.next()) {

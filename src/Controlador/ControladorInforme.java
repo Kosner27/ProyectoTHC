@@ -2,7 +2,9 @@ package Controlador;
 
 import Modelo.Conexion;
 import Modelo.Consultas.ConsultaInforme;
+import Modelo.modelo.InstitucionModelo;
 import Modelo.modelo.ModeloInforme;
+import Modelo.modelo.municipio;
 import Vistas.Informe;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -14,13 +16,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,14 +29,25 @@ public class ControladorInforme {
     private  Informe view;
     private ModeloInforme mod;
     private ConsultaInforme consul;
+    private municipio m;
+    private InstitucionModelo ins;
     private TableRowSorter<DefaultTableModel> sorter;
-    public ControladorInforme(Informe view,ModeloInforme mod,ConsultaInforme consul){
+    public ControladorInforme(Informe view,ModeloInforme mod,ConsultaInforme consul,municipio m,InstitucionModelo ins){
         this.view=view;
         this.consul=consul;
         this.mod=mod;
+        this.m=m;
+        this.ins=ins;
         this.view.buscarButton.addActionListener(this::actionPerformed);
         this.view.descargarButton.addActionListener(this::actionPerformed);
-
+        this.view.institucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (view.institucion.getItemCount() > 0) {
+                    cargarAnioBase();
+                }
+            }
+        });
 
     }
 
@@ -106,7 +117,7 @@ public class ControladorInforme {
             String Nombre = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
             Document document = new Document();
             String b = view.institucion.getSelectedItem().toString()+Nombre;
-            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString());
+            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString(),m.getNombreM());
             //codgio para eligir el lugar en donde se descarga el archivo
             JFileChooser fileChooser = new JFileChooser();
 
@@ -138,9 +149,12 @@ public class ControladorInforme {
                     document.add(new Paragraph(("")));
                     document.add(nombreInstitucion);
                     document.add(new Paragraph("  "));
+
+
+
                     for (ModeloInforme info : a) {
-                        String m = info.getMunicipio();
-                        Paragraph municipio = new Paragraph("Municipio: " + m);
+                        String nombreMunicipi = info.getMunicipio();
+                        Paragraph municipio = new Paragraph("Municipio: " + nombreMunicipi);
                         municipio.setAlignment(Element.ALIGN_LEFT);
                         document.add(municipio);
                         document.add(new Paragraph("  "));
@@ -207,17 +221,18 @@ public class ControladorInforme {
     public void cargarInstitucion() {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
-        String sql = "CALL Seleccionarinstitucion()";
-
+        ResultSet rs = null;
+        String sql = "Select * from institucion i inner join municipio m on i.idMunicipio = m.idMunicipio where m.NombreMunicipio = ? and i.NombreInstitucion = ? ";
         view.institucion.removeAllItems();
         if (conn != null) {
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
+            try (PreparedStatement ps = conn.prepareStatement(sql)){
+                    ps.setString(1,m.getNombreM());
+                    ps.setString(2, ins.getNombreInstitucion());
+                rs=ps.executeQuery();
                 view.institucion.removeAllItems();
                 view.institucion.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("NombreInstitucion");
+                while (rs.next()) {
+                    String nombre = rs.getString("NombreInstitucion");
                     view.institucion.addItem(nombre);
                 }
                 if (view.institucion.getItemCount() > 0) {
@@ -227,8 +242,8 @@ public class ControladorInforme {
                     System.out.println("El JComboBox institucion está vacío");
                 }
 
-                rst.close();
-                stmt.close();
+                rs.close();
+                ps.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -237,19 +252,20 @@ public class ControladorInforme {
 
     public void cargarAnioBase() {
         Conexion conexion = new Conexion();
+        ResultSet st = null;
         Connection conn = conexion.getConection();
-        String sql = "CALL SeleccionarAnioBase()";
-
+        String sql = " Select  ei.anioBase from emisioninstitucion ei inner join institucion i on ei.idInsititucion=i.idInstitucionAuto inner join emision e on ei.idEmision = e.idEmision where i.NombreInstitucion = ?  group by anioBase";
+        String nombre = view.institucion.getSelectedItem().toString();
+        view.anio.addItem(" ");
         view.anio.removeAllItems();
         if (conn != null) {
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.anio.removeAllItems();
-                view.anio.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("anioBase");
-                    view.anio.addItem(nombre);
+            try (PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1,nombre);
+                st = ps.executeQuery();
+                while (st.next()) {
+                    String anioBase = st.getString(1);
+                    view.anio.addItem(" ");
+                    view.anio.addItem(anioBase);
                 }
                 if (view.anio.getItemCount() > 0) {
                     view.anio.setSelectedIndex(0);
@@ -258,8 +274,8 @@ public class ControladorInforme {
                     System.out.println("El JComboBox año está vacío");
                 }
 
-                rst.close();
-                stmt.close();
+                st.close();
+                ps.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

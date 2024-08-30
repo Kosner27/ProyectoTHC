@@ -52,7 +52,7 @@ public class GraficoTendencia extends  JFrame {
 
 
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
+       /* GraficoPrincipal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -65,8 +65,8 @@ public class GraficoTendencia extends  JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+        });*/
+        /*GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -78,7 +78,7 @@ public class GraficoTendencia extends  JFrame {
                 contro.iniciar();
                 dispose();
             }
-        });
+        });*/
 
         GraficoHistorico.addActionListener(new ActionListener() {
             @Override
@@ -122,7 +122,7 @@ public class GraficoTendencia extends  JFrame {
                 dispose();
             }
         });
-        Calcular.addActionListener(new ActionListener() {
+        /*Calcular.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -135,9 +135,9 @@ public class GraficoTendencia extends  JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
+        /*GraficoPrincipal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -150,8 +150,8 @@ public class GraficoTendencia extends  JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
-        Informes.addActionListener(new ActionListener() {
+        });*/
+        /*Informes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -164,7 +164,7 @@ public class GraficoTendencia extends  JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
         inicioButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

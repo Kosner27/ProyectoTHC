@@ -53,7 +53,7 @@ public class Graficos extends JFrame {
         Graficos.add(GraficosCompararInstitucion);
         Graficos.add(GraficoHistorico);
 
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
+        /*GraficosCompararInstitucion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
@@ -65,7 +65,7 @@ public class Graficos extends JFrame {
                 contro.iniciar();
                 dispose();
             }
-        });
+        });*/
 
         GraficoHistorico.addActionListener(new ActionListener() {
             @Override
@@ -109,7 +109,7 @@ public class Graficos extends JFrame {
                 dispose();
             }
         });
-        Calcular.addActionListener(new ActionListener() {
+        /*Calcular.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -122,9 +122,9 @@ public class Graficos extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
-        GraficoPrincipal.addActionListener(new ActionListener() {
+        /*GraficoPrincipal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -137,11 +137,11 @@ public class Graficos extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
 
 
-        Informes.addActionListener(new ActionListener() {
+       /* Informes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Conexion con = new Conexion();
@@ -154,7 +154,7 @@ public class Graficos extends JFrame {
                 view.setVisible(true);
                 dispose();
             }
-        });
+        });*/
 
 
         MasInformacion.addMouseListener(new MouseAdapter() {

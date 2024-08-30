@@ -61,14 +61,15 @@ public class ConsultaInforme {
         return tabla;
     }
 
-public List<ModeloInforme> datos(String nombre){
+public List<ModeloInforme> datos(String nombre, String municipio){
     PreparedStatement ps = null;
     ResultSet rs = null;
     List<ModeloInforme> instituciones = new ArrayList<>();
 
     try {
-        ps = conn.prepareStatement("CALL institucion(?)");
-        ps.setString(1, nombre);
+        ps = conn.prepareStatement("Select * from institucion i inner join municipio m on i.idMunicipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+        ps.setString(1, municipio);
+        ps.setString(2, nombre);
         rs = ps.executeQuery();
 
         while (rs.next()) {
@@ -92,17 +93,6 @@ public List<ModeloInforme> datos(String nombre){
     }
     return instituciones;
 }
-    public static void main(String[] args) {
-        Conexion con = new Conexion();
-        ConsultaInforme consul = new ConsultaInforme(con);
-        List<ModeloInforme> a = consul.datos("iue");
-
-       for(ModeloInforme info : a ){
-           System.out.println(info.getDepartamento());
-       }
-
-
-        }
 
 
 
