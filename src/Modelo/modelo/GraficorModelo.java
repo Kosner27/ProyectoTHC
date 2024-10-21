@@ -4,7 +4,7 @@ public class GraficorModelo extends InstitucionModelo {
     public String Alcance;
     public Double Total;
 
-    public GraficorModelo(){
+    public GraficorModelo() {
         super();
     }
 

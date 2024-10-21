@@ -1,11 +1,11 @@
 package Modelo.modelo;
 
 public class InstitucionModelo {
-private String Nit;
-private String NombreInstitucion;
-private String departamento;
-private String municipio;
-private int hectareas;
+    private String Nit;
+    private String NombreInstitucion;
+    private String departamento;
+    private String municipio;
+    private int hectareas;
 
     public InstitucionModelo() {
     }

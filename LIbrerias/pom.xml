@@ -10,6 +10,13 @@
 
     <name>JFreeChart</name>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jfree</groupId>
@@ -36,27 +43,17 @@
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.2</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.orsonpdf/orsonpdf -->
         <dependency>
             <groupId>com.orsonpdf</groupId>
             <artifactId>orsonpdf</artifactId>
             <version>1.7</version>
         </dependency>
-
     </dependencies>
+
     <repositories>
         <repository>
             <id>central</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
-
-
-    <properties>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
 </project>

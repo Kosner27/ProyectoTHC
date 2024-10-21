@@ -2,13 +2,13 @@ package Modelo.modelo;
 
 
 public class CalcularModelo extends EmisionModelo {
-private Double CantidadConsumidad;
-private Double Total1;
-private String nMunicipio;
-public int anioBase;
-    public CalcularModelo(){
+    private Double CantidadConsumidad;
+    private Double Total1;
+    private int anioBase;
+
+    public CalcularModelo() {
         super();
-        }
+    }
 
     public int getAnioBase() {
         return anioBase;
@@ -34,11 +34,4 @@ public int anioBase;
         Total1 = total;
     }
 
-    public String getnMunicipio() {
-        return nMunicipio;
-    }
-
-    public void setnMunicipio(String nMunicipio) {
-        this.nMunicipio = nMunicipio;
-    }
 }

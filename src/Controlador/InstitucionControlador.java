@@ -1,190 +1,276 @@
 package Controlador;
 
 
+
 import Modelo.Conexion;
-import Modelo.Consultas.ConsultasInstitucion;
-import Modelo.modelo.InstitucionModelo;
-import Vistas.RegistrarInstitucion;
+import Modelo.Consultas.*;
+import Modelo.modelo.*;
+import Vistas.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
-import java.util.Objects;
+import java.util.List;
+
 
 public class InstitucionControlador implements ActionListener {
-private final InstitucionModelo mod;
-private final ConsultasInstitucion consul;
-private final RegistrarInstitucion view;
-
-    public InstitucionControlador (InstitucionModelo mod,ConsultasInstitucion consul, RegistrarInstitucion view){
-        this.mod=mod;
-        this.consul=consul;
+    private Usuario user;
+    private InstitucionModelo ins;
+    private Municipio m;
+    private RegistrarInstitucion view;
+    private  ConsultasInstitucion consul;
+    private InstitucionModelo mod ;
+    JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+    JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+    JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+    public InstitucionControlador (InstitucionModelo ins, Municipio m,
+                                   RegistrarInstitucion view, ConsultasInstitucion consul,
+                                   InstitucionModelo mod, Usuario user ){
         this.view=view;
-        this.view.registrarButton.addActionListener(this);
-        this.view.inicioButton.addActionListener(this);
-        this.view.editarButton.addActionListener(this);
-        this.view.buscarPorNombreButton.addActionListener(this);
-        this.view.departamento.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.departamento.getItemCount() > 0) {
-                    cargarMunicipio();
-                }
-            }
-        });
+        this.m=m;
+        this.ins=ins;
+        this.consul=consul;
+        this.mod=mod;
+        this.user=user;
+        Listeners();
     }
-    public void iniciar(){
-        view.setTitle("Registrar Institucion");
-        view.setLocationRelativeTo(null);
-        CargarDepartamento();
-        cargarMunicipio();
 
+    public void iniciar(){
+        switch (user.getTipoUsuario()) {
+            case "Administrador":
+                System.out.println("Estoy en docente");
+                view.setTitle("Registro de Institucion");
+                view.setLocationRelativeTo(null);
+                view.setVisible(true);
+                view.VerPerfiles.setVisible(false);
+                view.setLocationRelativeTo(null);
+                view.Graficos.add(GraficoPrincipal);
+                view.Graficos.add(GraficosCompararInstitucion);
+                view.Graficos.add(GraficoHistorico);
+                CargarDatos();
+                CamposInhabilitados();
+                view.setVisible(true);
+                view.setLocationRelativeTo(null);
+                GraficoPrincipal.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaGraficoPrincipal();
+                    }
+                });
+                GraficosCompararInstitucion.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaCompararInstituciones();
+                    }
+                });
+                GraficoHistorico.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaGraficoHistorico();
+
+                    }
+
+                });
+                break;
+            case "SuperAdmin":
+                view.setTitle("Registro de Institucion");
+                view.setLocationRelativeTo(null);
+                view.Graficos.add(GraficoPrincipal);
+                view.Graficos.add(GraficosCompararInstitucion);
+                view.Graficos.add(GraficoHistorico);
+                CargarDatos();
+                CamposInhabilitados();
+                view.setVisible(true);
+                view.setLocationRelativeTo(null);
+                GraficoPrincipal.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaGraficoPrincipal();
+                    }
+                });
+                GraficosCompararInstitucion.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaCompararInstituciones();
+                    }
+                });
+                GraficoHistorico.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        vistaGraficoHistorico();
+
+                    }
+
+                });
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
+                break;
+
+        }
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == view.registrarButton) {
-            mod.setNit(view.nit.getText());
-            mod.setMunicipio(Objects.requireNonNull(view.municipio.getSelectedItem()).toString());
-            mod.setNombreInstitucion(view.nombre.getText());
-            mod.setHectareas(Integer.parseInt(view.hectareas.getText()));
-
-            String nombreInstitucion = view.nombre.getText();
-            String NIT = view.nit.getText();
-            String Hectareas = view.hectareas.getText();
-            String seleccionado = (String) view.departamento.getSelectedItem();
-            String seleccionado2 = (String) view.municipio.getSelectedItem();
-
-            if (!view.nombre.getText().isEmpty() && !view.nit.getText().isEmpty() && !view.hectareas.getText().isEmpty() && !seleccionado2.isEmpty() && !seleccionado.isEmpty()) {
-                String[] row = {nombreInstitucion, NIT, Hectareas, seleccionado, seleccionado2};
-
-                // Obtener el modelo de la tabla existente
-                DefaultTableModel tableModel = (DefaultTableModel) view.Institucion.getModel();
-                tableModel.addRow(row);
-
-                view.Institucion.setModel(tableModel);
-                view.Institucion.setVisible(true);
-                view.Contenedor.setVisible(true);
-
-                SwingUtilities.invokeLater(() -> {
-                    view.Institucion.getColumnModel().getColumn(0).setPreferredWidth(200);
-                    view.Institucion.getColumnModel().getColumn(1).setPreferredWidth(150);
-                    view.Institucion.getColumnModel().getColumn(2).setPreferredWidth(150);
-                    view.Institucion.getColumnModel().getColumn(3).setPreferredWidth(150);
-                    view.Institucion.repaint();
-                });
-
-                if (consul.registrarInstitucion(mod)) {
-                    JOptionPane.showMessageDialog(null, "Registro guardado");
-                    Limpiar();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error");
-                    Limpiar();
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Por favor, llene todos los campos.");
+            if(e.getSource()==view.editarButton){
+                view.hectareas.setEditable(true);
             }
-        }
-
-
-
-
-    }
-
-
-    public void Limpiar(){
-        view.departamento.setSelectedIndex(0);
-        view.municipio.setSelectedIndex(0);
-        view.nit.setText(null);
-        view.hectareas.setText(null);
-        view.nombre.setText(null);
-    }
-
-    public void CargarDepartamento(){
-
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        String sql = "CALL SeleccionarDepartamento()";
-
-        view.departamento.removeAllItems();
-        if(conn!= null){
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.departamento.removeAllItems();
-                view.departamento.addItem("");
-                while (rst.next()){
-                    String nombre = rst.getString("NombreDepartamento");
-                    view.departamento.addItem(nombre);
-
-                }
-                if (view.departamento.getItemCount() > 0) {
-                    view.departamento.setSelectedIndex(0);
-                }else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox departamento está vacío");
-                }
-
-                rst.close();
-                stmt.close();
-
-            }catch (SQLException e ){
-                e.printStackTrace();
-            }
-        }
-    }
-    public void cargarMunicipio() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.municipio.removeAllItems(); // Limpiar los elementos del JComboBox
-        view.municipio.addItem("");
-
-        // Obtener el departamento seleccionado directamente del JComboBox
-        String departamentoSeleccionado = (String) view.departamento.getSelectedItem();
-
-        if (departamentoSeleccionado != null && !departamentoSeleccionado.isEmpty()) {
-            try {
-                // Cerrar la conexión existente antes de abrir una nueva
-                if (conn != null) {
-                    // Crear una nueva conexión para obtener los municipios del departamento seleccionado
-                    String procedureCall = "CALL BuscarMunicipio(?)";
-
-                    try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                        statement.setString(1, departamentoSeleccionado); // Establecer el valor del parámetro
-
-                        // Ejecutar la consulta
-                        ResultSet rs = statement.executeQuery();
-
-                        // Verificar si el ResultSet está vacío
-                        if (!rs.isBeforeFirst()) {
-                            System.out.println("No se encontraron municipios para el departamento seleccionado.");
-                        } else {
-                            // Llenar el JComboBox con los municipios obtenidos de la consulta
-                            while (rs.next()) {
-                                String nombreMunicipio = rs.getString("NombreMunicipio");
-                                view.municipio.addItem(nombreMunicipio);
-                            }
-                        }
+            String hectareas = view.hectareas.getText();
+            if(e.getSource()==view.guardarCambios ){
+                if(!hectareas.isEmpty()){
+                    Integer h = Integer.parseInt(view.hectareas.getText());
+                    if(consul.ActualizarInstitucion(view.nombre.getText(),view.municipio.getText(),h)){
+                        JOptionPane.showMessageDialog(null, "hectareas de la institucion actualizadas");
+                        view.hectareas.setEditable(false);
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Error en la consulta ");
                     }
+                }else{
+                    JOptionPane.showMessageDialog(null, " Por favor ingresar la cantidad de hectareas\n " +
+                            "por metro cuadrado que tiene la universidad");
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                // Asegúrate de cerrar la conexión
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+
+            }if(e.getSource()==view.inicioButton){
+                BotonInicio();
+        }if(e.getSource()==view.Reducir){
+                vistaReducir();
+        }  if(e.getSource() == view.perfil ){
+            vistaPerfil();
+        }if(e.getSource()==view.Calcular){
+            vistaCalcular();
+        }if(e.getSource()== view.RegistrarEmisión){
+            vistaRegistrarEmision();
+        }if(e.getSource()== view.Informes){
+            vistaInforme();
+        }if(e.getSource()== view.VerPerfiles){
+            vistaVerPerfiles();
         }
+
+
     }
+    public void CargarDatos(){
+        String NombreInstitucion = ins.getNombreInstitucion();
+        String Municipio = m.getNombreM();
+        System.out.println(Municipio);
+            List<InstitucionModelo> modelos = consul.CargarDatos(NombreInstitucion,Municipio);
+            for(InstitucionModelo i : modelos){
+                view.nombre.setText(i.getNombreInstitucion());
+                view.nit.setText(i.getNit());
+                view.departamento.setText(i.getDepartamento());
+                view.municipio.setText(i.getMunicipio());
+            }
+    }
+    public void CamposInhabilitados(){
+        view.nombre.setEditable(false);
+        view.nit.setEditable(false);
+        view.municipio.setEditable(false);
+        view.departamento.setEditable(false);
+        view.hectareas.setEditable(false);
+    }
+    public void BotonInicio (){
+        ControladoInicio control = new ControladoInicio(ins,user, m);
+        control.inicio();
+        view.dispose();
+    }
+    public void vistaReducir(){
+        Conexion con = new Conexion();
+        Reducir2 vista = new Reducir2();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        ControladorReducir redu = new ControladorReducir(ins,consul, vista,m,user);
+        redu.Iniciar();
+        view.dispose();
+    }
+    public void vistaGraficoPrincipal(){
+        Conexion con = new Conexion();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        Vistas.Graficos view2 = new Graficos();
+        GraficorModelo mod = new GraficorModelo();
+        InstitucionModelo modelo = new InstitucionModelo();
+        GraficoControlador contro = new GraficoControlador(mod,consul, view2,modelo,m,user,ins);
+        contro.iniciar();
+        view2.Graficos.setVisible(true);
+        view.dispose();
+    }
+    public void vistaCompararInstituciones(){
+        CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+        GraficoComparar view2 = new GraficoComparar();
+        Conexion conn = new Conexion();
+        GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
+        GraficoCompararModelo mod = new GraficoCompararModelo();
+        ComparaInstitucion contro = new ComparaInstitucion(mod,consultas,comIns,view2,ins,m,user);
+        contro.iniciar();
+        view.dispose();
+    }
+    public void vistaGraficoHistorico(){
+        Conexion con = new Conexion();
+        TendenciaModelo mod = new TendenciaModelo();
+        ConsultasTendencias consult = new ConsultasTendencias(con);
+        GraficoTendencia view2 = new GraficoTendencia();
+        TendenciaControlador control = new TendenciaControlador(mod,consult,view2,m,ins,user);
+        view2.setVisible(true);
+        control.iniciar();
+        view.dispose();
+    }
+    public void vistaPerfil(){
+        Conexion conn = new Conexion();
+        Perfil per = new Perfil();
+        ConsultaUsuario cons = new ConsultaUsuario(conn);
+        PerfilCOntrolador control = new PerfilCOntrolador(user, per, ins, m, cons);
+        control.Iniciar();
+        per.setVisible(true);
+        view.dispose();
+    }
+    public void vistaCalcular(){
+        Conexion con = new Conexion();
+        Vistas.Calcular view2 = new Calcular();
+        CalcularModelo mod = new CalcularModelo();
+        CalcularConsultas consul = new CalcularConsultas(con);
+        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+        CalcularControlador controlador = new CalcularControlador(mod,consul,view2,ins,consultaUsuario,user,m);
+        controlador.iniciar();
+        view.setVisible(true);
+        view.dispose();
+    }
+    public void vistaRegistrarEmision(){
+        Emision emisionView = new Emision();
+        EmisionModelo mod = new EmisionModelo();
+        ConsultasEmision consul = new ConsultasEmision();
+        EmisionControlador controlador = new EmisionControlador(mod,consul,emisionView,ins,m,user);
+        controlador.iniciar();
+        emisionView.setVisible(true);
+        view.dispose();
+    }
+    public void vistaInforme(){
+        Conexion con = new Conexion();
+        InstitucionModelo mod2 = new InstitucionModelo();
+        ConsultaInforme consul = new ConsultaInforme(con);
+        ModeloInforme mod = new ModeloInforme();
+        Informe view2 = new Informe();
+        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+        ControladorInforme contro = new ControladorInforme(view2,mod,consul,m,ins,user);
+        contro.iniciar();
+        view2.setVisible(true);
+        view.dispose();
+    }
+    public void vistaVerPerfiles(){
+        Conexion con = new Conexion();
+        VerPerfiles verPerfiles = new VerPerfiles();
+        ConsultaUsuario consul = new ConsultaUsuario(con);
 
-
-
+        VerPerfilesControlador verControl = new VerPerfilesControlador(user,ins, m,verPerfiles,consul);
+        verControl.Iniciar();
+        view.dispose();
+    }
+    public void Listeners(){
+        this.view.inicioButton.addActionListener(this::actionPerformed);
+        this.view.editarButton.addActionListener(this::actionPerformed);
+        this.view.guardarCambios.addActionListener(this::actionPerformed);
+        this.view.Reducir.addActionListener(this::actionPerformed);
+        this.view.perfil.addActionListener(this::actionPerformed);
+        this.view.Calcular.addActionListener(this::actionPerformed);
+        this.view.RegistrarEmisión.addActionListener(this::actionPerformed);
+        this.view.Informes.addActionListener(this::actionPerformed);
+        this.view.VerPerfiles.addActionListener(this::actionPerformed);
+    }
 }

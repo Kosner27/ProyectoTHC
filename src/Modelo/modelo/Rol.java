@@ -3,7 +3,7 @@ package Modelo.modelo;
 import java.util.List;
 
 public class Rol {
-    private  String tipoUsuario;
+    private String tipoUsuario;
     private String Descripcion;
 
     public Rol() {

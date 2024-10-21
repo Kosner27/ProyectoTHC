@@ -1,8 +1,5 @@
 package Vistas;
 
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.UsuarioModel;
-import Modelo.modelo.municipio;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -10,13 +7,11 @@ import java.awt.event.MouseEvent;
 
 
 public class Perfil extends JFrame {
-    public JMenuBar bar;
     public JMenuItem RegistrarInstitucion;
     public JMenuItem RegistrarEmisión;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem Reducir;
-    public JMenuItem MasInformacion;
     public JMenu Graficos;
     public JTextField nombre;
     public JTextField apellido;
@@ -33,22 +28,17 @@ public class Perfil extends JFrame {
     public JPanel PanelMain;
     public JButton verPassN;
     public JButton verPassC;
-    UsuarioModel user;
-    InstitucionModelo ins;
-    municipio m;
+    public JMenuBar bar;
+    public JMenuItem MasInformacion;
+    public JMenuItem perfil;
+    public JMenuItem VerPerfiles;
     public Perfil (){
-
-    }
-    public Perfil(UsuarioModel user,InstitucionModelo ins,municipio m){
-            this.user=user;
-            this.ins=ins;
-            this.m=m;
-            setTitle("Ver perfil");
+        setTitle("Ver perfil");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1100, 500);
         setLocationRelativeTo(null);
         setContentPane(PanelMain);
-        RegistrarInstitucion.setVisible(false);
+
 
 
         verPassC.addMouseListener(new MouseAdapter() {
@@ -82,8 +72,6 @@ public class Perfil extends JFrame {
                 newPass.setEchoChar('*');
             }
         });
-
-
     }
 
 }

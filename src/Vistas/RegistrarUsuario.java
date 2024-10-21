@@ -1,8 +1,8 @@
 package Vistas;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 public class RegistrarUsuario extends JFrame{
@@ -19,24 +19,48 @@ public class RegistrarUsuario extends JFrame{
     public JComboBox municipio;
     public JButton inicio;
     public JPasswordField NewPass;
+    public JButton verPassC;
+    private JButton verPassN;
 
     public RegistrarUsuario(){
         setTitle("Registrar Usuario");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(500, 600);
+        setSize(600, 600);
         setLocationRelativeTo(null);
         setContentPane(Principal);
 
-        inicio.addActionListener(new ActionListener() {
+        verPassC.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Main inicio = new Main();
-                inicio.setVisible(true);
-                dispose();
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                Contrasena.setEchoChar((char) 0);
+
             }
         });
 
+
+        verPassC.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Contrasena.setEchoChar('*');
+            }
+        });
+
+        verPassN.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                NewPass.setEchoChar((char) 0);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                NewPass.setEchoChar('*');
+            }
+        });
     }
 
 }

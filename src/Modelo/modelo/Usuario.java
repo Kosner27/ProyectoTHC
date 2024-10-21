@@ -1,6 +1,6 @@
 package Modelo.modelo;
 
-public class UsuarioModel {
+public class Usuario {
     private String Nombre;
     private String Apellido;
     private String Correo;
@@ -8,14 +8,39 @@ public class UsuarioModel {
     private String idInstitucion;
     private String TipoUsuario;
     private Integer idUsuario;
+    private String descripcion;
+    private String nombreInstticion;
+    private String municipio;
 
+    public String getMunicipio() {
+        return municipio;
+    }
 
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
 
-    public UsuarioModel() {
+    public String getNombreInstticion() {
+        return nombreInstticion;
+    }
+
+    public void setNombreInstticion(String nombreInstticion) {
+        this.nombreInstticion = nombreInstticion;
+    }
+
+    public Usuario() {
     }
 
     public String getApellido() {
         return Apellido;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public void setApellido(String apellido) {

@@ -1,12 +1,10 @@
 package Controlador;
 
 import Modelo.*;
-import Modelo.Consultas.GraficoCompararConsultas;
-import Modelo.modelo.GraficoCompararModelo;
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.municipio;
-import Vistas.CompararOtrarInstituciones;
-import Vistas.GraficoComparar;
+import Modelo.Consultas.*;
+import Modelo.modelo.*;
+import Vistas.*;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -39,47 +37,85 @@ public class ComparaInstitucion {
     public CompararOtrarInstituciones view;
     public GraficoComparar view2;
     public InstitucionModelo ins;
-    public municipio m;
+    public Municipio m;
+    private final Usuario user;
     public Conexion conn = new Conexion();
-
-    public ComparaInstitucion(GraficoCompararModelo mod, GraficoCompararConsultas consul, CompararOtrarInstituciones view, GraficoComparar view2,InstitucionModelo ins,municipio m) {
+    JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
+    JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
+    JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+    public ComparaInstitucion(GraficoCompararModelo mod, GraficoCompararConsultas consul,
+                              CompararOtrarInstituciones view, GraficoComparar view2,
+                              InstitucionModelo ins, Municipio m, Usuario user) {
         this.mod = mod;
         this.consul = consul;
         this.view = view;
         this.view2 = view2;
-        this.m=m;
-        this.view.añadirButton.addActionListener(this::actionPerformed);
-        this.view.compararButton.addActionListener(this::actionPerformed);
-        this.view2.descargarButton.addActionListener(this::actionPerformed);
-        this.view.institucion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.institucion.getItemCount() > 0) {
-                    cargarAnioBase();
-                    cargarMunicipio();
-                }
-            }
-        });
+        this.m = m;
+        this.ins = ins;
+        this.user = user;
+        Listeners();
     }
 
     public void iniciar() {
+        view.Graficos.add(GraficoPrincipal);
+        view.Graficos.add(GraficosCompararInstitucion);
+        view.Graficos.add(GraficoHistorico);
+
+        String usuario = user.getTipoUsuario();
+        switch (usuario){
+            case "Administrador" :
+                cargarInstitucion();
+                cargarAnioBase();
+                cargarMunicipio();
+                view.setTitle("Seleccionar Instituciones");
+                view.setLocationRelativeTo(null);
+                view.setVisible(true);
+                view.VerPerfiles.setVisible(false);
+                view.setLocationRelativeTo(null);
+                break;
+            case "SuperAdmin" :
+                view.setTitle("Seleccionar Instituciones");
+                view.setLocationRelativeTo(null);
+                cargarInstitucion();
+                cargarAnioBase();
+                cargarMunicipio();
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
+                break;
+
+        }
         view.setTitle("Seleccionar Instituciones");
         view.setLocationRelativeTo(null);
         cargarInstitucion();
         cargarAnioBase();
+        GraficoPrincipal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                vistaGraficoPrincipal();
+            }
+        });
+        GraficoHistorico.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                vistaGraficoHistorico();
+
+            }
+
+        });
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == view.añadirButton) {
-            String nombreInstitucion = view.institucion.getSelectedItem().toString();
-            String nombreMunicipio = view.Municipio.getSelectedItem().toString();
+            String nombreInstitucion =String.valueOf( view.institucion.getSelectedItem());
+            String nombreMunicipio = String.valueOf(view.Municipio.getSelectedItem());
             if (!nombreInstitucion.isEmpty()) {
                 DefaultTableModel tableModel = (DefaultTableModel) view.Instituciones.getModel();
 
                 System.out.println("Nombre de la institución: " + nombreInstitucion);
                 System.out.println("Municipio del usuario: " + view.Municipio.getSelectedItem().toString());
                 // Obtener datos filtrados basados en el usuario y la institución
-                List<InstitucionModelo> datos = consul.llenarTabla(nombreInstitucion,nombreMunicipio );
+                List<InstitucionModelo> datos = consul.llenarTabla(nombreInstitucion, nombreMunicipio);
 
                 // Verificar los datos obtenidos
                 System.out.println("Datos obtenidos para la institución " + nombreInstitucion + ": " + datos);
@@ -103,8 +139,8 @@ public class ComparaInstitucion {
         }
         if (e.getSource() == view.compararButton) {
 
-            String anio = view.anio.getSelectedItem().toString();
-            String alcance = view.alcance.getSelectedItem().toString();
+            String anio = String.valueOf(view.anio.getSelectedItem());
+            String alcance = String.valueOf(view.alcance.getSelectedItem());
 
             if (!anio.isEmpty() && !alcance.isEmpty()) {
 
@@ -135,6 +171,7 @@ public class ComparaInstitucion {
                     JFreeChart grafico = grafico(datos);
                     mostrarGrafico(grafico);
                 }
+
             } else {
                 JOptionPane.showMessageDialog(view,
                         "Por favor seleccione una institución, un año y un alcance antes de proceder.",
@@ -178,7 +215,7 @@ public class ComparaInstitucion {
                 }
 
                 String fecha = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-                String b = view.institucion.getSelectedItem().toString() + fecha;
+                String b = "CompararInstitucionesCon"+view.institucion.getSelectedItem().toString() + fecha;
                 JFileChooser f = new JFileChooser();
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF Files", "pdf");
                 f.setFileFilter(filter);
@@ -187,7 +224,8 @@ public class ComparaInstitucion {
                 int userSelection = f.showSaveDialog(null);
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File c = f.getSelectedFile();
-                    ExportarGrafico(datos, c); // Asegúrate de que la variable datos esté en el ámbito adecuado aquí
+                    File file = ensureUniqueFilename(c.getParentFile(), c.getName());
+                    ExportarGrafico(datos, file); // Asegúrate de que la variable datos esté en el ámbito adecuado aquí
                 }
             } else {
                 JOptionPane.showMessageDialog(view,
@@ -196,8 +234,55 @@ public class ComparaInstitucion {
                         JOptionPane.WARNING_MESSAGE);
             }
         }
+        if (e.getSource() == view.inicioButton) {
+            BotonInicio();
+        }
+        if (e.getSource() == view2.inicioButton) {
+            BotonInicio();
+        }if(e.getSource() == view.perfil){
+            vistaPerfil();
+        }if(e.getSource()==view.Calcular){
+            vistaCalcular();
+        }if(e.getSource()==view.RegistrarEmisión){
+            vistaRegistrarEmision();
+        }if(e.getSource()== view.Informes){
+            vistaInforme();
+        }if(e.getSource()==view.Reducir){
+            vistaReducir();
+        }if(e.getSource()==view.RegistrarInstitucion){
+            vistaActualizarInstitucion();
+        }if(e.getSource()==view.VerPerfiles){
+            vistaVerPerfiles();
+        }
     }
+    private static File ensureUniqueFilename(File directory, String filename) {
+        File file = new File(directory, filename);
 
+        // Si el archivo no existe, simplemente devolvemos el archivo original
+        if (!file.exists()) {
+            return file;
+        }
+
+        // Separamos el nombre del archivo y la extensión
+        String baseName = filename;
+        String extension = "";
+        int dotIndex = filename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            baseName = filename.substring(0, dotIndex);
+            extension = filename.substring(dotIndex);
+        }
+
+        // Generamos un nuevo nombre de archivo con un contador
+        int counter = 1;
+        String newFilename;
+        do {
+            newFilename = baseName + "(" + counter + ")" + extension;
+            file = new File(directory, newFilename);
+            counter++;
+        } while (file.exists());
+
+        return file;
+    }
     private void ExportarGrafico(DefaultCategoryDataset dato, File r) {
         Document document = new Document(PageSize.A3);
 
@@ -258,15 +343,15 @@ public class ComparaInstitucion {
         }
     }
 
-private JFreeChart grafico (DefaultCategoryDataset dataset){
-    JFreeChart chart = ChartFactory.createBarChart(
-            "Comparar instituciones por alcance ",   // Título del gráfico
-            "Fuentes emision",       // Etiqueta del eje X
-            "Cantidad de co2",       // Etiqueta del eje Y
-            dataset   // Conjunto de datos
-    );
-    return chart;
-}
+    private JFreeChart grafico(DefaultCategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Comparar instituciones por alcance ",   // Título del gráfico
+                "Fuentes emision",       // Etiqueta del eje X
+                "Cantidad de co2",       // Etiqueta del eje Y
+                dataset   // Conjunto de datos
+        );
+        return chart;
+    }
 
     private void mostrarGrafico(JFreeChart chart) {
         ChartPanel panel = new ChartPanel(chart);
@@ -274,7 +359,7 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
         panel.setPreferredSize(new Dimension(300, 700));
         view2.PanelGrafico.setLayout(new BorderLayout());
         view2.PanelGrafico.removeAll();
-        view2.PanelGrafico.add(panel,BorderLayout.CENTER);
+        view2.PanelGrafico.add(panel, BorderLayout.CENTER);
         view2.PanelGrafico.revalidate();
         view2.PanelGrafico.repaint();
         view2.setVisible(true);
@@ -321,8 +406,8 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
         view.anio.addItem(" ");
         view.anio.removeAllItems();
         if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)){
-                ps.setString(1,nombre);
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, nombre);
                 st = ps.executeQuery();
                 while (st.next()) {
                     String anioBase = st.getString(1);
@@ -343,6 +428,7 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
             }
         }
     }
+
     public void cargarMunicipio() {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
@@ -357,7 +443,7 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
                 // Cerrar la conexión existente antes de abrir una nueva
                 if (conn != null) {
                     // Crear una nueva conexión para obtener los municipios del departamento seleccionado
-                    String procedureCall = "Select NombreMunicipio from municipio m inner join institucion i on m.idMunicipio = i.idMunicipio where i.NombreInstitucion = ?";
+                    String procedureCall = "Select NombreMunicipio from municipio m inner join  municipioinstitiucion mi on mi.idMuncipio= m.idMunicipio  inner join institucion i on  i.idInstitucionAuto = mi.IdInstitucion where i.NombreInstitucion = ?";
 
                     try (CallableStatement statement = conn.prepareCall(procedureCall)) {
                         statement.setString(1, Institucion); // Establecer el valor del parámetro
@@ -392,4 +478,127 @@ private JFreeChart grafico (DefaultCategoryDataset dataset){
             }
         }
     }
+    public void BotonInicio (){
+        ControladoInicio control = new ControladoInicio(ins,user, m);
+        control.inicio();
+        view.dispose();
+        view2.dispose();
+    }
+    public void vistaPerfil(){
+        Conexion conn = new Conexion();
+        Perfil per = new Perfil();
+        ConsultaUsuario cons = new ConsultaUsuario(conn);
+        PerfilCOntrolador control = new PerfilCOntrolador(user, per, ins, m, cons);
+        control.Iniciar();
+        per.setVisible(true);
+        view.dispose();
+    }
+    public void vistaCalcular(){
+        Conexion con = new Conexion();
+        Calcular viewCal = new Calcular();
+        CalcularModelo mod = new CalcularModelo();
+        CalcularConsultas consul = new CalcularConsultas(con);
+        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+        CalcularControlador controlador = new CalcularControlador(mod,consul,viewCal,ins,consultaUsuario,user,m);
+        controlador.iniciar();
+        viewCal.setVisible(true);
+        view.dispose();
+    }
+    public void vistaRegistrarEmision(){
+        Emision emisionView = new Emision();
+        EmisionModelo mod = new EmisionModelo();
+        ConsultasEmision consul = new ConsultasEmision();
+        EmisionControlador controlador = new EmisionControlador(mod,consul,emisionView,ins,m,user);
+        controlador.iniciar();
+        emisionView.setVisible(true);
+        view.dispose();
+    }
+    public void vistaInforme(){
+        Conexion con = new Conexion();
+        InstitucionModelo mod2 = new InstitucionModelo();
+        ConsultaInforme consul = new ConsultaInforme(con);
+        ModeloInforme mod = new ModeloInforme();
+        Informe viewInfo = new Informe();
+        ConsultaUsuario consultaUsuario= new ConsultaUsuario(con);
+        ControladorInforme contro = new ControladorInforme(viewInfo,mod,consul,m,ins,user);
+        contro.iniciar();
+        viewInfo.setVisible(true);
+        view.dispose();
+    }
+    public void vistaGraficoPrincipal(){
+        Conexion con = new Conexion();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        Vistas.Graficos viewGraf = new Graficos();
+        GraficorModelo mod = new GraficorModelo();
+        InstitucionModelo modelo = new InstitucionModelo();
+        GraficoControlador contro = new GraficoControlador(mod,consul, viewGraf,modelo,m,user,ins);
+        contro.iniciar();
+        viewGraf.setVisible(true);
+        view.dispose();
+    }
+    public void vistaGraficoHistorico(){
+        Conexion con = new Conexion();
+        TendenciaModelo mod = new TendenciaModelo();
+        ConsultasTendencias consult = new ConsultasTendencias(con);
+        GraficoTendencia viewGraf = new GraficoTendencia();
+        TendenciaControlador control = new TendenciaControlador(mod,consult,viewGraf,m,ins,user);
+        viewGraf.setVisible(true);
+        control.iniciar();
+        view.dispose();
+    }
+    public void vistaReducir(){
+        Conexion con = new Conexion();
+        Reducir2 vista = new Reducir2();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        ControladorReducir redu = new ControladorReducir(ins,consul, vista,m,user);
+        redu.Iniciar();
+        view.dispose();
+    }
+    public void vistaActualizarInstitucion(){
+        Conexion con = new Conexion();
+        ConsultasInstitucion consul = new ConsultasInstitucion();
+        RegistrarInstitucion view2 = new RegistrarInstitucion();
+        InstitucionModelo mod = new InstitucionModelo();
+        InstitucionControlador control = new InstitucionControlador(ins, m,view2, consul,mod,user);
+        view2.setVisible(true);
+        control.iniciar();
+        view.dispose();
+
+
+
+    }
+    public void vistaVerPerfiles(){
+        Conexion con = new Conexion();
+        VerPerfiles verPerfiles = new VerPerfiles();
+        ConsultaUsuario consul = new ConsultaUsuario(con);
+
+        VerPerfilesControlador verControl = new VerPerfilesControlador(user,ins, m,verPerfiles,consul);
+        verControl.Iniciar();
+        view.dispose();
+    }
+    public void Listeners(){
+        this.view.añadirButton.addActionListener(this::actionPerformed);
+        this.view.compararButton.addActionListener(this::actionPerformed);
+        this.view2.descargarButton.addActionListener(this::actionPerformed);
+        this.view.inicioButton.addActionListener(this::actionPerformed);
+        this.view2.inicioButton.addActionListener(this::actionPerformed);
+        this.view.perfil.addActionListener(this::actionPerformed);
+        this.view.Calcular.addActionListener(this::actionPerformed);
+        this.view.RegistrarEmisión.addActionListener(this::actionPerformed);
+        this.view.Informes.addActionListener(this::actionPerformed);
+        this.view.institucion.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (view.institucion.getItemCount() > 0) {
+                    cargarAnioBase();
+                    cargarMunicipio();
+                }
+            }
+        });
+        this.view.Reducir.addActionListener(this::actionPerformed);
+        this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
+        this.view.VerPerfiles.addActionListener(this::actionPerformed);
+
+    }
+
 }

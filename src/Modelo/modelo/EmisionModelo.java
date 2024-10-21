@@ -1,16 +1,17 @@
 package Modelo.modelo;
 
 public class EmisionModelo {
- private String NombreFuente;
- private String TipoFuente;
- private String EstadoFuente;
- private String Alcance;
- private Double  FactorEmision;
- private String UnidadMedidad;
+    private String NombreFuente;
+    private String TipoFuente;
+    private String EstadoFuente;
+    private String Alcance;
+    private Double FactorEmision;
+    private String UnidadMedidad;
 
-    public EmisionModelo(){
+    public EmisionModelo() {
 
     }
+
     public String getNombreFuente() {
         return NombreFuente;
     }
@@ -26,8 +27,6 @@ public class EmisionModelo {
     public void setTipoFuente(String tipoFuente) {
         TipoFuente = tipoFuente;
     }
-
-
 
     public String getEstadoFuente() {
         return EstadoFuente;

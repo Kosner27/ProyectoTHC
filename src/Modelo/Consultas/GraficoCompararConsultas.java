@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 public class GraficoCompararConsultas {
     private Connection conn;
 
@@ -23,7 +24,7 @@ public class GraficoCompararConsultas {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("Select * from institucion i inner join municipio m on i.idMunicipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+            ps = conn.prepareStatement("Select * from institucion i inner join  municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join  municipio m on mi.idMuncipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
             ps.setString(1, nombreMunicipio);
             ps.setString(2, NombreSeleccionado);
             rs = ps.executeQuery();
@@ -60,11 +61,11 @@ public class GraficoCompararConsultas {
             String sql = "{CALL CompararEmisionesInstituciones(?, ?, ?)}";
             ps = conn.prepareStatement(sql);
             ps.setString(1, Instituciones);
-            ps.setInt(2,Integer.parseInt( anio));
+            ps.setInt(2, Integer.parseInt(anio));
             ps.setString(3, alcance);
             rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 GraficoCompararModelo dato = new GraficoCompararModelo();
                 dato.setAlcance(rs.getString("Alcance"));
                 dato.setNombrefuente(rs.getString("NombreFuente"));
@@ -74,7 +75,7 @@ public class GraficoCompararConsultas {
             }
 
         } catch (SQLException ex) {
-            System.out.println("Error al ejecutar procedimiento almacenado: "+ex.getMessage());
+            System.out.println("Error al ejecutar procedimiento almacenado: " + ex.getMessage());
         }
         return resultados;
     }

@@ -1,10 +1,7 @@
 package Modelo.Consultas;
 
-import Modelo.modelo.CalcularModelo;
+import Modelo.modelo.*;
 import Modelo.Conexion;
-import Modelo.modelo.EmisionModelo;
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.municipio;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CalcularConsultas {
-    private Connection conn;
+    private final Connection conn;
 
     public CalcularConsultas(Conexion conexion) {
         this.conn = conexion.getConection();
@@ -50,16 +47,16 @@ public class CalcularConsultas {
         return emisiones;
     }
 
-    public boolean registrarCargaAmbienta(CalcularModelo mod, String nombreInstitucion, String nombreMunicipio) {
+    public boolean registrarCargaAmbienta(CalcularModelo mod, InstitucionModelo nombreInstitucion,  Municipio nombreMunicipio) {
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement("CALL insertarEmisionInstitucion(?,?,?,?,?,?)");
             ps.setInt(1, mod.getAnioBase());
             ps.setDouble(2, mod.getCantidadConsumidad());
-            ps.setString(3, nombreInstitucion);
+            ps.setString(3, nombreInstitucion.getNombreInstitucion());
             ps.setString(4, mod.getNombreFuente());
             ps.setDouble(5, mod.getTotal1());
-            ps.setString(6, nombreMunicipio);
+            ps.setString(6, nombreMunicipio.getNombreM());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -74,29 +71,33 @@ public class CalcularConsultas {
         }
     }
 
-    public String Institucion(String ins, String m){
+
+
+    public String Institucion(String ins, String m) {
         PreparedStatement ps = null;
         String nombre = null;
         ResultSet rs = null;
-        try{
-            ps = conn.prepareStatement("Select i.NombreInstitucion, m.NombreMunicipio from institucion i  inner join municipio m on i.idMunicipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
-            ps.setString(1,ins);
-            ps.setString(2,m);
-            rs= ps.executeQuery();
-            while(rs.next()){
+        try {
+            ps = conn.prepareStatement("Select i.NombreInstitucion, m.NombreMunicipio from institucion i  inner join  municipioinstitiucion mi \n" +
+                    "on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on mi.idMuncipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
+            ps.setString(1, ins);
+            ps.setString(2, m);
+            rs = ps.executeQuery();
+            while (rs.next()) {
 
-              nombre =  rs.getString("NombreInstitucion");
+                nombre = rs.getString("NombreInstitucion");
 
             }
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
-        }return nombre;
+        }
+        return nombre;
     }
 }

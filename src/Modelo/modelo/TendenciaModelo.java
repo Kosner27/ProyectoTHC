@@ -2,14 +2,15 @@ package Modelo.modelo;
 
 public class TendenciaModelo {
     private String Nombre;
-    private  Integer AnioBase;
+    private Integer AnioBase;
     private Double co2;
     private String alcance;
 
 
-    public TendenciaModelo(){
+    public TendenciaModelo() {
 
     }
+
     public Double getCo2() {
         return co2;
     }

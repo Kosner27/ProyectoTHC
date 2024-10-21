@@ -1,266 +1,212 @@
 package Controlador;
+
 import Modelo.Conexion;
 import Modelo.modelo.HASH;
-import Modelo.modelo.Rol;
-import Modelo.modelo.UsuarioModel;
+import Modelo.modelo.Municipio;
+import Modelo.modelo.Usuario;
+import Vistas.Main;
 import Vistas.RegistrarUsuario;
 import Modelo.Consultas.ConsultaUsuario;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 
-
+/**
+ * Controlador para la funcionalidad de registro de usuarios.
+ */
 public class ControladoRegistrarUsuario {
-    private final UsuarioModel mod;
-    private final RegistrarUsuario view;
-    private final ConsultaUsuario consul;
+    private final Usuario mod; // Modelo de usuario
+    private final RegistrarUsuario view; // Vista para registrar usuario
+    private final ConsultaUsuario consul; // Consulta de usuarios
 
-    public ControladoRegistrarUsuario(UsuarioModel mod,RegistrarUsuario view, ConsultaUsuario consul) {
+    /**
+     * Constructor del controlador.
+     * @param mod Modelo de usuario
+     * @param view Vista para registrar usuario
+     * @param consul Consultas relacionadas a usuarios
+     */
+    public ControladoRegistrarUsuario(Usuario mod, RegistrarUsuario view, ConsultaUsuario consul) {
         this.mod = mod;
-
         this.view = view;
         this.consul = consul;
+        // Agrega listeners para los eventos de los componentes de la vista
         this.view.Registrar.addActionListener(this::actionPerformed);
-        this.view.departamento.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.departamento.getItemCount() > 0) {
-                    cargarMunicipio();
-                }
-            }
-        });
-        this.view.municipio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(view.municipio.getItemCount()>0){
-                    cargarInstitucion();
-                }
-            }
-        });
+        this.view.departamento.addActionListener(e -> cargarMunicipio());
+        this.view.municipio.addActionListener(e -> cargarInstitucion());
+        this.view.inicio.addActionListener(this::actionPerformed);
+
     }
-    public void iniciar(){
+    /**
+     * Inicializa la vista y carga los datos necesarios.
+     */
+    public void iniciar() {
         view.setTitle("Registrar Institucion");
         view.setLocationRelativeTo(null);
         CargarDepartamento();
         cargarMunicipio();
         cargarInstitucion();
-        CargarRoles();
     }
-    public void actionPerformed(ActionEvent e ){
-        String Nombre= view.Nombre.getText().toString();
-        String apellido =view.Apellido.getText().toString();
-        String Correo = view.Correo.getText().toString();
-        String pass = new String(view.Contrasena.getPassword());
-        String newpass = new String(view.NewPass.getPassword());
-        String Departamento = view.departamento.getSelectedItem().toString();
-        String Municipio = view.municipio.getSelectedItem().toString();
-        String Institucion = view.Institucion.getSelectedItem().toString();
-        String Rol = view.Rol.getSelectedItem().toString();
+    /**
+     * Maneja los eventos de los componentes de la vista.
+     * @param e Evento de acción
+     */
+    private void actionPerformed(ActionEvent e) {
 
-        if(e.getSource() == view.Registrar) {
+        if (e.getSource() == view.Registrar) {
 
-            if (!Nombre.isEmpty() && !apellido.isEmpty() && !Correo.isEmpty() && !Departamento.isEmpty() && !Municipio.isEmpty()
-                    && !Institucion.isEmpty() && !Rol.isEmpty() && !pass.isEmpty() && !newpass.isEmpty()) {
-                if (pass.equals(newpass)) {
-                    if(consul.ExisteUsuario(Correo)==0){
-                        if(consul.esEmail(Correo)){
-                        String passCifrado = HASH.sha1(pass);
-                        mod.setNombre(Nombre);
-                        mod.setApellido(apellido);
-                        mod.setCorreo(Correo);
-                        mod.setContrasena(passCifrado);
-                        mod.setIdInstitucion(Institucion);
-                        mod.setTipoUsuario(Rol);
-                        if (consul.insersartUsuario(Municipio, mod)) {
-                            JOptionPane.showMessageDialog(null, "Se registro el usuario\n " + Nombre
-                                    + " de manera correcta");
-                            Limpiar();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Error al registrar usuario");
-                            Limpiar();
-                        }
-                        }else{
-                            JOptionPane.showMessageDialog(null, "El correo no tiene el formato valido");
-                        }
-                    }else {
-                        JOptionPane.showMessageDialog(null,"El correo ya ha sido registrado");
+            registrarUsuario();
+        }
+        if (e.getSource() == view.inicio) {
+          abrirInicio();
+        }
+    }
+    /**
+     * Abre la vista principal.
+     */
+    private void abrirInicio(){
+        Main inicio = new Main();
+        Usuario user = new Usuario();
+        ControladorMain contro = new ControladorMain(inicio, user);
+        contro.Iniciar();
+        view.dispose();
+    }
+
+    /**
+     * Limpia los campos de la vista.
+     */
+    private void Limpiar() {
+        view.Nombre.setText(null);
+        view.Apellido.setText(null);
+        view.Correo.setText(null);
+        view.Contrasena.setText(null);
+        view.NewPass.setText(null);
+        view.departamento.setSelectedIndex(0);
+        view.municipio.setSelectedIndex(0);
+        view.Institucion.setSelectedIndex(0);
+    }
+    /**
+     * Carga los departamentos desde la base de datos en el JComboBox correspondiente.
+     */
+    private void CargarDepartamento() {
+        try (Connection conn = new Conexion().getConection();
+             Statement stmt = conn.createStatement()) {
+
+            ResultSet rst = stmt.executeQuery("CALL SeleccionarDepartamento()");
+            view.departamento.removeAllItems();
+            view.departamento.addItem("");
+            while (rst.next()) {
+                view.departamento.addItem(rst.getString("NombreDepartamento"));
+            }
+
+            if (view.departamento.getItemCount() > 0) {
+                view.departamento.setSelectedIndex(0);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al cargar departamentos: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Carga los municipios de acuerdo al departamento seleccionado.
+     */
+    private void cargarMunicipio() {
+        String departamentoSeleccionado = (String) view.departamento.getSelectedItem();
+        if (departamentoSeleccionado == null || departamentoSeleccionado.isEmpty()) {
+            return;
+        }
+
+        try (Connection conn = new Conexion().getConection();
+             CallableStatement stmt = conn.prepareCall("CALL BuscarMunicipio(?)")) {
+
+            stmt.setString(1, departamentoSeleccionado);
+            ResultSet rs = stmt.executeQuery();
+            view.municipio.removeAllItems();
+            view.municipio.addItem("");
+
+            while (rs.next()) {
+                view.municipio.addItem(rs.getString("NombreMunicipio"));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al cargar municipios: " + e.getMessage());
+        }
+    }
+    /**
+     * Carga las instituciones de acuerdo al municipio seleccionado.
+     */
+    private void cargarInstitucion() {
+        String municipioSeleccionado = (String) view.municipio.getSelectedItem();
+        if (municipioSeleccionado == null || municipioSeleccionado.isEmpty()) {
+            return;
+        }
+
+        try (Connection conn = new Conexion().getConection();
+             CallableStatement stmt = conn.prepareCall("CALL BuscarInstitucion2(?)")) {
+
+            stmt.setString(1, municipioSeleccionado);
+            ResultSet rs = stmt.executeQuery();
+            view.Institucion.removeAllItems();
+            view.Institucion.addItem(" ");
+
+            while (rs.next()) {
+                view.Institucion.addItem(rs.getString("NombreInstitucion"));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Error al cargar instituciones: " + e.getMessage());
+        }
+    }
+    /**
+     * Registra un nuevo usuario en la base de datos.
+     */
+    private void registrarUsuario() {
+        String nombre = view.Nombre.getText();
+        String apellido = view.Apellido.getText();
+        String correo = view.Correo.getText();
+        String contrasena = new String(view.Contrasena.getPassword());
+        String nuevaContrasena = new String(view.NewPass.getPassword());
+        String departamento = view.departamento.getSelectedItem().toString();
+        String municipio = view.municipio.getSelectedItem().toString();
+        String institucion = view.Institucion.getSelectedItem().toString();
+        String rol = "Administrador";
+
+        if (validarCampos(nombre, apellido, correo, departamento, municipio, institucion, contrasena, nuevaContrasena)) {
+            Municipio m = new Municipio();
+            m.setNombreM(municipio);
+            mod.setCorreo(correo);
+            if (contrasena.equals(nuevaContrasena) && consul.ExisteUsuario(correo) == 0) {
+                if (consul.esEmail(mod.getCorreo())) {
+                    String contrasenaCifrada = HASH.sha1(contrasena);
+                    mod.setNombre(nombre);
+                    mod.setApellido(apellido);
+                    mod.setCorreo(correo);
+                    mod.setContrasena(contrasenaCifrada);
+                    mod.setIdInstitucion(institucion);
+                    mod.setTipoUsuario(rol);
+
+                    if (consul.insertarUsuario(m, mod)) {
+                        JOptionPane.showMessageDialog(null, "Usuario registrado: " + nombre);
+                        Limpiar();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al registrar usuario");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null,"Las contraseñas no coinciden") ;
+                    JOptionPane.showMessageDialog(null, "El correo no tiene un formato válido");
                 }
-
+            } else {
+                JOptionPane.showMessageDialog(null, "El correo ya ha sido registrado o las contraseñas no coinciden");
             }
-            else{
-                JOptionPane.showMessageDialog(null, "Complete todos los campos ");
-            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Complete todos los campos");
         }
     }
-public void Limpiar(){
-     view.Nombre.setText(null);
-    view.Apellido.setText(null);
-    view.Correo.setText(null);
-    view.Contrasena.setText(null);
-    view.NewPass.setText(null);
-    view.departamento.setSelectedIndex(0);
-    view.municipio.setSelectedIndex(0);
-    view.Institucion.setSelectedIndex(0);
-    view.Rol.setSelectedIndex(0);
-}
-    public void CargarDepartamento(){
-
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        String sql = "CALL SeleccionarDepartamento()";
-
-        view.departamento.removeAllItems();
-        if(conn!= null){
-            try {
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.departamento.removeAllItems();
-                view.departamento.addItem("");
-                while (rst.next()){
-                    String nombre = rst.getString("NombreDepartamento");
-                    view.departamento.addItem(nombre);
-
-                }
-                if (view.departamento.getItemCount() > 0) {
-                    view.departamento.setSelectedIndex(0);
-                }else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox departamento está vacío");
-                }
-
-                rst.close();
-                stmt.close();
-
-            }catch (SQLException e ){
-                e.printStackTrace();
-            }
-        }
-    }
-    public void cargarMunicipio() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.municipio.removeAllItems(); // Limpiar los elementos del JComboBox
-        view.municipio.addItem("");
-
-        // Obtener el departamento seleccionado directamente del JComboBox
-        String departamentoSeleccionado = (String) view.departamento.getSelectedItem();
-
-        if (departamentoSeleccionado != null && !departamentoSeleccionado.isEmpty()) {
-            try {
-                // Cerrar la conexión existente antes de abrir una nueva
-                if (conn != null) {
-                    // Crear una nueva conexión para obtener los municipios del departamento seleccionado
-                    String procedureCall = "CALL BuscarMunicipio(?)";
-
-                    try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                        statement.setString(1, departamentoSeleccionado); // Establecer el valor del parámetro
-
-                        // Ejecutar la consulta
-                        ResultSet rs = statement.executeQuery();
-
-                        // Verificar si el ResultSet está vacío
-                        if (!rs.isBeforeFirst()) {
-                            System.out.println("No se encontraron municipios para el departamento seleccionado.");
-                        } else {
-                            // Llenar el JComboBox con los municipios obtenidos de la consulta
-                            while (rs.next()) {
-                                String nombreMunicipio = rs.getString("NombreMunicipio");
-                                view.municipio.addItem(nombreMunicipio);
-                            }
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(view.Principal, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                // Asegúrate de cerrar la conexión
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+    /**
+     * Validar que todos los campos requeridos estén completos.
+     * @return true si todos los campos son válidos, false de lo contrario.
+     */
+    private boolean validarCampos(String nombre, String apellido, String correo, String departamento, String municipio, String institucion, String contrasena, String nuevaContrasena) {
+        return !nombre.isEmpty() && !apellido.isEmpty() && !correo.isEmpty() &&
+                !departamento.isEmpty() && !municipio.isEmpty() &&
+                !institucion.isEmpty() && !contrasena.isEmpty()
+                && !nuevaContrasena.isEmpty();
     }
 
-    public void cargarInstitucion(){
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.Institucion.removeAllItems();
-        view.Institucion.addItem(" ");
-        String municipio = view.municipio.getSelectedItem().toString();
-        if(municipio != null && !municipio.isEmpty()){
-            try{
-                if(conn != null){
-                    String procedureCall = "call BuscarInstitucion2(?)";
-                    try(CallableStatement statement = conn.prepareCall(procedureCall)){
-                        statement.setString(1, municipio); // Establecer el valor del parámetro
-
-                        // Ejecutar la consulta
-                        ResultSet rs = statement.executeQuery();
-
-                        if(!rs.isBeforeFirst()){
-                            JOptionPane.showMessageDialog(null,"No se encontro Universidad y/o institucion para el municipio seleccionado");
-                        }else{
-                         while (rs.next()){
-                             String NombreInstitucion = rs.getString("NombreInstitucion");
-                             view.Institucion.addItem(NombreInstitucion);
-                         }
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(view.Principal, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }finally {
-                // Asegúrate de cerrar la conexión
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    public void CargarRoles(){
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.Rol.addItem(" ");
-        if(conn != null ){
-            String procedureCall = "Select * from Roles ";
-            try(CallableStatement statement = conn.prepareCall(procedureCall)){
-
-                ResultSet rs = statement.executeQuery();
-                while(rs.next()){
-                    String rol = rs.getString("tipoUsuario");
-                    view.Rol.addItem(rol);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            finally {
-                // Asegúrate de cerrar la conexión si es necesario
-                try {
-                    if (conn != null && !conn.isClosed()) {
-                        conn.close();
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
 }

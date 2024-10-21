@@ -6,7 +6,7 @@ public class GraficoCompararModelo {
     private String Alcance;
     private Double total;
 
-    public GraficoCompararModelo(){
+    public GraficoCompararModelo() {
 
     }
 

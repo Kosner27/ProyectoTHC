@@ -2,7 +2,6 @@ package Modelo.Consultas;
 
 import Modelo.Conexion;
 import Modelo.modelo.EmisionModelo;
-import Modelo.modelo.UsuarioModel;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConsultasEmision {
     public boolean registrarEmision(EmisionModelo mod) {
@@ -48,7 +45,7 @@ public class ConsultasEmision {
         }
     }
 
-    public List<EmisionModelo>dato() {
+    public List<EmisionModelo> dato() {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         String sql = "Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, factorEmision from emision order by NombreFuente";
@@ -82,26 +79,89 @@ public class ConsultasEmision {
         return emisionModeloList;
     }
 
-    public int ExisteEmision(String nombreEmision){
+    public int ExisteEmision(String nombreEmision) {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         ResultSet st = null;
         String sql = "Select count(idEmision) from emision where NombreFuente = ?";
-        try(PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setString(1,nombreEmision);
-            st=ps.executeQuery();
-            if(st.next()){
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombreEmision);
+            st = ps.executeQuery();
+            if (st.next()) {
                 return st.getInt(1);
-            }{
+            }
+            {
                 return 1;
             }
 
-        }catch (SQLException ex ){
+        } catch (SQLException ex) {
             ex.printStackTrace();
             return 1;
         }
     }
 
+    public List<EmisionModelo> buscarEmision(String nombre) {
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        ArrayList<EmisionModelo> dato = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, factorEmision from emision where NombreFuente=? ");
+            ps.setString(1, nombre);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                EmisionModelo mod = new EmisionModelo();
+                mod.setNombreFuente(rs.getString("NombreFuente"));
+                mod.setEstadoFuente(rs.getString("EstadoFuente"));
+                mod.setAlcance(rs.getString("alcance"));
+                mod.setUnidadMedidad(rs.getString("unidadMedida"));
+                mod.setFactorEmision(rs.getDouble("factorEmision"));
+                mod.setTipoFuente(rs.getString("Emision"));
+                dato.add(mod);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
 
+            }
+        }
+        return dato;
     }
+
+    public boolean ActualizarFactoreEmision(String nombreE, Double factor) {
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        String sql = "Update emision set factorEmision = ? where NombreFuente = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, factor);
+            ps.setString(2, nombreE);
+            ps.execute();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean eliminarFuente(String nombreE) {
+        Conexion conexion = new Conexion();
+        Connection conn = conexion.getConection();
+        String sql = "Delete from emision where NombreFuente = ? ";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombreE);
+            ps.execute();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+}
 

@@ -69,9 +69,9 @@
             <properties>
               <model>
                 <item value=""/>
-                <item value="1"/>
-                <item value="2"/>
-                <item value="3"/>
+                <item value="Alcance 1"/>
+                <item value="Alcance 2"/>
+                <item value="Alcacne 3"/>
               </model>
             </properties>
           </component>
@@ -176,7 +176,15 @@
           </component>
         </children>
       </grid>
-      <grid id="9b55b" class="javax.swing.JMenuBar" binding="bar" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <component id="983c2" class="javax.swing.JLabel" binding="titulo">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Comparar Instituciones"/>
+        </properties>
+      </component>
+      <grid id="97d56" class="javax.swing.JMenuBar" binding="bar" layout-manager="GridLayoutManager" row-count="1" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -186,80 +194,90 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="daee7" class="javax.swing.JMenuItem" binding="RegistrarInstitucion">
+          <component id="9bed4" class="javax.swing.JMenuItem" binding="RegistrarInstitucion">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <borderPainted value="false"/>
-              <text value="Registrar Institución"/>
+              <text value="Actualizar Institucion"/>
             </properties>
           </component>
-          <component id="5b748" class="javax.swing.JMenuItem" binding="RegistrarEmisión">
+          <component id="27e0a" class="javax.swing.JMenuItem" binding="RegistrarEmisión">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Registrar Emisión"/>
             </properties>
           </component>
-          <component id="3c665" class="javax.swing.JMenuItem" binding="Calcular">
+          <component id="6384f" class="javax.swing.JMenuItem" binding="Calcular">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Calcular"/>
             </properties>
           </component>
-          <component id="ff4e7" class="javax.swing.JMenuItem" binding="Informes">
+          <component id="f4c2" class="javax.swing.JMenuItem" binding="Informes">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Informes"/>
             </properties>
           </component>
-          <component id="c82f3" class="javax.swing.JMenuItem" binding="Reducir">
+          <component id="b8b1f" class="javax.swing.JMenuItem" binding="Reducir">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Reducir"/>
             </properties>
           </component>
-          <component id="77ec4" class="javax.swing.JMenuItem" binding="MasInformacion">
+          <component id="21466" class="javax.swing.JMenuItem" binding="MasInformacion">
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Más información"/>
             </properties>
           </component>
-          <component id="70c14" class="javax.swing.JMenu" binding="Graficos">
+          <component id="370aa" class="javax.swing.JMenu" binding="Graficos">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-10115519"/>
               <text value="Graficos"/>
             </properties>
           </component>
+          <component id="d6b2" class="javax.swing.JMenuItem" binding="perfil">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Ver perfil"/>
+            </properties>
+          </component>
+          <component id="dc0ef" class="javax.swing.JMenuItem" binding="VerPerfiles">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Ver perfiles"/>
+            </properties>
+          </component>
         </children>
       </grid>
-      <component id="983c2" class="javax.swing.JLabel" binding="titulo">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Comparar Instituciones"/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>

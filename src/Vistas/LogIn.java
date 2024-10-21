@@ -1,13 +1,6 @@
 package Vistas;
 
-import Controlador.ControladorLogin;
-import Modelo.Conexion;
-import Modelo.Consultas.ConsultaUsuario;
-import Modelo.modelo.Rol;
-import Modelo.modelo.UsuarioModel;
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LogIn extends JFrame {
@@ -15,9 +8,9 @@ public class LogIn extends JFrame {
     public JTextField Correo;
     public JPasswordField Contrasena;
     public JButton iniciarSesionButton;
-    public JButton olvidasteTúContraseñaButton;
+    public JButton olvidasteTuContrasenaButton;
     public JPanel Principal;
-    public JButton clickAquíButton;
+    public JButton clickAquiButton;
     public JButton inicioButton;
 
     public  LogIn(){
@@ -31,14 +24,11 @@ public class LogIn extends JFrame {
 
 
 
-inicioButton.addActionListener(new ActionListener() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Main inicio = new Main();
-        inicio.setVisible(true);
-        dispose();
-    }
-});
-}
 
+
+    }
+    public void addEnterKeyListener(ActionListener listener) {
+        Contrasena.addActionListener(listener);
+        Correo.addActionListener(listener);
+    }
 }

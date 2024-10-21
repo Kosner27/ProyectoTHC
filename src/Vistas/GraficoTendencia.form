@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Vistas.GraficoTendencia">
-  <grid id="27dc6" binding="PanelMain" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="PanelMain" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="31" y="39" width="497" height="452"/>
+      <xy x="31" y="39" width="896" height="565"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <vspacer id="3f653">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <grid id="bd4c6" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="bd4c6" layout-manager="GridLayoutManager" row-count="6" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -24,7 +24,7 @@
           <grid id="9fabe" binding="Grafico" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="1" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -55,17 +55,50 @@
               </vspacer>
             </children>
           </grid>
-          <component id="9348b" class="javax.swing.JLabel">
+          <component id="b29fb" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Seleccione la institución a la que pertenece"/>
+              <text value="Seleccione la sede de la institucion"/>
+            </properties>
+          </component>
+          <component id="60f22" class="javax.swing.JComboBox" binding="municipio">
+            <constraints>
+              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="200" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="c980" class="javax.swing.JComboBox" binding="comboNucleo">
+            <constraints>
+              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <visible value="false"/>
+            </properties>
+          </component>
+          <component id="555a3" class="javax.swing.JLabel" binding="Nucleo">
+            <constraints>
+              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="seleccion nucleo"/>
+              <visible value="false"/>
+            </properties>
+          </component>
+          <component id="8922d" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Quieres ver el historico de algun nucleo"/>
             </properties>
           </component>
           <component id="b1dd3" class="javax.swing.JComboBox" binding="institucion">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
+              <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -78,95 +111,51 @@
               </model>
             </properties>
           </component>
-          <component id="dd194" class="javax.swing.JButton" binding="verButton" default-binding="true">
+          <component id="9348b" class="javax.swing.JLabel">
             <constraints>
-              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
+              <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Ver"/>
+              <text value="Seleccione la institución a la que pertenece"/>
             </properties>
           </component>
-          <grid id="51d51" class="javax.swing.JMenuBar" binding="bar" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+          <component id="30f81" class="javax.swing.JCheckBox" binding="siCheckBox" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <background color="-10115519"/>
+              <text value="si"/>
             </properties>
-            <border type="none"/>
-            <children>
-              <component id="e36a4" class="javax.swing.JMenuItem" binding="RegistrarInstitucion">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <borderPainted value="false"/>
-                  <text value="Registrar Institución"/>
-                </properties>
-              </component>
-              <component id="8a412" class="javax.swing.JMenuItem" binding="RegistrarEmisión">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Registrar Emisión"/>
-                </properties>
-              </component>
-              <component id="63953" class="javax.swing.JMenuItem" binding="Calcular">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Calcular"/>
-                </properties>
-              </component>
-              <component id="7c529" class="javax.swing.JMenuItem" binding="Informes">
-                <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Informes"/>
-                </properties>
-              </component>
-              <component id="9aef4" class="javax.swing.JMenuItem" binding="Reducir">
-                <constraints>
-                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Reducir"/>
-                </properties>
-              </component>
-              <component id="719e2" class="javax.swing.JMenuItem" binding="MasInformacion">
-                <constraints>
-                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Más información"/>
-                </properties>
-              </component>
-              <component id="d58c0" class="javax.swing.JMenu" binding="Graficos">
-                <constraints>
-                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <background color="-10115519"/>
-                  <text value="Graficos"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
+          </component>
+          <component id="6645" class="javax.swing.JCheckBox" binding="noCheckBox" default-binding="true">
+            <constraints>
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="no"/>
+            </properties>
+          </component>
+          <hspacer id="33034">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="83659">
+            <constraints>
+              <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <component id="57e9f" class="javax.swing.JLabel" binding="titulo">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Grafico Historico"/>
+            </properties>
+          </component>
           <component id="7cca8" class="javax.swing.JButton" binding="inicioButton" default-binding="true">
             <constraints>
-              <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+              <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -174,27 +163,118 @@
               <text value="Inicio"/>
             </properties>
           </component>
-          <vspacer id="eb118">
-            <constraints>
-              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </vspacer>
-          <component id="57e9f" class="javax.swing.JLabel" binding="titulo">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Grafico Historico"/>
-            </properties>
-          </component>
           <component id="88cf7" class="javax.swing.JButton" binding="descargarButton" default-binding="true">
             <constraints>
-              <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties>
               <text value="Descargar"/>
+            </properties>
+          </component>
+          <component id="dd194" class="javax.swing.JButton" binding="verButton" default-binding="true">
+            <constraints>
+              <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="Ver"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="a802a" class="javax.swing.JMenuBar" binding="bar" layout-manager="GridLayoutManager" row-count="1" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-10115519"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="62ab2" class="javax.swing.JMenuItem" binding="RegistrarInstitucion">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <borderPainted value="false"/>
+              <text value="Actualizar Institucion"/>
+            </properties>
+          </component>
+          <component id="5f3ce" class="javax.swing.JMenuItem" binding="RegistrarEmisión">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Registrar Emisión"/>
+            </properties>
+          </component>
+          <component id="3c8f5" class="javax.swing.JMenuItem" binding="Calcular">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Calcular"/>
+            </properties>
+          </component>
+          <component id="50a5" class="javax.swing.JMenuItem" binding="Informes">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Informes"/>
+            </properties>
+          </component>
+          <component id="74074" class="javax.swing.JMenuItem" binding="Reducir">
+            <constraints>
+              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Reducir"/>
+            </properties>
+          </component>
+          <component id="ac46a" class="javax.swing.JMenuItem" binding="MasInformacion">
+            <constraints>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Más información"/>
+            </properties>
+          </component>
+          <component id="8e71f" class="javax.swing.JMenu" binding="Graficos">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Graficos"/>
+            </properties>
+          </component>
+          <component id="edada" class="javax.swing.JMenuItem" binding="perfil">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Ver perfil"/>
+            </properties>
+          </component>
+          <component id="ae4" class="javax.swing.JMenuItem" binding="VerPerfiles">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-10115519"/>
+              <text value="Ver perfiles"/>
             </properties>
           </component>
         </children>

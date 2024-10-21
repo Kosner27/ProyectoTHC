@@ -5,14 +5,15 @@ public class ModeloInforme extends EmisionModelo {
     private Double CargaAmnbiental;
     private Integer AnioBase;
     private String UnidadMedidad;
-    private Double  FactorEmision;
+    private Double FactorEmision;
     private String Municipio;
     private String Departamento;
     private String nit;
 
-    public ModeloInforme(){
+    public ModeloInforme() {
         super();
     }
+
     public Integer getAnioBase() {
         return AnioBase;
     }
@@ -28,9 +29,11 @@ public class ModeloInforme extends EmisionModelo {
     public void setCargaAmnbiental(Double cargaAmnbiental) {
         CargaAmnbiental = cargaAmnbiental;
     }
+
     public Double getCantidadConsumidad() {
         return CantidadConsumidad;
     }
+
     public void setCantidadConsumidad(Double cantidadConsumidad) {
         CantidadConsumidad = cantidadConsumidad;
     }
