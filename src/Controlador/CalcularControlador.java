@@ -48,70 +48,96 @@ public class CalcularControlador implements ActionListener {
         this.view.inicioButton.addActionListener(this);
         this.view.fuente.addActionListener(this::comboBoxActionPerformed);
         this.view.perfil.addActionListener(this);
-        this.view.RegistrarEmisión.addActionListener(this);
+        this.view.RegistrarEmision.addActionListener(this);
         this.view.Informes.addActionListener(this);
         this.view.Reducir.addActionListener(this);
         this.view.RegistrarInstitucion.addActionListener(this);
         this.view.actualizarButton.addActionListener(this);
         this.view.VerPerfiles.addActionListener(this);
-        this.view.siCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.siCheckBox.isSelected()) {
-                    view.Registro.setVisible(true);
-                    view.siRegistro.setVisible(true);
-                    view.noRegistro.setVisible(true);
+        this.view.verInstitucion.addActionListener(this);
+        this.view.siCheckBox.addActionListener(e -> {
+            if (view.siCheckBox.isSelected()) {
+                view.Registro.setVisible(true);
+                view.siRegistro.setVisible(true);
+                view.noRegistro.setVisible(true);
+                view.noCalculo.setEnabled(false);
 
-                }
-                if (!view.siCheckBox.isSelected()) {
-                    view.Registro.setVisible(false);
-                    view.siRegistro.setVisible(false);
-                    view.noRegistro.setVisible(false);
-                }
+            }
+            if (!view.siCheckBox.isSelected()) {
+                view.Registro.setVisible(false);
+                view.siRegistro.setVisible(false);
+                view.noRegistro.setVisible(false);
+                view.noCalculo.setEnabled(true);
+
             }
         });
-        this.view.siRegistro.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.siRegistro.isSelected()) {
-                    view.hayNucleo.setVisible(true);
-                    view.comboNucleo.setVisible(true);
-                    view.noRegistro.setEnabled(false);
-                    view.nucleo.setVisible(false);
-                    view.Nucleo.setVisible(false);
-                    view.actualizarButton.setVisible(false);
+        this.view.siRegistro.addActionListener(e -> {
+            if (view.siRegistro.isSelected()) {
+                view.noCalculo.setEnabled(false);
+                view.hayNucleo.setVisible(true);
+                view.comboNucleo.setVisible(true);
+                view.noRegistro.setEnabled(false);
+                view.nucleo.setVisible(false);
+                view.Nucleo.setVisible(false);
+                view.actualizarButton.setVisible(false);
 
-                }
-                if (!view.siRegistro.isSelected()) {
-                    view.hayNucleo.setVisible(false);
-                    view.comboNucleo.setVisible(false);
-                    view.noRegistro.setEnabled(true);
-                    view.nucleo.setVisible(true);
-                    view.Nucleo.setVisible(true);
-                    view.actualizarButton.setVisible(true);
-                }
             }
-
+            if(!view.siRegistro.isSelected()){
+                view.noCalculo.setEnabled(true);
+                view.hayNucleo.setVisible(false);
+                view.comboNucleo.setVisible(false);
+                view.noRegistro.setEnabled(true);
+            }
         });
-        this.view.noRegistro.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.noRegistro.isSelected()) {
-                    Conexion conn = new Conexion();
-                    NucleoView nucleoView = new NucleoView();
-                    Nucleo nucleo = new Nucleo();
-                    ConsultaNucleo consultaNucleo = new ConsultaNucleo(conn);
+        this.view.noRegistro.addActionListener(e -> {
+            if (view.noRegistro.isSelected()) {
+                view.hayNucleo.setVisible(false);
+                view.comboNucleo.setVisible(false);
+                view.siRegistro.setEnabled(false);
+                view.noRegistro.setEnabled(true);
+                view.nucleo.setVisible(true);
+                view.Nucleo.setVisible(true);
+                view.actualizarButton.setVisible(true);
+                Conexion conn = new Conexion();
+                NucleoView nucleoView = new NucleoView();
+                Nucleo nucleo = new Nucleo();
+                ConsultaNucleo consultaNucleo = new ConsultaNucleo(conn);
+                if(modUser.getTipoUsuario().equals("Superadmin")){
+                    municipio.setNombreM(view.municipio.getSelectedItem().toString());
+                    institucionModelo.setNombreInstitucion(view.comboInstitucion.getSelectedItem().toString());
                     ControladorNucleo controladorNucleo = new ControladorNucleo(nucleoView, consultaNucleo, municipio, institucionModelo, nucleo);
                     controladorNucleo.establecerDatos(institucionModelo.getNombreInstitucion(), municipio.getNombreM());
                     controladorNucleo.inicio();
+                }else{
+                    ControladorNucleo controladorNucleo = new ControladorNucleo(nucleoView, consultaNucleo, municipio, institucionModelo, nucleo);
+                    controladorNucleo.establecerDatos(institucionModelo.getNombreInstitucion(), municipio.getNombreM());
+                    controladorNucleo.inicio();
+                }
 
 
-                }
-                if (!view.noRegistro.isSelected()) {
-                    view.Nucleo.setVisible(false);
-                    view.nucleo.setVisible(false);
-                    view.siRegistro.setEnabled(true);
-                }
+
+            }
+            if(!view.noRegistro.isSelected()){
+                view.siRegistro.setEnabled(true);
+                view.actualizarButton.setVisible(false);
+                view.nucleo.setVisible(false);
+                view.Nucleo.setVisible(false);
+            }
+        });
+        this.view.noCalculo.addActionListener(e -> {
+            if(view.noCalculo.isSelected()){
+                view.siCheckBox.setEnabled(false);
+
+            }if(!view.noCalculo.isSelected()){
+                view.siCheckBox.setEnabled(true);
+
+            }
+        });
+        this.view.noCalculo.addActionListener(this::actionPerformed);
+        this.view.comboInstitucion.addActionListener(e -> {
+            if (view.comboInstitucion.getItemCount() > 0) {
+                view.municipio.removeAllItems(); // Limpiar el combo de municipio
+                llenarComoboMunicipio(); // Cargar el municipio
             }
         });
 
@@ -125,6 +151,8 @@ public class CalcularControlador implements ActionListener {
                view.Graficos.add(GraficoPrincipal);
                view.Graficos.add(GraficosCompararInstitucion);
                view.Graficos.add(GraficoHistorico);
+               view.comboInstitucion.setVisible(false);
+               view.municipio.setVisible(false);
                cargarNucleosExistentes();
                cargarInstitucion();
                cargarFuentesPorNombre();
@@ -132,28 +160,34 @@ public class CalcularControlador implements ActionListener {
                view.sede.setText(municipio.getNombreM());
                view.setTitle("Calcular Emision");
                view.setLocationRelativeTo(null);
-               GraficoPrincipal.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaGraficoPrincipal();
-                   }
-               });
-               GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaCompararInstituciones();
-                   }
-               });
-               GraficoHistorico.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaGraficoHistorico();
-
-                   }
-
-               });
+               view.verInstitucion.setVisible(false);
+               GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+               GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+               GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
                 break;
-           case "SuperAdmin":
+           case "Superadmin":
+               view.Graficos.add(GraficoPrincipal);
+               view.Graficos.add(GraficosCompararInstitucion);
+               view.Graficos.add(GraficoHistorico);
+               view.Institucion.setVisible(false);
+               view.sede.setVisible(false);
+               llenarComboInstitucion();
+               cargarNucleosExistentes();
+               cargarFuentesPorNombre();
+               calcular();
+               view.sede.setText(municipio.getNombreM());
+               view.setTitle("Calcular Emision");
+               view.setLocationRelativeTo(null);
+               GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+               GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+               GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
+               break;
+           case "Invitado":
+               view.RegistrarInstitucion.setVisible(false);
+               view.VerPerfiles.setVisible(false);
+               view.RegistrarEmision.setVisible(false);
+               view.Calcular.setVisible(false);
+               view.verInstitucion.setVisible(false);
                view.Graficos.add(GraficoPrincipal);
                view.Graficos.add(GraficosCompararInstitucion);
                view.Graficos.add(GraficoHistorico);
@@ -164,26 +198,9 @@ public class CalcularControlador implements ActionListener {
                view.sede.setText(municipio.getNombreM());
                view.setTitle("Calcular Emision");
                view.setLocationRelativeTo(null);
-               GraficoPrincipal.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaGraficoPrincipal();
-                   }
-               });
-               GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaCompararInstituciones();
-                   }
-               });
-               GraficoHistorico.addActionListener(new ActionListener() {
-                   @Override
-                   public void actionPerformed(ActionEvent e) {
-                       vistaGraficoHistorico();
-
-                   }
-
-               });
+               GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+               GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+               GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
                break;
            default:
                JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
@@ -308,7 +325,7 @@ public class CalcularControlador implements ActionListener {
         if (e.getSource() == view.perfil) {
             vistaPerfil();
         }
-        if (e.getSource() == view.RegistrarEmisión) {
+        if (e.getSource() == view.RegistrarEmision) {
             vistaRegistrarEmision();
         }
         if (e.getSource() == view.Informes) {
@@ -325,6 +342,9 @@ public class CalcularControlador implements ActionListener {
         }
         if (e.getSource() == view.actualizarButton) {
             actualizarButton();
+        }
+        if(e.getSource() == view.verInstitucion){
+            vistaVerInstitucion();
         }
     }
 
@@ -379,20 +399,41 @@ public class CalcularControlador implements ActionListener {
             // Obtener los datos de la última fila
             String cargaAmbientalStr = model.getValueAt(lastRow, 3).toString();
             String resultadoStr = model.getValueAt(lastRow, 6).toString();
-            if (!cargaAmbientalStr.isEmpty() && !resultadoStr.isEmpty() && !view.siCheckBox.isSelected()) {
-                double cargaAmbiental = Double.parseDouble(cargaAmbientalStr);
-                double total1 = Double.parseDouble(resultadoStr);
-                calcularModelo.setCantidadConsumidad(cargaAmbiental);
-                calcularModelo.setTotal1(total1);
-                if (consul.registrarCargaAmbienta(calcularModelo, institucionModelo, municipio)) {
-                    JOptionPane.showMessageDialog(null, "Registro guardado");
-                    view.fuente.setEnabled(true);
-                    view.anio.setEditable(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error al guardar el registro");
-                }
+            if(modUser.getTipoUsuario().equals("Superadmin")){
+                if (!cargaAmbientalStr.isEmpty() && !resultadoStr.isEmpty() && view.noCalculo.isSelected()) {
+                    double cargaAmbiental = Double.parseDouble(cargaAmbientalStr);
+                    System.out.println(modUser.getTipoUsuario()+ " boton guardar");
+                    double total1 = Double.parseDouble(resultadoStr);
+                    calcularModelo.setCantidadConsumidad(cargaAmbiental);
+                    calcularModelo.setTotal1(total1);
+                    institucionModelo.setNombreInstitucion(view.comboInstitucion.getSelectedItem().toString());
+                    municipio.setNombreM(view.municipio.getSelectedItem().toString());
+                    if (consul.registrarCargaAmbientaInstitucionSinNucleo(calcularModelo, institucionModelo, municipio)) {
+                        JOptionPane.showMessageDialog(null, "Registro guardado");
+                        view.fuente.setEnabled(true);
+                        view.anio.setEditable(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al guardar el registro");
+                    }
 
+                }
+            }else{
+                if (!cargaAmbientalStr.isEmpty() && !resultadoStr.isEmpty() && view.noCalculo.isSelected()) {
+                    double cargaAmbiental = Double.parseDouble(cargaAmbientalStr);
+                    double total1 = Double.parseDouble(resultadoStr);
+                    calcularModelo.setCantidadConsumidad(cargaAmbiental);
+                    calcularModelo.setTotal1(total1);
+                    if (consul.registrarCargaAmbientaInstitucionSinNucleo(calcularModelo, institucionModelo, municipio)) {
+                        JOptionPane.showMessageDialog(null, "Registro guardado");
+                        view.fuente.setEnabled(true);
+                        view.anio.setEditable(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al guardar el registro");
+                    }
+
+                }
             }
+
             if (view.siCheckBox.isSelected() && view.noRegistro.isSelected()) {
                 Conexion conn = new Conexion();
                 ConsultaNucleo consultaNucleo = new ConsultaNucleo(conn);
@@ -402,7 +443,7 @@ public class CalcularControlador implements ActionListener {
                 calcularModelo.setCantidadConsumidad(cargaAmbiental);
                 calcularModelo.setTotal1(total1);
                 nucleo.setNombreNucleo(view.nucleo.getText());
-                if (consultaNucleo.InsertarCalculoConNucleo(calcularModelo, nucleo)) {
+                if (consultaNucleo.InsertarCalculoConNucleo (calcularModelo, nucleo)) {
                     JOptionPane.showMessageDialog(null, "Se registro el calculo para el nucleo " + nucleo.getNombreNucleo() +
                             " fue exitosa");
                     view.fuente.setEnabled(true);
@@ -420,7 +461,7 @@ public class CalcularControlador implements ActionListener {
                 double total1 = Double.parseDouble(resultadoStr);
                 calcularModelo.setCantidadConsumidad(cargaAmbiental);
                 calcularModelo.setTotal1(total1);
-                nucleo.setNombreNucleo(view.comboNucleo.getSelectedItem().toString());
+                nucleo.setNombreNucleo(Objects.requireNonNull(view.comboNucleo.getSelectedItem()).toString());
                 if (consultaNucleo.InsertarCalculoConNucleo(calcularModelo, nucleo)) {
                     JOptionPane.showMessageDialog(null, "Se registro el calculo para el nucleo " + nucleo.getNombreNucleo() +
                             " fue exitosa");
@@ -522,7 +563,7 @@ public class CalcularControlador implements ActionListener {
 
     public void vistaActualizarInstitucion() {
         ConsultasInstitucion consul = new ConsultasInstitucion();
-        RegistrarInstitucion view2 = new RegistrarInstitucion();
+        VerDatosInstitucion view2 = new VerDatosInstitucion();
         InstitucionModelo mod = new InstitucionModelo();
         InstitucionControlador control = new InstitucionControlador(institucionModelo, municipio, view2, consul, mod, modUser);
         view2.setVisible(true);
@@ -549,40 +590,85 @@ public class CalcularControlador implements ActionListener {
         view.nucleo.setText(consultaNucleo.UltimoRegistro());
     }
 
-    private void cargarNucleosExistentes(){
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
+    public void cargarNucleosExistentes() {
+        // Limpiamos el combo box antes de cargar los nuevos valores
         view.comboNucleo.removeAllItems();
         view.comboNucleo.addItem(" ");
+        Conexion conexion = new Conexion();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
+        // Obtenemos el nombre de la institución desde el modelo
         String nombreInstitucion = institucionModelo.getNombreInstitucion();
-        System.out.println(nombreInstitucion);
-        try{
-            if(conn!= null){
-                String procedureCall = "Select NombreNucleo from emisionnucleo en inner join nucleoinstitucion ni on en.IdNucleo = ni.IdNucleo inner join institucion i on ni.idInstitucion = i.idInstitucionAuto where i.NombreInstitucion = ? group by NombreNucleo";
-                try(CallableStatement statement = conn.prepareCall(procedureCall)) {
-                    statement.setString(1, nombreInstitucion);
-                    ResultSet rs = statement.executeQuery();
-                    while(rs.next()){
-                        String nombreNucleo = rs.getString("NombreNucleo");
-                        view.comboNucleo.addItem(nombreNucleo);
-                    }
-                }
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }finally {
-            // Asegúrate de cerrar la conexión
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+        // Llamamos al modelo para cargar los núcleos
+        List<String> nucleos = consultaNucleo.cargarNucleos(nombreInstitucion);
+
+        // Agregamos los núcleos al combo box
+        for (String nucleo : nucleos) {
+            view.comboNucleo.addItem(nucleo);
         }
+
+        // Manejo de errores si ocurre algún problema en la consulta
 
     }
 
+    private void vistaVerInstitucion(){
+        Conexion con = new Conexion();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        InstitucionModelo institucionModelo = new InstitucionModelo();
+        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion,consultaNucleo,
+                institucionModelo,verInstituciones,modUser,municipio);
+        contraladorVerInstituciones.iniciar();
+        //view.dispose();
+    }
+
+    private void llenarComboInstitucion(){
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        // Obtener la lista de instituciones desde el Modelo
+        List<String> instituciones = consultasInstitucion.obtenerInstituciones();
+
+        // Limpiar el comboBox y agregar un item vacío
+        view.comboInstitucion.removeAllItems();
+        view.comboInstitucion.addItem("");  // Añadimos un item vacío como indicativo
+
+        // Llenar el comboBox con las instituciones obtenidas del Modelo
+        for (String institucion : instituciones) {
+            view.comboInstitucion.addItem(institucion);
+        }
+
+        // Si el comboBox tiene elementos, seleccionamos el primero
+        if (view.comboInstitucion.getItemCount() > 0) {
+            view.comboInstitucion.setSelectedIndex(0); // Seleccionamos el primer elemento
+        }
+    }
+
+    private void llenarComoboMunicipio(){
+        // Obtener la institución seleccionada desde la vista
+        String nombreInstitucion = (String) view.comboInstitucion.getSelectedItem();
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+
+        // Verificar que la institución no esté vacía
+        if (nombreInstitucion != null && !nombreInstitucion.isEmpty()) {
+            // Obtener la lista de municipios desde el Modelo
+            List<String> municipios = consultasInstitucion.obtenerMunicipios(nombreInstitucion);
+
+            // Limpiar el JComboBox de municipios y agregar un item vacío
+            view.municipio.removeAllItems();
+            view.municipio.addItem("");  // Añadir un item vacío como indicativo
+
+            // Llenar el JComboBox con los municipios obtenidos del Modelo
+            for (String municipio : municipios) {
+                view.municipio.addItem(municipio);
+            }
+
+            // Si el JComboBox tiene elementos, seleccionamos el primero
+            if (view.municipio.getItemCount() > 0) {
+                view.municipio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        } else {
+            // Si la institución está vacía, limpiar el JComboBox de municipios
+            view.municipio.removeAllItems();
+        }
+    }
 
 }

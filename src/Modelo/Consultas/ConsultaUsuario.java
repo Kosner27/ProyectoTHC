@@ -42,25 +42,6 @@ public class ConsultaUsuario {
 
     }
 
-    public boolean insersartUsuarioDefault(String municipio, Usuario usuario) {
-        String sql = "call InsertarUsuarioDefault(?,?,?,?,?,?,?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getApellido());
-            ps.setString(3, usuario.getCorreo());
-            ps.setString(4, usuario.getContrasena());
-            ps.setString(5, usuario.getIdInstitucion());
-            ps.setString(6, usuario.getTipoUsuario());
-            ps.setString(7, municipio);
-            ps.execute();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-
-    }
 
     /*public int PrimerRegistro(String Institucion , String Municipio){
         String sql = "Select count(u.idUsuario) from usuario u inner join institucion i on u.idInstitucion = i.IdInstitucionAuto  inner join municipio m on i.idMunicipio = m.idMunicipio where u.Descripcion = 'Creado por Default'  and i.NombreInstitucion = ? and m.NombreMunicipio = ?";
@@ -114,7 +95,7 @@ public class ConsultaUsuario {
     public int ExisteUsuario(String usuario) {
 
         ResultSet st = null;
-        String sql = "Select count(idUsuario) from usuario where Correo = ?";
+        String sql = "Select count(idUsuario) from usuario where Correo = ? and Activo = 1 ";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, usuario);
             st = ps.executeQuery();
@@ -147,7 +128,58 @@ public class ConsultaUsuario {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("Select u.Nombre,u.Apellido,u.Correo,r.tipoUsuario,r.descripcion, i.NombreInstitucion, m.NombreMunicipio from usuario u inner join roles r on u.idRol = r.idRol inner join institucion i on i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on mi.idMuncipio = m.idMunicipio ");
+            ps = conn.prepareStatement("Select u.Nombre,u.Apellido,u.Correo,r.tipoUsuario,r.descripcion, " +
+                    "i.NombreInstitucion, m.NombreMunicipio " +
+                    "from usuario u inner join roles r on " +
+                    "u.idRol = r.idRol inner join institucion i on " +
+                    "i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi on " +
+                    "i.idInstitucionAuto = mi.IdInstitucion inner join municipio m " +
+                    "on mi.idMuncipio = m.idMunicipio where u.Activo = 1");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Usuario user = new Usuario();
+                user.setNombre(rs.getString("Nombre"));
+                user.setApellido(rs.getString("Apellido"));
+                user.setCorreo(rs.getString("Correo"));
+                user.setTipoUsuario(rs.getString("tipoUsuario"));
+                user.setDescripcion(rs.getString("descripcion"));
+                user.setNombreInstticion(rs.getString("NombreInstitucion"));
+                user.setMunicipio(rs.getString("NombreMunicipio"));
+                Datos.add(user);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+
+            }
+        }
+        return Datos;
+
+    }
+
+    public List<Usuario> datosAdministradorDeSede(String municipio, String institucion) {
+        Conexion conexion = new Conexion();
+        List<Usuario> Datos = new ArrayList<>();
+        Connection conn = conexion.getConection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("Select u.Nombre,u.Apellido,u.Correo,r.tipoUsuario,r.descripcion, " +
+                    "i.NombreInstitucion, m.NombreMunicipio " +
+                    "from usuario u inner join roles r on " +
+                    "u.idRol = r.idRol inner join institucion i on " +
+                    "i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi on " +
+                    "i.idInstitucionAuto = mi.IdInstitucion inner join municipio m " +
+                    "on mi.idMuncipio = m.idMunicipio where u.Activo = 1 and i.NombreInstitucion = ? and m.NombreMunicipio = ? " +
+                    " and r.tipoUsuario = 'Invitado'");
+            ps.setString(1,institucion);
+            ps.setString(2, municipio);
             rs = ps.executeQuery();
             while (rs.next()) {
                 Usuario user = new Usuario();
@@ -183,14 +215,25 @@ public class ConsultaUsuario {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("select u.Nombre,U.Apellido,r.tipoUsuario from usuario u inner join roles r on  u.idRol = r.idRol where Correo = ?");
+            ps = conn.prepareStatement("Select u.Nombre,u.Apellido,u.Correo,r.tipoUsuario,r.descripcion, " +
+                            "i.NombreInstitucion, m.NombreMunicipio " +
+                            "from usuario u inner join roles r on " +
+                            "u.idRol = r.idRol inner join institucion i on " +
+                            "i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi on " +
+                            "i.idInstitucionAuto = mi.IdInstitucion inner join municipio m " +
+                            "on mi.idMuncipio = m.idMunicipio " +
+                    "where Correo = ? and u.Activo = 1");
             ps.setString(1, correo);
             rs = ps.executeQuery();
             if (rs.next()) {
                 Usuario user = new Usuario();
                 user.setNombre(rs.getString("Nombre"));
                 user.setApellido(rs.getString("Apellido"));
+                user.setCorreo(rs.getString("Correo"));
                 user.setTipoUsuario(rs.getString("tipoUsuario"));
+                user.setDescripcion(rs.getString("descripcion"));
+                user.setNombreInstticion(rs.getString("NombreInstitucion"));
+                user.setMunicipio(rs.getString("NombreMunicipio"));
                 mod.add(user);
             }
         } catch (SQLException ex) {
@@ -209,7 +252,7 @@ public class ConsultaUsuario {
     }
 
     public boolean EditarPrivilegios(String correo, int privilegio) {
-        String sql = "UPDATE usuario SET idRol = ? WHERE Correo = ?";
+        String sql = "UPDATE usuario SET idRol = ? WHERE Correo = ? and Activo = 1";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, privilegio);
             ps.setString(2, correo); // Aquí se utiliza el correo proporcionado
@@ -224,8 +267,11 @@ public class ConsultaUsuario {
     public boolean LogIn(Usuario usr, InstitucionModelo ins, Municipio m) {
 
         ResultSet st = null;
-        String sql = "Select u.idUsuario, u.Correo, u.Constrasena, u.idRol, r.tipoUsuario,u.Nombre, u.Apellido,i.NombreInstitucion, m.NombreMunicipio from usuario u inner join Roles r on r.idRol = u.idRol inner join institucion i on i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi \n" +
-                "on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on m.idMunicipio = mi.idMuncipio where u.Correo = ? ";
+        String sql = "Select u.idUsuario, u.Correo, u.Constrasena, u.idRol, r.tipoUsuario,u.Nombre, u.Apellido,i.NombreInstitucion, m.NombreMunicipio " +
+                "from usuario u inner join Roles r on r.idRol = u.idRol inner join institucion i on i.idInstitucionAuto = u.idInstitucion inner join  municipioinstitiucion mi " +
+                "on i.idInstitucionAuto = mi.IdInstitucion " +
+                "inner join municipio m on m.idMunicipio = mi.idMuncipio " +
+                "where u.Correo = ? and u.Activo = 1 ";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, usr.getCorreo());
             st = ps.executeQuery();
@@ -257,7 +303,7 @@ public class ConsultaUsuario {
     }
 
     public boolean eliminarUsuario(String Correo) {
-        String sql = "Delete from usuario where Correo = ?";
+        String sql = "update usuario set Activo = 0 where Correo = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, Correo);
             ps.execute();

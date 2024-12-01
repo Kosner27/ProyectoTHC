@@ -87,86 +87,36 @@ public class EmisionControlador implements ActionListener {
         DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
         sorter = new TableRowSorter<>(tableModel);
         view.Emisiones.setRowSorter(sorter);
-        switch (user.getTipoUsuario()){
+        switch (user.getTipoUsuario()) {
             case "Administrador":
                 view.VerPerfiles.setVisible(false);
                 view.Graficos.add(GraficoPrincipal);
                 view.Graficos.add(GraficosCompararInstitucion);
                 view.Graficos.add(GraficoHistorico);
                 view.setTitle("Registrar Emision");
+                view.verInstitucion.setVisible(false);
                 view.setLocationRelativeTo(null);
-                GraficoPrincipal.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoPrincipal();
-                    }
-                });
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaCompararInstituciones();
-                    }
-                });
-                GraficoHistorico.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoHistorico();
-
-                    }
-
-                });
+                GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+                GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+                GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
                 break;
-            case "SuperAdmin":
+            case "Superadmin":
                 view.Graficos.add(GraficoPrincipal);
                 view.Graficos.add(GraficosCompararInstitucion);
                 view.Graficos.add(GraficoHistorico);
                 view.setTitle("Registrar Emision");
                 view.setLocationRelativeTo(null);
-                GraficoPrincipal.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoPrincipal();
-                    }
-                });
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaCompararInstituciones();
-                    }
-                });
-                GraficoHistorico.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoHistorico();
-
-                    }
-
-                });
+                GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+                GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+                GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
                 break;
         }
-        GraficoPrincipal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaGraficoPrincipal();
-            }
-        });
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaCompararInstituciones();
-            }
-        });
-        GraficoHistorico.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaGraficoHistorico();
-
-            }
-
-        });
+        GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+        GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+        GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -252,9 +202,15 @@ public class EmisionControlador implements ActionListener {
         if (e.getSource() == view.VerPerfiles) {
             vistaVerPerfiles();
         }
+        if(e.getSource() == view.verInstitucion){
+            vistaVerInstitucion();
+        }
+        if(e.getSource() == view.limpiarCamposButton){
+            Limpiar();
+        }
     }
 
-    public void Limpiar() {
+    private void Limpiar() {
         view.Fuente.setSelectedIndex(0);
         view.Estado.setSelectedIndex(0);
         view.Unidad.setSelectedIndex(0);
@@ -263,7 +219,7 @@ public class EmisionControlador implements ActionListener {
         view.nombre.setText(null);
     }
 
-    public void loadEmisionesExistentes(Map<String, EmisionModelo> data) {
+    private void loadEmisionesExistentes(Map<String, EmisionModelo> data) {
         DefaultTableModel tableModel = (DefaultTableModel) view.Emisiones.getModel();
         tableModel.setRowCount(0);
 
@@ -271,7 +227,7 @@ public class EmisionControlador implements ActionListener {
             Object[] rowData = {
                     dato.getTipoFuente(),
                     dato.getEstadoFuente(),
-                    dato.getNombreFuente(),
+                    dato.getNombreFuente().trim(),
                     dato.getUnidadMedidad(),
                     dato.getFactorEmision(),
                     dato.getAlcance()
@@ -290,13 +246,13 @@ public class EmisionControlador implements ActionListener {
         view.Contenedor.setVisible(true);
     }
 
-    public void BotonInicio() {
+    private void BotonInicio() {
         ControladoInicio control = new ControladoInicio(ins, user, m);
         control.inicio();
         view.dispose();
     }
 
-    public void vistaPerfil() {
+    private void vistaPerfil() {
         Conexion conn = new Conexion();
         Perfil per = new Perfil();
         ConsultaUsuario cons = new ConsultaUsuario(conn);
@@ -306,7 +262,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaCalcular() {
+    private void vistaCalcular() {
         Conexion con = new Conexion();
         Vistas.Calcular viewCal = new Calcular();
         CalcularModelo mod = new CalcularModelo();
@@ -318,7 +274,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaInforme() {
+    private void vistaInforme() {
         Conexion con = new Conexion();
         ConsultaInforme consul = new ConsultaInforme(con);
         ModeloInforme mod = new ModeloInforme();
@@ -329,7 +285,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaGraficoPrincipal() {
+    private void vistaGraficoPrincipal() {
         Conexion con = new Conexion();
         GraficoConsulta consul = new GraficoConsulta(con);
         Vistas.Graficos viewGraf = new Graficos();
@@ -341,7 +297,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaCompararInstituciones() {
+    private void vistaCompararInstituciones() {
         CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
         GraficoComparar viewGraf = new GraficoComparar();
         Conexion conn = new Conexion();
@@ -352,7 +308,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaGraficoHistorico() {
+    private void vistaGraficoHistorico() {
         Conexion con = new Conexion();
         TendenciaModelo mod = new TendenciaModelo();
         ConsultasTendencias consult = new ConsultasTendencias(con);
@@ -363,7 +319,7 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaReducir() {
+    private void vistaReducir() {
         Conexion con = new Conexion();
         Reducir2 vista = new Reducir2();
         GraficoConsulta consul = new GraficoConsulta(con);
@@ -372,10 +328,10 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void vistaActualizarInstitucion() {
+    private void vistaActualizarInstitucion() {
         Conexion con = new Conexion();
         ConsultasInstitucion consul = new ConsultasInstitucion();
-        RegistrarInstitucion view2 = new RegistrarInstitucion();
+        VerDatosInstitucion view2 = new VerDatosInstitucion();
         InstitucionModelo mod = new InstitucionModelo();
         InstitucionControlador control = new InstitucionControlador(ins, m, view2, consul, mod, user);
         view2.setVisible(true);
@@ -385,7 +341,7 @@ public class EmisionControlador implements ActionListener {
 
     }
 
-    public void vistaVerPerfiles() {
+    private void vistaVerPerfiles() {
         Conexion con = new Conexion();
         VerPerfiles verPerfiles = new VerPerfiles();
         ConsultaUsuario consul = new ConsultaUsuario(con);
@@ -395,11 +351,23 @@ public class EmisionControlador implements ActionListener {
         view.dispose();
     }
 
-    public void Buscar() {
+    private void vistaVerInstitucion() {
+        Conexion con = new Conexion();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        InstitucionModelo institucionModelo = new InstitucionModelo();
+        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion, consultaNucleo,
+                institucionModelo, verInstituciones, user, m);
+        contraladorVerInstituciones.iniciar();
+        //view.dispose();
+    }
+
+    private void Buscar() {
         String nombre = view.nombre.getText();
         if (!nombre.isEmpty()) {
             List<EmisionModelo> dato = consul.buscarEmision(nombre);
-
+            System.out.println(nombre);
             for (EmisionModelo a : dato) {
                 view.Alcance.setSelectedItem(a.getAlcance());
                 view.Fuente.setSelectedItem(a.getTipoFuente());
@@ -409,10 +377,12 @@ public class EmisionControlador implements ActionListener {
                 view.Factor.setText(a.getFactorEmision().toString());
             }
 
+        }else{
+            JOptionPane.showMessageDialog(view, "Para buscar por favor llene el campo del nombre de emisión");
         }
     }
 
-    public void desactivarCampos() {
+    private void desactivarCampos() {
         view.Alcance.setEnabled(false);
         view.Fuente.setEnabled(false);
         view.Estado.setEnabled(false);
@@ -421,11 +391,12 @@ public class EmisionControlador implements ActionListener {
 
     }
 
-    public void guardarCambios() {
+    private void guardarCambios() {
         Double facto = Double.parseDouble(view.Factor.getText());
 
         if (!facto.isNaN()) {
-            if (consul.ActualizarFactoreEmision(view.nombre.getText(), facto)) {
+            String a =view.nombre.getText();
+            if (consul.ActualizarFactoreEmision(a.trim(), facto)) {
                 JOptionPane.showMessageDialog(null, "Registro Actualizado");
                 Limpiar();
             } else {
@@ -436,7 +407,7 @@ public class EmisionControlador implements ActionListener {
         }
     }
 
-    public void eliminar() {
+    private void eliminar() {
         String nombre = view.nombre.getText();
         if (!nombre.isEmpty()) {
             if (consul.eliminarFuente(nombre)) {
@@ -449,7 +420,7 @@ public class EmisionControlador implements ActionListener {
         }
     }
 
-    public void startPolling() {
+    private void startPolling() {
         timer = new Timer(5000, new ActionListener() { // Intervalo de 5 segundos
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -499,18 +470,18 @@ public class EmisionControlador implements ActionListener {
     }
 
     public void Listeners() {
-        this.view.guardarButton.addActionListener(this::actionPerformed);
-        this.view.inicioButton.addActionListener(this::actionPerformed);
-        this.view.buscarButton.addActionListener(this::actionPerformed);
-        this.view.editar.addActionListener(this::actionPerformed);
-        this.view.eliminarButton1.addActionListener(this::actionPerformed);
-        this.view.perfil.addActionListener(this::actionPerformed);
-        this.view.Calcular.addActionListener(this::actionPerformed);
-        this.view.Informes.addActionListener(this::actionPerformed);
-        this.view.guardarCambiosButton.addActionListener(this::actionPerformed);
-        this.view.Reducir.addActionListener(this::actionPerformed);
-        this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
-        this.view.VerPerfiles.addActionListener(this::actionPerformed);
+        this.view.guardarButton.addActionListener(this);
+        this.view.inicioButton.addActionListener(this);
+        this.view.buscarButton.addActionListener(this);
+        this.view.editar.addActionListener(this);
+        this.view.eliminarButton1.addActionListener(this);
+        this.view.perfil.addActionListener(this);
+        this.view.Calcular.addActionListener(this);
+        this.view.Informes.addActionListener(this);
+        this.view.guardarCambiosButton.addActionListener(this);
+        this.view.Reducir.addActionListener(this);
+        this.view.RegistrarInstitucion.addActionListener(this);
+        this.view.VerPerfiles.addActionListener(this);
         view.Fuente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -551,7 +522,9 @@ public class EmisionControlador implements ActionListener {
                 actualizar2();
             }
         });
-
+        this.view.VerPerfiles.addActionListener(this);
+        this.view.verInstitucion.addActionListener(this);
+        this.view.limpiarCamposButton.addActionListener(this);
     }
 
 

@@ -10,11 +10,11 @@ public class Loader extends JFrame {
     public Loader() {
         setUndecorated(true);
         setVisible(true);
-        setSize(600, 500);
+        setSize(400, 400);
         setLocationRelativeTo(null);
 
 
-        panel1.setOpaque(false);
+        panel1.setOpaque(true);
 
         setContentPane(panel1);
         ProgreBar();
@@ -24,7 +24,7 @@ public class Loader extends JFrame {
 
     }
     private void ProgreBar(){
-        Timer mTimer = new Timer(43, (ActionEvent e )->{
+        Timer mTimer = new Timer(43, (ActionEvent _)->{
 
             loader.setValue(loader.getValue()+1);
             loader.setStringPainted(true);

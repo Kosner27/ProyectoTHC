@@ -65,7 +65,9 @@ public class RecuperadorControlador {
         }
         }if(e.getSource()==contrasena.inicoButton){
             Main vista = new Main();
-            vista.setVisible(true);
+            Usuario user = new Usuario();
+            ControladorMain controladorMain = new ControladorMain(vista, user);
+            controladorMain.Iniciar();
             contrasena.dispose();
         }
     }

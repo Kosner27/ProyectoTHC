@@ -4,13 +4,13 @@ package Modelo.Consultas;
 import Modelo.Conexion;
 import Modelo.modelo.GraficoCompararModelo;
 import Modelo.modelo.InstitucionModelo;
+import Modelo.modelo.Nucleo;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GraficoCompararConsultas {
     private Connection conn;
@@ -24,7 +24,11 @@ public class GraficoCompararConsultas {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("Select * from institucion i inner join  municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join  municipio m on mi.idMuncipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+            ps = conn.prepareStatement("Select * from institucion i inner join  " +
+                    "municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join " +
+                    " municipio m on mi.idMuncipio = m.idMunicipio inner join " +
+                    "Departamento d on m.idDepartamento = d.idDepartamento " +
+                    "where m.NombreMunicipio = ? and i.NombreInstitucion = ? ");
             ps.setString(1, nombreMunicipio);
             ps.setString(2, NombreSeleccionado);
             rs = ps.executeQuery();
@@ -52,31 +56,142 @@ public class GraficoCompararConsultas {
         return Comparar;
 
     }
-
-    public List<GraficoCompararModelo> LlenarGrafico(String Instituciones, String anio, String alcance) {
-        List<GraficoCompararModelo> resultados = new ArrayList<>();
-        PreparedStatement ps;
-        ResultSet rs;
+    public List<Nucleo> llenarTablaConNucleo(String NombreSeleccionado, String municipio , String Nucleo) {
+        List<Nucleo> Comparar = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            String sql = "{CALL CompararEmisionesInstituciones(?, ?, ?)}";
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, Instituciones);
-            ps.setInt(2, Integer.parseInt(anio));
-            ps.setString(3, alcance);
+            ps = conn.prepareStatement("Select n.NombreNucleo,  i.NombreInstitucion, i.Nit, m.NombreMunicipio, d.NombreDepartamento\n" +
+                    " from nucleoinstitucion n\n" +
+                    "INNER JOIN institucion i ON i.idInstitucionAuto = n.idInstitucion\n" +
+                    "inner join municipioinstitiucion mi on mi.IdInstitucion= i.idInstitucionAuto\n" +
+                    "inner join municipio m on m.idMunicipio = mi.idMuncipio\n" +
+                    "inner join Departamento d on d.idDepartamento=m.idDepartamento\n" +
+                    "where i.NombreInstitucion = ? and n.NombreNucleo = ? and m.NombreMunicipio = ?;");
+            ps.setString(1, NombreSeleccionado);
+            ps.setString(2, Nucleo);
+            ps.setString(3,municipio);
             rs = ps.executeQuery();
 
+            while (rs.next()) {
+                Nucleo dato = new Nucleo();
+                dato.setNombreNucleo(rs.getString("NombreNucleo"));
+                dato.setNombreIns(rs.getString("NombreInstitucion"));
+                dato.setIdInstitucion(rs.getString("Nit"));
+                dato.setMunicipio(rs.getString("NombreMunicipio"));
+                dato.setDepartamento(rs.getString("NombreDepartamento"));
+                Comparar.add(dato);
+
+            }
+        } catch (SQLException ex) {
+            System.out.printf(ex.getMessage());
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return Comparar;
+
+    }
+
+    public List<GraficoCompararModelo> LlenarGrafico(String instituciones, String anio, String alcance, String campus) {
+        List<GraficoCompararModelo> resultados = new ArrayList<>();
+        CallableStatement cs = null;
+        ResultSet rs = null;
+
+        try {
+            // Validar parámetros
+            if (instituciones == null || instituciones.trim().isEmpty()) {
+                throw new IllegalArgumentException("El parámetro instituciones no puede estar vacío.");
+            }
+            if (anio == null || anio.trim().isEmpty() || !anio.matches("\\d+")) {
+                throw new IllegalArgumentException("El parámetro anio debe ser un número válido.");
+            }
+            if (alcance == null || alcance.trim().isEmpty()) {
+                throw new IllegalArgumentException("El parámetro alcance no puede estar vacío.");
+            }
+
+            // Formatear los parámetros (manejo de listas)
+            String formattedInstituciones = formatValues(instituciones);
+
+            // Verificar si campus es null, vacío o específico, en cuyo caso no debe ser enviado como NULL
+            String formattedCampus = null;
+            if (campus != null && !campus.trim().isEmpty()) {
+                if ("Sumatoria de todos los nucleos registrados".equalsIgnoreCase(campus)) {
+                    formattedCampus = "Sumatoria de todos los nucleos registrados";  // Valor específico
+                } else {
+                    formattedCampus = formatValues(campus);  // Formato de valores si es una lista
+                }
+            }
+
+            // Preparar la llamada al procedimiento almacenado
+            String sql = "{CALL CompararEmisionesInstituciones(?, ?, ?, ?)}";
+            cs = conn.prepareCall(sql);
+
+            // Establecer los parámetros
+            cs.setString(1, formattedInstituciones); // Instituciones
+            cs.setInt(2, Integer.parseInt(anio));    // Año
+            cs.setString(3, alcance);               // Alcance
+
+            // Configurar el parámetro de campus
+            if (formattedCampus == null) {
+                cs.setNull(4, Types.VARCHAR);       // NULL indica que no se aplica filtro de campus
+            } else {
+                cs.setString(4, formattedCampus);   // Filtro por campus específico
+            }
+
+            // Logs de depuración
+            System.out.println("Llamando al procedimiento con:");
+            System.out.println("Instituciones: " + formattedInstituciones);
+            System.out.println("Año: " + anio);
+            System.out.println("Alcance: " + alcance);
+            System.out.println("Campus (enviado): " + (formattedCampus != null ? formattedCampus : "NULL"));
+
+            // Ejecutar la consulta
+            rs = cs.executeQuery();
+
+            // Procesar resultados
             while (rs.next()) {
                 GraficoCompararModelo dato = new GraficoCompararModelo();
                 dato.setAlcance(rs.getString("Alcance"));
                 dato.setNombrefuente(rs.getString("NombreFuente"));
                 dato.setNombreInstitucion(rs.getString("NombreInstitucion"));
                 dato.setTotal(rs.getDouble("Co2Aportado"));
+                dato.setNucleo(rs.getString("Nucleo")); // Lista de núcleos
                 resultados.add(dato);
             }
 
         } catch (SQLException ex) {
-            System.out.println("Error al ejecutar procedimiento almacenado: " + ex.getMessage());
+            System.err.println("Error al ejecutar procedimiento almacenado: " + ex.getMessage());
+            ex.printStackTrace();
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Error en los parámetros: " + ex.getMessage());
+        } finally {
+            // Liberar recursos
+            try {
+                if (rs != null) rs.close();
+                if (cs != null) cs.close();
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar recursos: " + e.getMessage());
+            }
         }
+
         return resultados;
     }
+
+    // Método para formatear valores de cadenas (ejemplo: 'valor1','valor2')
+    private String formatValues(String values) {
+        return Arrays.stream(values.split(","))
+                .map(String::trim) // Eliminar espacios en blanco
+                .map(value -> "'" + value.replace("'", "") + "'") // Envolver en comillas simples, eliminando duplicadas
+                .collect(Collectors.joining(","));
+    }
+
+
 }
+
+

@@ -47,10 +47,16 @@ public class CalcularConsultas {
         return emisiones;
     }
 
-    public boolean registrarCargaAmbienta(CalcularModelo mod, InstitucionModelo nombreInstitucion,  Municipio nombreMunicipio) {
+    public boolean registrarCargaAmbientaInstitucionSinNucleo(CalcularModelo mod, InstitucionModelo nombreInstitucion,  Municipio nombreMunicipio) {
         PreparedStatement ps = null;
         try {
-            ps = conn.prepareStatement("CALL insertarEmisionInstitucion(?,?,?,?,?,?)");
+            System.out.println("Año Base: " + mod.getAnioBase());
+            System.out.println("Cantidad Consumida: " + mod.getCantidadConsumidad());
+            System.out.println("Nombre Institución: " + nombreInstitucion.getNombreInstitucion());
+            System.out.println("Nombre Fuente: " + mod.getNombreFuente());
+            System.out.println("Total 1: " + mod.getTotal1());
+            System.out.println("Nombre Municipio: " + nombreMunicipio.getNombreM());
+            ps = conn.prepareStatement("CALL insertarCalculoSinNucleo(?,?,?,?,?,?)");
             ps.setInt(1, mod.getAnioBase());
             ps.setDouble(2, mod.getCantidadConsumidad());
             ps.setString(3, nombreInstitucion.getNombreInstitucion());

@@ -7,7 +7,7 @@ import java.awt.*;
 public class Calcular extends JFrame{
     public JPanel PanelMain;
     public JMenuItem RegistrarInstitucion;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Informes;
     public JMenuItem Graficos;
     public JMenuItem Reducir;
@@ -37,6 +37,10 @@ public class Calcular extends JFrame{
     public JLabel Registro;
     public JLabel hayNucleo;
     public JButton actualizarButton;
+    public JCheckBox noCalculo;
+    public JMenuItem verInstitucion;
+    public JComboBox comboInstitucion;
+    public JComboBox municipio;
 
 
     public Calcular(){

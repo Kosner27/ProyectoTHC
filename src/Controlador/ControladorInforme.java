@@ -43,7 +43,6 @@ public class ControladorInforme {
         this.ins = ins;
         this.modUser = modUse;
         Listeners();
-
     }
 
 
@@ -59,17 +58,36 @@ public class ControladorInforme {
                 cargarInstitucion();
                 cargarAnioBase();
                 cargarMunicipio();
-                System.out.println("Estoy en docente");
                 view.setTitle("Informe");
                 view.setLocationRelativeTo(null);
                 view.Emisiones.setRowSorter(sorter);
                 view.setVisible(true);
                 view.VerPerfiles.setVisible(false);
+                view.verInstitucion.setVisible(false);
                 view.setLocationRelativeTo(null);
                 break;
-            case "SuperAdmin":
+
+            case "Superadmin":
                 view.setTitle("Informe");
                 view.setLocationRelativeTo(null);
+                cargarInstitucion();
+
+                cargarAnioBase();
+                cargarMunicipio();
+                cargarNucleosExistentes();
+                sorter = new TableRowSorter<>(tableModel);
+                view.Emisiones.setRowSorter(sorter);
+                break;
+            case "Invitado":
+                view.setTitle("Informe");
+                view.verInstitucion.setVisible(false);
+                view.RegistrarInstitucion.setVisible(false);
+                view.VerPerfiles.setVisible(false);
+                view.RegistrarEmision.setVisible(false);
+                view.Calcular.setVisible(false);
+                view.perfil.setVisible(true);
+                view.setLocationRelativeTo(null);
+                view.setVisible(true);
                 cargarInstitucion();
                 cargarAnioBase();
                 cargarMunicipio();
@@ -79,46 +97,30 @@ public class ControladorInforme {
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
-                break;
+
 
         }
-        GraficoPrincipal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaGraficoPrincipal();
-            }
-        });
-        GraficosCompararInstitucion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaCompararInstituciones();
-            }
-        });
-        GraficoHistorico.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                vistaGraficoHistorico();
-
-            }
-
-        });
+        GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
+        GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
+        GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
 
     }
 
     private void actionPerformed(ActionEvent e) {
         if (e.getSource() == view.buscarButton) {
-            if (view.noCheckBox.isSelected()) {
+
+            if (!view.comboNucleo.isVisible()) {
                 LlenarTablaSinNucleo();
             }
-            if (view.siCheckBox.isSelected()) {
+            if (view.comboNucleo.isVisible()) {
                 LlenarTablaConNucleo();
             }
         }
         if (e.getSource() == view.descargarButton) {
-            if (view.noCheckBox.isSelected()) {
+            if (!view.comboNucleo.isVisible()) {
                 LlenarDocumentoSinNucleo();
             }
-            if (view.siCheckBox.isSelected()) {
+            if (view.comboNucleo.isVisible()) {
                 LlenarDocumentoConNucleo();
             }
         }
@@ -128,7 +130,7 @@ public class ControladorInforme {
         if (e.getSource() == view.perfil) {
             vistaPerfil();
         }
-        if (e.getSource() == view.RegistrarEmisión) {
+        if (e.getSource() == view.RegistrarEmision) {
             vistaRegistrarEmision();
         }
         if (e.getSource() == view.Calcular) {
@@ -143,8 +145,12 @@ public class ControladorInforme {
         if (e.getSource() == view.VerPerfiles) {
             vistaVerPerfiles();
         }
+        if (e.getSource() == view.verInstitucion) {
+            vistaVerInstitucion();
+        }
     }
-    private void LlenarDocumentoSinNucleo(){
+
+    private void LlenarDocumentoSinNucleo() {
         String Nombre = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         String Institucion = String.valueOf(view.institucion.getSelectedItem());
         Document document = new Document();
@@ -250,7 +256,7 @@ public class ControladorInforme {
         }
     }
 
-    private void LlenarDocumentoConNucleo(){
+    private void LlenarDocumentoConNucleo() {
         String Nombre = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         String Institucion = String.valueOf(view.institucion.getSelectedItem());
         String nucleo = String.valueOf(view.comboNucleo.getSelectedItem());
@@ -504,187 +510,113 @@ public class ControladorInforme {
         return file;
     }
 
-    private void cargarInstitucion() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        ResultSet rs = null;
-        String sql = "CALL Seleccionarinstitucion()";
+    public void cargarInstitucion() {
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        // Obtener la lista de instituciones desde el Modelo
+        List<String> instituciones = consultasInstitucion.obtenerInstituciones();
+
+        // Limpiar el comboBox y agregar un item vacío
         view.institucion.removeAllItems();
-        if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                rs = ps.executeQuery();
-                view.institucion.removeAllItems();
-                view.institucion.addItem("");
-                while (rs.next()) {
-                    String nombre = rs.getString("NombreInstitucion");
-                    view.institucion.addItem(nombre);
-                }
-                if (view.institucion.getItemCount() > 0) {
-                    view.institucion.setSelectedIndex(0);
-                } else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox institucion está vacío");
-                }
+        view.institucion.addItem("");  // Añadimos un item vacío como indicativo
 
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        // Llenar el comboBox con las instituciones obtenidas del Modelo
+        for (String institucion : instituciones) {
+            view.institucion.addItem(institucion);
+        }
+
+        // Si el comboBox tiene elementos, seleccionamos el primero
+        if (view.institucion.getItemCount() > 0) {
+            view.institucion.setSelectedIndex(0); // Seleccionamos el primer elemento
         }
     }
 
-    private void cargarAnioBase() {
-        view.anio.removeAllItems(); // Limpiar el combo de años
-        view.anio.addItem(" "); // Agregar un texto indicativo
+    // Método para cargar los años base en el comboBox de la Vista
+    public void cargarAnioBase() {
+        // Obtener la lista de años base desde el Modelo
+        String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
+        String nombreMunicipio = String.valueOf(view.municipio.getSelectedItem());
 
-        String sql = "SELECT DISTINCT ei.anioBase FROM emisioninstitucion ei " +
-                "INNER JOIN institucion i ON ei.idInsititucion = i.idInstitucionAuto " +
-                "INNER JOIN emision e ON ei.idEmision = e.idEmision " +
-                "INNER JOIN municipioinstitiucion mi ON i.idInstitucionAuto = mi.IdInstitucion " +
-                "INNER JOIN municipio m ON mi.IdMuncipio = m.IdMunicipio " +
-                "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? " +
-                "GROUP BY ei.anioBase";
+        // Consultar los años base desde el Modelo
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        List<String> aniosBase = consultasInstitucion.obtenerAnioBase(nombreInstitucion, nombreMunicipio);
 
-        String nombre = String.valueOf(view.institucion.getSelectedItem());
-        String municipio = String.valueOf(view.municipio.getSelectedItem());
+        // Limpiar el comboBox de años y agregar un item vacío
+        view.anio.removeAllItems();
+        view.anio.addItem("");  // Añadir un item vacío como indicativo
 
-        Conexion conexion = new Conexion();
-        try (Connection conn = conexion.getConection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nombre);
-            ps.setString(2, municipio);
+        // Llenar el comboBox con los años base obtenidos del Modelo
+        for (String anio : aniosBase) {
+            view.anio.addItem(anio);
+        }
 
-            try (ResultSet st = ps.executeQuery()) {
-                while (st.next()) {
-                    String anioBase = st.getString(1);
-                    view.anio.addItem(anioBase);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        // Si el comboBox tiene elementos, seleccionamos el primero
+        if (view.anio.getItemCount() > 0) {
+            view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
         }
     }
 
-    private void cargarMunicipio() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.municipio.removeAllItems(); // Limpiar los elementos del JComboBox
-        view.municipio.addItem("");
+    public void cargarMunicipio() {
+        // Obtener la institución seleccionada desde la vista
+        String nombreInstitucion = (String) view.institucion.getSelectedItem();
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
 
-        // Obtener el departamento seleccionado directamente del JComboBox
-        String Institucion = (String) view.institucion.getSelectedItem();
+        // Verificar que la institución no esté vacía
+        if (nombreInstitucion != null && !nombreInstitucion.isEmpty()) {
+            // Obtener la lista de municipios desde el Modelo
+            List<String> municipios = consultasInstitucion.obtenerMunicipios(nombreInstitucion);
 
-        if (Institucion != null && !Institucion.isEmpty()) {
-            try {
-                // Cerrar la conexión existente antes de abrir una nueva
-                if (conn != null) {
-                    // Crear una nueva conexión para obtener los municipios del departamento seleccionado
-                    String procedureCall = "Select NombreMunicipio from municipio m inner join  municipioinstitiucion mi on mi.idMuncipio= m.idMunicipio  inner join institucion i on  i.idInstitucionAuto = mi.IdInstitucion where i.NombreInstitucion = ?";
+            // Limpiar el JComboBox de municipios y agregar un item vacío
+            view.municipio.removeAllItems();
+            view.municipio.addItem("");  // Añadir un item vacío como indicativo
 
-                    try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                        statement.setString(1, Institucion); // Establecer el valor del parámetro
-
-                        // Ejecutar la consulta
-                        ResultSet rs = statement.executeQuery();
-
-                        // Verificar si el ResultSet está vacío
-                        if (!rs.isBeforeFirst()) {
-                            System.out.println("No se encontraron municipios para el departamento seleccionado.");
-                        } else {
-                            // Llenar el JComboBox con los municipios obtenidos de la consulta
-                            while (rs.next()) {
-                                String nombreMunicipio = rs.getString("NombreMunicipio");
-                                view.municipio.addItem(nombreMunicipio);
-                            }
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                // Asegúrate de cerrar la conexión
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
+            // Llenar el JComboBox con los municipios obtenidos del Modelo
+            for (String municipio : municipios) {
+                view.municipio.addItem(municipio);
             }
+
+            // Si el JComboBox tiene elementos, seleccionamos el primero
+            if (view.municipio.getItemCount() > 0) {
+                view.municipio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        } else {
+            // Si la institución está vacía, limpiar el JComboBox de municipios
+            view.municipio.removeAllItems();
         }
     }
 
-    private void cargarNucleosExistentes() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
+    public void cargarNucleosExistentes() {
+        // Limpiamos el combo box antes de cargar los nuevos valores
         view.comboNucleo.removeAllItems();
         view.comboNucleo.addItem(" ");
+        Conexion conexion = new Conexion();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
+        // Obtenemos el nombre de la institución desde el modelo
         String nombreInstitucion = view.institucion.getSelectedItem().toString();
-        System.out.println(nombreInstitucion);
-        try {
-            if (conn != null) {
-                String procedureCall = "Select NombreNucleo from emisionnucleo en inner join nucleoinstitucion ni on en.IdNucleo = ni.IdNucleo inner join institucion i on ni.idInstitucion = i.idInstitucionAuto where i.NombreInstitucion = ? group by NombreNucleo";
-                try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                    statement.setString(1, nombreInstitucion);
-                    ResultSet rs = statement.executeQuery();
-                    while (rs.next()) {
-                        String nombreNucleo = rs.getString("NombreNucleo");
-                        view.comboNucleo.addItem(nombreNucleo);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            // Asegúrate de cerrar la conexión
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+        // Llamamos al modelo para cargar los núcleos
+        List<String> nucleos = consultaNucleo.cargarNucleos(nombreInstitucion);
+
+        // Agregamos los núcleos al combo box
+        for (String nucleo : nucleos) {
+            view.comboNucleo.addItem(nucleo);
         }
+
+        // Manejo de errores si ocurre algún problema en la consulta
 
     }
 
     private void anioBaseNucleo() {
         view.anio.removeAllItems(); // Limpiar el combo de años
         view.anio.addItem(" "); // Agregar un texto indicativo
-
-        String sql = "SELECT anioBase " +
-                "FROM emisionnucleo en " +
-                "INNER JOIN nucleoinstitucion n ON en.IdNucleo = n.IdNucleo " +
-                "INNER JOIN emision e ON en.idEmision = e.idEmision " +
-                "INNER JOIN institucion i ON n.idInstitucion = i.IdInstitucionAuto " +
-                "INNER JOIN municipioinstitiucion mi ON i.idInstitucionAuto = mi.IdInstitucion " +
-                "INNER JOIN municipio m ON mi.IdMuncipio = m.IdMunicipio " +
-                "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? AND n.NombreNucleo = ? " +
-                "ORDER BY en.anioBase;";
-
+        Conexion conexion = new Conexion();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
         String nombre = String.valueOf(view.institucion.getSelectedItem());
         String municipio = String.valueOf(view.municipio.getSelectedItem());
         String nucleo = String.valueOf(view.comboNucleo.getSelectedItem());
-
-        Conexion conexion = new Conexion();
-        try (Connection conn = conexion.getConection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nombre);
-            ps.setString(2, municipio);
-            ps.setString(3, nucleo);
-
-            try (ResultSet st = ps.executeQuery()) {
-                while (st.next()) {
-                    String anioBase = st.getString(1);
-                    view.anio.addItem(anioBase);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<String> anioBaseNucleo = consultaNucleo.obtenerAnosBase(nombre, municipio, nucleo);
+        for (String anioBase : anioBaseNucleo) {
+            view.anio.addItem(anioBase);
         }
+
     }
 
     private void BotonInicio() {
@@ -697,7 +629,9 @@ public class ControladorInforme {
         Conexion conn = new Conexion();
         Perfil per = new Perfil();
         ConsultaUsuario cons = new ConsultaUsuario(conn);
+        System.out.println(ins.getNombreInstitucion());
         PerfilCOntrolador control = new PerfilCOntrolador(modUser, per, ins, m, cons);
+
         control.Iniciar();
         per.setVisible(true);
         view.dispose();
@@ -770,7 +704,7 @@ public class ControladorInforme {
 
     private void vistaActualizarInstitucion() {
         ConsultasInstitucion consul = new ConsultasInstitucion();
-        RegistrarInstitucion view2 = new RegistrarInstitucion();
+        VerDatosInstitucion view2 = new VerDatosInstitucion();
         InstitucionModelo mod = new InstitucionModelo();
         InstitucionControlador control = new InstitucionControlador(ins, m, view2, consul, mod, modUser);
         view2.setVisible(true);
@@ -790,85 +724,71 @@ public class ControladorInforme {
         view.dispose();
     }
 
+    private void vistaVerInstitucion() {
+        Conexion con = new Conexion();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        InstitucionModelo institucionModelo = new InstitucionModelo();
+        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion, consultaNucleo,
+                institucionModelo, verInstituciones, modUser, m);
+        contraladorVerInstituciones.iniciar();
+        //view.dispose();
+    }
+
+
     private void Listeners() {
         this.view.buscarButton.addActionListener(this::actionPerformed);
         this.view.inicioButton.addActionListener(this::actionPerformed);
         this.view.descargarButton.addActionListener(this::actionPerformed);
         this.view.perfil.addActionListener(this::actionPerformed);
-        this.view.RegistrarEmisión.addActionListener(this::actionPerformed);
+        this.view.RegistrarEmision.addActionListener(this::actionPerformed);
         this.view.Calcular.addActionListener(this::actionPerformed);
-        this.view.noCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.noCheckBox.isSelected()) {
-                    view.nucleo.setVisible(false);
-                    view.comboNucleo.setVisible(false);
-                    view.siCheckBox.setEnabled(false);
-                }
-                if (!view.noCheckBox.isSelected()) {
-                    view.siCheckBox.setEnabled(true);
-                }
+
+
+// ActionListener para el combo box de institución
+        this.view.institucion.addActionListener(e -> {
+            if (view.institucion.getItemCount() > 0) {
+                view.municipio.removeAllItems(); // Limpiar el combo de municipio
+                view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos
+                cargarMunicipio(); // Cargar municipios para la institución seleccionada
+                cargarAnioBase(); // Cargar el año base para la institución
             }
-        });
-        this.view.siCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.siCheckBox.isSelected()) {
-                    view.comboNucleo.setVisible(true);
-                    view.nucleo.setVisible(true);
-                    view.noCheckBox.setEnabled(false);
-                    cargarNucleosExistentes();
-                }
-                if (!view.siCheckBox.isSelected()) {
-                    // Si se selecciona "No", ocultar el combo box de núcleos
-                    view.nucleo.setVisible(false);
-                    view.comboNucleo.setVisible(false);
-                    view.noCheckBox.setEnabled(true);
-                }
-
-
+            Conexion conn = new Conexion();
+            ConsultaNucleo consultaNucleo;
+            consultaNucleo = new ConsultaNucleo(conn);
+            String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
+            if (consultaNucleo.TieneNucleo(nombreInstitucion) >= 1) {
+                view.nucleo.setVisible(true);
+                view.comboNucleo.setVisible(true);
+                view.anio.removeAllItems();
+            } else {
+                view.comboNucleo.setVisible(false);
+                view.nucleo.setVisible(false);
                 cargarAnioBase();
             }
         });
 
-// ActionListener para el combo box de institución
-        this.view.institucion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.institucion.getItemCount() > 0) {
-                    view.municipio.removeAllItems(); // Limpiar el combo de municipio
-                    view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos
-                    cargarMunicipio(); // Cargar municipios para la institución seleccionada
-                    cargarAnioBase(); // Cargar el año base para la institución
-                }
-            }
-        });
-
         // ActionListener para el combo box de municipio
-        this.view.municipio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.municipio.getItemCount() > 0) {
-                    view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos si está visible
-                    if (view.siCheckBox.isSelected()) {
-                        cargarNucleosExistentes(); // Cargar núcleos si el checkbox está seleccionado
-                    }
-                    cargarAnioBase(); // Cargar el año base
-                }
+        this.view.municipio.addActionListener(e -> {
+            if (view.municipio.getItemCount() > 0) {
+                view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos si está visible
+                cargarNucleosExistentes(); // Cargar núcleos si el checkbox está seleccionado
+
+                cargarAnioBase(); // Cargar el año base
             }
         });
-        this.view.comboNucleo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.comboNucleo.getItemCount() > 0) {
-                    anioBaseNucleo(); // Cargar el año base basado en la selección del núcleo
-                }
+        this.view.comboNucleo.addActionListener(e -> {
+            if (view.comboNucleo.getItemCount() > 0) {
+                anioBaseNucleo(); // Cargar el año base basado en la selección del núcleo
             }
         });
 
         this.view.Reducir.addActionListener(this::actionPerformed);
         this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
         this.view.VerPerfiles.addActionListener(this::actionPerformed);
+        this.view.verInstitucion.addActionListener(this::actionPerformed);
 
     }
+
 }

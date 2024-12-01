@@ -2,8 +2,6 @@ package Vistas;
 
 import javax.swing.*;
 
-import java.awt.*;
-
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Graficos extends JFrame {
@@ -20,7 +18,7 @@ public class Graficos extends JFrame {
     public JLabel titulo;
     public JButton Descargar;
     public JMenuItem RegistrarInstitucion;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem Reducir;
@@ -34,22 +32,18 @@ public class Graficos extends JFrame {
     public JComboBox comboxNucleo;
     public JCheckBox siGeneral;
     public JCheckBox noGeneral;
-    public JCheckBox siTieneNucleos;
     public JCheckBox noTieneNucleo;
-    public JLabel tieneNucleo;
     public JLabel Nucleo;
     public JLabel general;
     public JLabel SeleccionarNucleo;
+    public JMenuItem verInstitucion;
 
 
     public Graficos() {
-        setTitle("Graficos");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1300, 600);
+        setSize(1100, 600);
         setLocationRelativeTo(null);
-        Font font = new Font("Arial", Font.PLAIN, 14);
-        titulo.setFont(font);
         setContentPane(PanelMain);
 
 

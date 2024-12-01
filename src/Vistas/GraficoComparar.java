@@ -21,10 +21,11 @@ public class GraficoComparar extends JFrame {
     public JMenuItem MasInformacion;
     public JMenuItem perfil;
     public JMenuItem VerPerfiles;
+    public JMenuItem verInstitucion;
 
     public GraficoComparar() {
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 600);
         setLocationRelativeTo(null);
         setContentPane(PanelMain);

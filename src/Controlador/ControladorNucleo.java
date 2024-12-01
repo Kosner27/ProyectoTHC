@@ -63,6 +63,8 @@
             view.setLocationRelativeTo(null);
             view.sede.setText(m.getNombreM());
             view.nombreInstitucion.setText(institucionModelo.getNombreInstitucion());
+            view.setVisible(true);  // Esto debería hacerse solo cuando sea necesario
+
         }
 
         private void actionPerformed(ActionEvent e){
@@ -73,27 +75,29 @@
             }
         }
         public void establecerDatos(String nombreInstitucion, String nombreMunicipio) {
+            System.out.println(nombreInstitucion);
             view.nombreInstitucion.setText(nombreInstitucion);
-            view.nombreInstitucion.setEnabled(false);
+            view.nombreInstitucion.setEditable(false);
             view.sede.setText(nombreMunicipio);
-            view.sede.setEnabled(false);
+            view.sede.setEditable(false);
         }
 
         private void guardarButton (){
             String nucleo1 = view.nucleotxt.getText();
-
+            int hectares = Integer.parseInt(view.hectareas.getText());
             if(!nucleo1.isEmpty()) {
                 nucleo.setNombreNucleo(nucleo1);
+                nucleo.setHectareas(hectares);
                 if(consultaNucleo.ExisteNucleo(nucleo)<1){
-                if(consultaNucleo.RegistrarNucleo(nucleo, institucionModelo, m)) {
-                    JOptionPane.showMessageDialog(null, "El nucleo " + nucleo1 + " fue registrado correctamente");
+                if(consultaNucleo.RegistrarNucleo(nucleo, m,institucionModelo)) {
+                    JOptionPane.showMessageDialog(view, "El nucleo " + nucleo1 + " fue registrado correctamente");
                     view.dispose(); // Cerrar el formulario de núcleo
                     System.out.println(nucleo.getNombreNucleo());
                 } else {
-                    JOptionPane.showMessageDialog(null, "ERROR");
+                    JOptionPane.showMessageDialog(view, "ERROR");
                 }
                 }else{
-                    JOptionPane.showMessageDialog(null, "EL nucleo ya esta registrado en la base de datos");
+                    JOptionPane.showMessageDialog(view, "EL nucleo ya esta registrado en la base de datos");
                 }
             }
         }

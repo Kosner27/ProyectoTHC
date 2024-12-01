@@ -36,6 +36,8 @@ public class Emision extends JFrame {
     public JMenuItem RegistrarEmisión;
     public JMenuItem MasInformacion;
     public JMenuItem VerPerfiles;
+    public JMenuItem verInstitucion;
+    public JButton limpiarCamposButton;
 
 
     public Emision() {

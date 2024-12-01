@@ -19,7 +19,7 @@ public class RecordarContrasena extends JFrame{
         setTitle("Recordar Constraseña");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(800, 200);
+        setSize(800, 400);
         setLocationRelativeTo(null);
         setContentPane(main);
         verPassC.addMouseListener(new MouseAdapter() {

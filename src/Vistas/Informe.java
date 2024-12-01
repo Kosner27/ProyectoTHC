@@ -17,7 +17,7 @@ public class Informe extends JFrame {
     public JButton descargarButton;
     public JTextField total;
     public JLabel titulo;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Reducir;
     public JMenuItem perfil;
@@ -26,10 +26,9 @@ public class Informe extends JFrame {
     public JMenuItem Informes;
     public JMenuItem MasInformacion;
     public JMenuItem VerPerfiles;
-    public JCheckBox noCheckBox;
-    public JCheckBox siCheckBox;
     public JComboBox comboNucleo;
     public JLabel nucleo;
+    public JMenuItem verInstitucion;
 
 
     public Informe(){

@@ -9,6 +9,8 @@ import Vistas.RegistrarUsuario;
 import Modelo.Consultas.ConsultaUsuario;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.*;
 
 /**
@@ -18,7 +20,7 @@ public class ControladoRegistrarUsuario {
     private final Usuario mod; // Modelo de usuario
     private final RegistrarUsuario view; // Vista para registrar usuario
     private final ConsultaUsuario consul; // Consulta de usuarios
-
+    private MonitoreoInactividad monitoreo;
     /**
      * Constructor del controlador.
      * @param mod Modelo de usuario
@@ -29,11 +31,21 @@ public class ControladoRegistrarUsuario {
         this.mod = mod;
         this.view = view;
         this.consul = consul;
+        monitoreo = new MonitoreoInactividad(() -> {
+            JOptionPane.showMessageDialog(null, "Se detectó inactividad. La aplicación se cerrará.");
+            System.exit(0); // Cerrar la aplicación
+        });
         // Agrega listeners para los eventos de los componentes de la vista
         this.view.Registrar.addActionListener(this::actionPerformed);
         this.view.departamento.addActionListener(e -> cargarMunicipio());
         this.view.municipio.addActionListener(e -> cargarInstitucion());
         this.view.inicio.addActionListener(this::actionPerformed);
+        this.view.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                monitoreo.reiniciar(); // Reiniciar el tiempo de inactividad al presionar cualquier tecla
+            }
+        });
 
     }
     /**
@@ -45,6 +57,7 @@ public class ControladoRegistrarUsuario {
         CargarDepartamento();
         cargarMunicipio();
         cargarInstitucion();
+        monitoreo.iniciar();
     }
     /**
      * Maneja los eventos de los componentes de la vista.
@@ -55,9 +68,13 @@ public class ControladoRegistrarUsuario {
         if (e.getSource() == view.Registrar) {
 
             registrarUsuario();
+            monitoreo.reiniciar();
+
         }
         if (e.getSource() == view.inicio) {
           abrirInicio();
+          monitoreo.reiniciar();
+
         }
     }
     /**

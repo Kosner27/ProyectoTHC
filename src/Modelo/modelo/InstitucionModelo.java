@@ -5,9 +5,27 @@ public class InstitucionModelo {
     private String NombreInstitucion;
     private String departamento;
     private String municipio;
+    private String nucleo;
     private int hectareas;
+    private int hectareasNucleo;
 
     public InstitucionModelo() {
+    }
+
+    public String getNucleo() {
+        return nucleo;
+    }
+
+    public void setNucleo(String nucleo) {
+        this.nucleo = nucleo;
+    }
+
+    public int getHectareasNucleo() {
+        return hectareasNucleo;
+    }
+
+    public void setHectareasNucleo(int hectareasNucleo) {
+        this.hectareasNucleo = hectareasNucleo;
     }
 
     public String getNombreInstitucion() {

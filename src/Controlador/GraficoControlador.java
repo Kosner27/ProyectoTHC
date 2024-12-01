@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 
 
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.*;
 
@@ -81,12 +82,27 @@ public class GraficoControlador {
                 view.setTitle("Grafico principal");
                 view.setLocationRelativeTo(null);
                 view.setVisible(true);
-                view.VerPerfiles.setVisible(false);
+                view.VerPerfiles.setVisible(true);
+                view.verInstitucion.setVisible(false);
                 view.setLocationRelativeTo(null);
                 break;
-            case "SuperAdmin":
+            case "Superadmin":
                 view.setTitle("Grafico principal");
                 view.setLocationRelativeTo(null);
+                view.setVisible(true);
+                cargarInstitucion();
+                cargarAnioBase();
+                cargarMunicipio();
+                break;
+            case "Invitado":
+                view.RegistrarInstitucion.setVisible(false);
+                view.VerPerfiles.setVisible(false);
+                view.RegistrarEmision.setVisible(false);
+                view.Calcular.setVisible(false);
+                view.verInstitucion.setVisible(false);
+                view.perfil.setVisible(true);
+                view.setLocationRelativeTo(null);
+                view.setVisible(true);
                 cargarInstitucion();
                 cargarAnioBase();
                 cargarMunicipio();
@@ -115,9 +131,12 @@ public class GraficoControlador {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == view.buscarButton) {
-            if (view.noTieneNucleo.isSelected()) {
+            if(!view.siNucleo.isSelected() && !view.noNucleo.isSelected()){
                 graficosSinNucleo();
+
             }
+
+
             if (view.siNucleo.isSelected()) {
                 graficosConNucleo();
             }
@@ -126,12 +145,18 @@ public class GraficoControlador {
             }
         }
         if (e.getSource() == view.Descargar) {
-            if (view.siNucleo.isSelected()) {
+
+            if(view.comboxNucleo.isVisible()){
                 DescargarConNucleo();
-            }
-            if (view.noTieneNucleo.isSelected()) {
+            }if(!view.comboxNucleo.isVisible() && !view.siGeneral.isSelected()){
                 DescargasSinNucleo();
+            }if(view.siGeneral.isSelected()){
+                DescargaTodosLosNucleos();
             }
+
+
+
+
         }
         if (e.getSource() == view.inicioButton) {
             BotonInicio();
@@ -142,7 +167,7 @@ public class GraficoControlador {
         if (e.getSource() == view.Calcular) {
             vistaCalcular();
         }
-        if (e.getSource() == view.RegistrarEmisión) {
+        if (e.getSource() == view.RegistrarEmision) {
             vistaRegistrarEmision();
         }
         if (e.getSource() == view.Informes) {
@@ -157,15 +182,19 @@ public class GraficoControlador {
         if (e.getSource() == view.VerPerfiles) {
             vistaVerPerfiles();
         }
+        if(e.getSource() == view.verInstitucion){
+            vistaVerInstitucion();
+        }
     }
 
     private void graficosSinNucleo() {
         String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
-        String anioBase = String.valueOf(view.anio.getSelectedItem());
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
         String NombreMuncipio = String.valueOf(view.municipio.getSelectedItem());
-        if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty() && !NombreMuncipio.isEmpty()) {
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty() && !NombreMuncipio.isEmpty()) {
             DefaultPieDataset datosAlcance = new DefaultPieDataset();
             DefaultPieDataset datosFuente = new DefaultPieDataset();
+            int anioBase = Integer.parseInt(anioBaseString);
             List<GraficorModelo> datos = consul.GraficoPorAlcance(nombreInstitucion, anioBase, NombreMuncipio);
             List<CalcularModelo> datos2 = consul.GraficoPorFuente(nombreInstitucion, anioBase, NombreMuncipio);
             for (CalcularModelo dato : datos2) {
@@ -207,12 +236,13 @@ public class GraficoControlador {
 
     private void graficosConNucleo() {
         String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
-        String anioBase = String.valueOf(view.anio.getSelectedItem());
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
         String NombreMuncipio = String.valueOf(view.municipio.getSelectedItem());
         String nucleo = String.valueOf(view.comboxNucleo.getSelectedItem());
-        if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty() && !NombreMuncipio.isEmpty() && !nucleo.isEmpty()) {
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty() && !NombreMuncipio.isEmpty() && !nucleo.isEmpty()) {
             DefaultPieDataset datosAlcance = new DefaultPieDataset();
             DefaultPieDataset datosFuente = new DefaultPieDataset();
+            int anioBase = Integer.parseInt(anioBaseString);
             List<GraficorModelo> datos = consul.GraficoPorAlcanceNucleo(nombreInstitucion, anioBase, NombreMuncipio, nucleo);
             List<CalcularModelo> datos2 = consul.GraficoPorFuenteNucleo(nombreInstitucion, anioBase, NombreMuncipio, nucleo);
             for (CalcularModelo dato : datos2) {
@@ -250,9 +280,10 @@ public class GraficoControlador {
 
     private void graficosConNucleoSumaTodosNucleos() {
         String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
-        String anioBase = String.valueOf(view.anio.getSelectedItem());
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
         String NombreMuncipio = String.valueOf(view.municipio.getSelectedItem());
-        if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty() && !NombreMuncipio.isEmpty()) {
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty() && !NombreMuncipio.isEmpty()) {
+            int anioBase = Integer.parseInt(anioBaseString);
             DefaultPieDataset datosAlcance = new DefaultPieDataset();
             DefaultPieDataset datosFuente = new DefaultPieDataset();
             List<GraficorModelo> datos = consul.GraficoPorAlcanceNucleoSumaTodosNucleos(nombreInstitucion, anioBase, NombreMuncipio);
@@ -292,11 +323,12 @@ public class GraficoControlador {
 
     private void DescargasSinNucleo() {
         String nombreInstitucion = view.institucion.getSelectedItem().toString();
-        String anioBase = view.anio.getSelectedItem().toString();
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
         String NombreMuncipio = view.municipio.getSelectedItem().toString();
-        if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty()) {
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty()) {
             DefaultPieDataset datosAlcance = new DefaultPieDataset();
             DefaultPieDataset datosFuente = new DefaultPieDataset();
+            int anioBase = Integer.parseInt(anioBaseString);
             List<GraficorModelo> datos = consul.GraficoPorAlcance(nombreInstitucion, anioBase, NombreMuncipio);
             List<CalcularModelo> datos2 = consul.GraficoPorFuente(nombreInstitucion, anioBase, NombreMuncipio);
             for (CalcularModelo dato : datos2) {
@@ -340,10 +372,11 @@ public class GraficoControlador {
 
     private void DescargarConNucleo() {
         String nombreInstitucion = Objects.requireNonNull(view.institucion.getSelectedItem()).toString();
-        String anioBase = Objects.requireNonNull(view.anio.getSelectedItem()).toString();
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
         String NombreMuncipio = Objects.requireNonNull(view.municipio.getSelectedItem()).toString();
         String nombreN = Objects.requireNonNull(view.comboxNucleo.getSelectedItem()).toString();
-        if (!nombreInstitucion.isEmpty() && !anioBase.isEmpty() && !nombreN.isEmpty()) {
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty() && !nombreN.isEmpty()) {
+            int anioBase = Integer.parseInt(anioBaseString);
             DefaultPieDataset datosAlcance = new DefaultPieDataset();
             DefaultPieDataset datosFuente = new DefaultPieDataset();
             List<GraficorModelo> datos = consul.GraficoPorAlcanceNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
@@ -383,6 +416,58 @@ public class GraficoControlador {
                 File file = ensureUniqueFilename(c.getParentFile(), c.getName());
                 ExportarGraficos(datosAlcance, datosFuente, file);
             }
+
+        }
+    }
+
+    private void DescargaTodosLosNucleos(){
+        String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
+        String anioBaseString = String.valueOf(view.anio.getSelectedItem());
+        String NombreMuncipio = String.valueOf(view.municipio.getSelectedItem());
+        if (!nombreInstitucion.isEmpty() && !anioBaseString.isEmpty() && !NombreMuncipio.isEmpty()) {
+            DefaultPieDataset datosAlcance = new DefaultPieDataset();
+            DefaultPieDataset datosFuente = new DefaultPieDataset();
+            int anioBase = Integer.parseInt(anioBaseString);
+            List<GraficorModelo> datos = consul.GraficoPorAlcanceNucleoSumaTodosNucleos(nombreInstitucion, anioBase, NombreMuncipio);
+            List<CalcularModelo> datos2 = consul.GraficoPorFuenteNucleoSumaTodosNucleos(nombreInstitucion, anioBase, NombreMuncipio);
+            for (CalcularModelo dato : datos2) {
+                String fuente = dato.getNombreFuente();
+                Double total = dato.getTotal1();
+
+                if (fuente != null && total != null) {
+                    datosFuente.setValue(fuente, total);
+                } else {
+                    System.out.println("Datos incorectos " + fuente + total);
+                }
+            }
+            for (GraficorModelo dato : datos) {
+                String alcance = dato.getAlcance();
+                Double total = dato.getTotal();
+
+                // Verificar si alguno de los valores es nulo
+                if (alcance != null && total != null) {
+                    datosAlcance.setValue(alcance, total);
+                } else {
+                    System.out.println("Alcance o Total es nulo: Alcance = " + alcance + ", Total = " + total);
+                }
+            }
+
+
+            String fecha = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String b = "GraficosDeLa" + view.institucion.getSelectedItem().toString() + fecha + "DeTodosLosNucleos";
+
+            JFileChooser f = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF Files", "pdf");
+            f.setFileFilter(filter);
+            f.setDialogTitle("Guardar archivo PDF");
+            f.setSelectedFile(new File(b + ".pdf"));
+            int userSelection = f.showSaveDialog(null);
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File c = f.getSelectedFile();
+                File file = ensureUniqueFilename(c.getParentFile(), c.getName());
+                ExportaGraficoSumaTodosNucleos(datosAlcance, datosFuente, file);
+            }
+
 
         }
     }
@@ -576,6 +661,87 @@ public class GraficoControlador {
 
     }
 
+    private void ExportaGraficoSumaTodosNucleos(DefaultPieDataset datosAlcance, DefaultPieDataset datosFuente, File r){
+        try {
+            //Se creo lo graficos
+            JFreeChart chartAlcance = crearGraficoCircular(datosAlcance);
+            JFreeChart chartFuente = crearGraficoFuente(datosFuente);
+
+            // se pasason a imagenes
+            BufferedImage bufferedImageAlcance = chartAlcance.createBufferedImage(600, 300); // Ajuste de tamaño
+            ByteArrayOutputStream chartStreamAlcance = new ByteArrayOutputStream();
+            ChartUtils.writeBufferedImageAsPNG(chartStreamAlcance, bufferedImageAlcance);
+            byte[] chartBytesAlcance = chartStreamAlcance.toByteArray();
+
+            BufferedImage bufferedImageFuente = chartFuente.createBufferedImage(600, 300); // Ajuste de tamaño
+            ByteArrayOutputStream chartStreamFuente = new ByteArrayOutputStream();
+            ChartUtils.writeBufferedImageAsPNG(chartStreamFuente, bufferedImageFuente);
+            byte[] chartBytesFuente = chartStreamFuente.toByteArray();
+
+            // Crear el PDF
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(r));
+            document.open();
+            List<ModeloInforme> a = consul.datos(view.institucion.getSelectedItem().toString(), m.getNombreM());
+            String fechaActual = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+
+            // Añadir la fecha al documento
+            Paragraph fecha = new Paragraph("Fecha de creación: " + fechaActual);
+            fecha.setAlignment(Element.ALIGN_RIGHT);
+            document.add(fecha);
+            document.add(new Paragraph(" ")); // Añadir espacio entre la fecha y la tabla
+            String nombre = view.institucion.getSelectedItem().toString();
+            Paragraph nombreInstitucion = new Paragraph("Nombre de la Institucion: " + nombre);
+            nombreInstitucion.setAlignment(Element.ALIGN_LEFT);
+            document.add(new Paragraph(("")));
+            document.add(nombreInstitucion);
+            document.add(new Paragraph("  "));
+            String m = view.municipio.getSelectedItem().toString();
+            Paragraph municipio = new Paragraph("Municipio: " + m);
+            municipio.setAlignment(Element.ALIGN_LEFT);
+            document.add(municipio);
+            document.add(new Paragraph("  "));
+            for (ModeloInforme info : a) {
+
+                //////////////////////////////
+                String d = info.getDepartamento();
+                Paragraph departamento = new Paragraph("Departamento: " + d);
+                departamento.setAlignment(Element.ALIGN_LEFT);
+                document.add(departamento);
+                document.add(new Paragraph("  "));
+                ///////////////////////////////7
+                String i = info.getNit();
+                Paragraph nit = new Paragraph("Nit de la institución: " + i);
+                nit.setAlignment(Element.ALIGN_LEFT);
+                document.add(nit);
+                document.add(new Paragraph("  "));
+            }
+            // Añadir los gráficos al PDF
+            Image chartImageAlcance = Image.getInstance(chartBytesAlcance);
+            chartImageAlcance.setAlignment(Element.ALIGN_CENTER);
+            chartImageAlcance.scaleToFit(500, 300);
+            Paragraph textoALcance = new Paragraph("En el siguiente vamos apreciar lo siguiente una suma total de las fuentes de emisión discriminada por alcance el cual se describe asi.\n" +
+                    "Alcance 1: Corresponde al consumo de combustibles fósiles, y de refrigerantes.\n" +
+                    "Alcance 2: Corresponde al consumo de la energía eléctrica.\n" +
+                    "Alcance 3: Otras emisiones indirectas, consumo de materias primas e insumos, ademas de los viajes de negocios.\n");
+
+            textoALcance.setAlignment(Element.ALIGN_LEFT);
+            document.add(textoALcance);
+            document.add(chartImageAlcance);
+            document.add(new Paragraph("\n")); // Espacio entre gráficos
+
+            Image chartImageFuente = Image.getInstance(chartBytesFuente);
+            chartImageFuente.setAlignment(Element.ALIGN_CENTER);
+            chartImageFuente.scaleToFit(500, 300);
+            document.add(new Paragraph("En el siguiente grafico encontraremos todas las fuentes de emision que corresponden a la institución seleccionada con su respectivo año base, ademas se muestra el porcentaje de consumo de la fuente de emisión"));
+            document.add(chartImageFuente);
+            JOptionPane.showMessageDialog(null, "Pdf guardado correctamente ");
+            document.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private JFreeChart crearGraficoCircular(DefaultPieDataset dataset) {
         JFreeChart chart = ChartFactory.createPieChart(
                 "Emisiones por Alcance",  // Título del gráfico
@@ -654,189 +820,148 @@ public class GraficoControlador {
     }
 
     public void cargarInstitucion() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        String sql = "CALL Seleccionarinstitucion()";
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        // Obtener la lista de instituciones desde el Modelo
+        List<String> instituciones = consultasInstitucion.obtenerInstituciones();
 
+        // Limpiar el comboBox y agregar un item vacío
         view.institucion.removeAllItems();
+        view.institucion.addItem("");  // Añadimos un item vacío como indicativo
 
-        if (conn != null) {
-            try {
+        // Llenar el comboBox con las instituciones obtenidas del Modelo
+        for (String institucion : instituciones) {
+            view.institucion.addItem(institucion);
+        }
 
-                Statement stmt = conn.createStatement();
-                ResultSet rst = stmt.executeQuery(sql);
-                view.institucion.removeAllItems();
-                view.institucion.addItem("");
-                while (rst.next()) {
-                    String nombre = rst.getString("NombreInstitucion");
-                    view.institucion.addItem(nombre);
-                }
-                if (view.institucion.getItemCount() > 0) {
-                    view.institucion.setSelectedIndex(0);
-                } else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox institucion está vacío");
-                }
-
-                rst.close();
-                stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        // Si el comboBox tiene elementos, seleccionamos el primero
+        if (view.institucion.getItemCount() > 0) {
+            view.institucion.setSelectedIndex(0); // Seleccionamos el primer elemento
         }
     }
 
+    // Método para cargar los años base en el comboBox de la Vista
     public void cargarAnioBase() {
-        Conexion conexion = new Conexion();
-        ResultSet st = null;
-        Connection conn = conexion.getConection();
-        String sql = " Select  ei.anioBase from emisioninstitucion ei inner join institucion i on ei.idInsititucion=i.idInstitucionAuto inner join emision e on ei.idEmision = e.idEmision where i.NombreInstitucion = ?  group by anioBase";
-        String nombre = String.valueOf(view.institucion.getSelectedItem());
-        view.anio.addItem(" ");
-        view.anio.removeAllItems();
-        if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, nombre);
-                st = ps.executeQuery();
-                while (st.next()) {
-                    String anioBase = st.getString(1);
-                    view.anio.addItem(" ");
-                    view.anio.addItem(anioBase);
-                }
-                if (view.anio.getItemCount() > 0) {
-                    view.anio.setSelectedIndex(0);
-                } else {
-                    // Manejar el caso en el que el JComboBox está vacío
-                    System.out.println("El JComboBox año está vacío");
-                }
+        // Obtener la lista de años base desde el Modelo
+        String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
+        String nombreMunicipio = String.valueOf(view.municipio.getSelectedItem());
 
-                st.close();
-                ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        // Consultar los años base desde el Modelo
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        List<String> aniosBase = consultasInstitucion.obtenerAnioBase(nombreInstitucion, nombreMunicipio);
+
+        System.out.println(aniosBase);
+        // Limpiar el comboBox de años y agregar un item vacío
+        view.anio.removeAllItems();
+        view.anio.addItem("");  // Añadir un item vacío como indicativo
+
+        // Llenar el comboBox con los años base obtenidos del Modelo
+        for (String anio : aniosBase) {
+            view.anio.addItem(anio);
+        }
+
+        // Si el comboBox tiene elementos, seleccionamos el primero
+        if (view.anio.getItemCount() > 0) {
+            view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
+        }
+    }
+
+    public void cargarMunicipio() {
+        // Obtener la institución seleccionada desde la vista
+        String nombreInstitucion = (String) view.institucion.getSelectedItem();
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+
+        // Verificar que la institución no esté vacía
+        if (nombreInstitucion != null && !nombreInstitucion.isEmpty()) {
+            // Obtener la lista de municipios desde el Modelo
+            List<String> municipios = consultasInstitucion.obtenerMunicipios(nombreInstitucion);
+
+            // Limpiar el JComboBox de municipios y agregar un item vacío
+            view.municipio.removeAllItems();
+            view.municipio.addItem("");  // Añadir un item vacío como indicativo
+
+            // Llenar el JComboBox con los municipios obtenidos del Modelo
+            for (String municipio : municipios) {
+                view.municipio.addItem(municipio);
             }
+
+            // Si el JComboBox tiene elementos, seleccionamos el primero
+            if (view.municipio.getItemCount() > 0) {
+                view.municipio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        } else {
+            // Si la institución está vacía, limpiar el JComboBox de municipios
+            view.municipio.removeAllItems();
+        }
+    }
+
+    public void cargarNucleosExistentes() {
+        // Limpiamos el combo box antes de cargar los nuevos valores
+        view.comboxNucleo.removeAllItems();
+        view.comboxNucleo.addItem(" ");
+        Conexion conexion = new Conexion();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
+        // Obtenemos el nombre de la institución desde el modelo
+        String nombreInstitucion = view.institucion.getSelectedItem().toString();
+        // Llamamos al modelo para cargar los núcleos
+        List<String> nucleos = consultaNucleo.cargarNucleos(nombreInstitucion);
+
+        // Agregamos los núcleos al combo box
+        for (String nucleo : nucleos) {
+            view.comboxNucleo.addItem(nucleo);
+        }
+
+        // Manejo de errores si ocurre algún problema en la consulta
+        if (nucleos.isEmpty()) {
+            JOptionPane.showMessageDialog(view.PanelMain, "No se encontraron núcleos para esta institución.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     private void anioBaseNucleo() {
         view.anio.removeAllItems(); // Limpiar el combo de años
         view.anio.addItem(" "); // Agregar un texto indicativo
-
-        String sql = "SELECT anioBase " +
-                "FROM emisionnucleo en " +
-                "INNER JOIN nucleoinstitucion n ON en.IdNucleo = n.IdNucleo " +
-                "INNER JOIN emision e ON en.idEmision = e.idEmision " +
-                "INNER JOIN institucion i ON n.idInstitucion = i.IdInstitucionAuto " +
-                "INNER JOIN municipioinstitiucion mi ON i.idInstitucionAuto = mi.IdInstitucion " +
-                "INNER JOIN municipio m ON mi.IdMuncipio = m.IdMunicipio " +
-                "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? AND n.NombreNucleo = ? " +
-                "group by en.anioBase ORDER BY en.anioBase ;";
-
+        Conexion conexion = new Conexion();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
         String nombre = String.valueOf(view.institucion.getSelectedItem());
         String municipio = String.valueOf(view.municipio.getSelectedItem());
         String nucleo = String.valueOf(view.comboxNucleo.getSelectedItem());
-
-        Conexion conexion = new Conexion();
-        try (Connection conn = conexion.getConection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nombre);
-            ps.setString(2, municipio);
-            ps.setString(3, nucleo);
-
-            try (ResultSet st = ps.executeQuery()) {
-                while (st.next()) {
-                    String anioBase = st.getString(1);
-                    view.anio.addItem(anioBase);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<String> anioBaseNucleo = consultaNucleo.obtenerAnosBase(nombre, municipio, nucleo);
+        for (String anioBase : anioBaseNucleo) {
+            view.anio.addItem(anioBase);
         }
+
     }
 
-    public void cargarMunicipio() {
+    public void anioParaSumaTodosLosNucleos() {
         Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.municipio.removeAllItems(); // Limpiar los elementos del JComboBox
-        view.municipio.addItem("");
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
+        // Obtener la institución y municipio seleccionados desde la vista
+        String nombreInstitucion = (String) view.institucion.getSelectedItem();
+        String nombreMunicipio = (String) view.municipio.getSelectedItem();
 
-        // Obtener el departamento seleccionado directamente del JComboBox
-        String Institucion = (String) view.institucion.getSelectedItem();
+        // Verificar que los valores seleccionados no sean nulos o vacíos
+        if (nombreInstitucion != null && !nombreInstitucion.isEmpty() &&
+                nombreMunicipio != null && !nombreMunicipio.isEmpty()) {
 
-        if (Institucion != null && !Institucion.isEmpty()) {
-            try {
-                // Cerrar la conexión existente antes de abrir una nueva
-                if (conn != null) {
-                    // Crear una nueva conexión para obtener los municipios del departamento seleccionado
-                    String procedureCall = "Select NombreMunicipio from municipio m inner join  municipioinstitiucion mi on mi.idMuncipio= m.idMunicipio  inner join institucion i on  i.idInstitucionAuto = mi.IdInstitucion where i.NombreInstitucion = ?";
+            // Obtener la lista de años base desde el Modelo
+            List<String> aniosBase = consultaNucleo.obteneranioParaSumaTodosLosNucleos(nombreInstitucion, nombreMunicipio);
 
-                    try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                        statement.setString(1, Institucion); // Establecer el valor del parámetro
+            // Limpiar el JComboBox de años y agregar un item vacío como indicativo
+            view.anio.removeAllItems();
+            view.anio.addItem(""); // Agregar un espacio vacío para indicar al usuario que elija un año
 
-                        // Ejecutar la consulta
-                        ResultSet rs = statement.executeQuery();
-
-                        // Verificar si el ResultSet está vacío
-                        if (!rs.isBeforeFirst()) {
-                            System.out.println("No se encontraron municipios para el departamento seleccionado.");
-                        } else {
-                            // Llenar el JComboBox con los municipios obtenidos de la consulta
-                            while (rs.next()) {
-                                String nombreMunicipio = rs.getString("NombreMunicipio");
-                                view.municipio.addItem(nombreMunicipio);
-                            }
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                // Asegúrate de cerrar la conexión
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
+            // Llenar el JComboBox con los años base obtenidos del Modelo
+            for (String anio : aniosBase) {
+                view.anio.addItem(anio);
             }
+
+            // Si el JComboBox tiene elementos, seleccionamos el primero
+            if (view.anio.getItemCount() > 0) {
+                view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        } else {
+            // Si la institución o municipio están vacíos, limpiar el JComboBox de años
+            view.anio.removeAllItems();
         }
-    }
-
-    private void cargarNucleosExistentes() {
-        Conexion conexion = new Conexion();
-        Connection conn = conexion.getConection();
-        view.comboxNucleo.removeAllItems();
-        view.comboxNucleo.addItem(" ");
-        String nombreInstitucion = view.institucion.getSelectedItem().toString();
-        System.out.println(nombreInstitucion);
-        try {
-            if (conn != null) {
-                String procedureCall = "Select NombreNucleo from emisionnucleo en inner join nucleoinstitucion ni on en.IdNucleo = ni.IdNucleo inner join institucion i on ni.idInstitucion = i.idInstitucionAuto where i.NombreInstitucion = ? group by NombreNucleo";
-                try (CallableStatement statement = conn.prepareCall(procedureCall)) {
-                    statement.setString(1, nombreInstitucion);
-                    ResultSet rs = statement.executeQuery();
-                    while (rs.next()) {
-                        String nombreNucleo = rs.getString("NombreNucleo");
-                        view.comboxNucleo.addItem(nombreNucleo);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(view.PanelMain, "Error al cargar los municipios: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            // Asegúrate de cerrar la conexión
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
     }
 
     public void BotonInicio() {
@@ -925,7 +1050,7 @@ public class GraficoControlador {
     public void vistaActualizarInstitucion() {
         Conexion con = new Conexion();
         ConsultasInstitucion consul = new ConsultasInstitucion();
-        RegistrarInstitucion view2 = new RegistrarInstitucion();
+        VerDatosInstitucion view2 = new VerDatosInstitucion();
         InstitucionModelo mod = new InstitucionModelo();
         InstitucionControlador control = new InstitucionControlador(ins, m, view2, consul, mod, user);
         view2.setVisible(true);
@@ -945,46 +1070,31 @@ public class GraficoControlador {
         view.dispose();
     }
 
+    private void vistaVerInstitucion(){
+        Conexion con = new Conexion();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        InstitucionModelo institucionModelo = new InstitucionModelo();
+        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion,consultaNucleo,
+                institucionModelo,verInstituciones,user,m);
+        contraladorVerInstituciones.iniciar();
+        //view.dispose();
+    }
+
+
     public void Listeners() {
         this.view.buscarButton.addActionListener(this::actionPerformed);
         this.view.Descargar.addActionListener(this::actionPerformed);
         this.view.inicioButton.addActionListener(this::actionPerformed);
         this.view.perfil.addActionListener(this::actionPerformed);
         this.view.Calcular.addActionListener(this::actionPerformed);
-        this.view.RegistrarEmisión.addActionListener(this::actionPerformed);
+        this.view.RegistrarEmision.addActionListener(this::actionPerformed);
         this.view.Informes.addActionListener(this::actionPerformed);
         this.view.Reducir.addActionListener(this::actionPerformed);
         this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
         this.view.VerPerfiles.addActionListener(this::actionPerformed);
-        this.view.siTieneNucleos.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.siTieneNucleos.isSelected()) {
-                    view.siNucleo.setVisible(true);
-                    view.noNucleo.setVisible(true);
-                    view.Nucleo.setVisible(true);
-                    view.noTieneNucleo.setEnabled(false);
-                } else {
-                    view.noTieneNucleo.setEnabled(true);
-                    view.siNucleo.setVisible(false);
-                    view.noNucleo.setVisible(false);
-                    view.Nucleo.setVisible(false);
-                }
-            }
-        });
-        this.view.noTieneNucleo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (view.noTieneNucleo.isSelected()) {
-                    view.siNucleo.setVisible(false);
-                    view.noNucleo.setVisible(false);
-                    view.Nucleo.setVisible(false);
-                    view.siTieneNucleos.setEnabled(false);
-                } else {
-                    view.siTieneNucleos.setEnabled(true);
-                }
-            }
-        });
+        this.view.verInstitucion.addActionListener(this::actionPerformed);
         this.view.siNucleo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1032,6 +1142,19 @@ public class GraficoControlador {
                     cargarAnioBase();
                     cargarMunicipio();
                 }
+                Conexion conn = new Conexion();
+                ConsultaNucleo consultaNucleo = new ConsultaNucleo(conn);
+                String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
+                if(consultaNucleo.TieneNucleo(nombreInstitucion)>=1){
+                    view.noNucleo.setVisible(true);
+                    view.siNucleo.setVisible(true);
+                    view.Nucleo.setVisible(true);
+                    view.anio.removeAllItems();
+                }else{
+                    view.noNucleo.setVisible(false);
+                    view.siNucleo.setVisible(false);
+                    view.Nucleo.setVisible(false);
+                }
             }
         });
         this.view.municipio.addActionListener(new ActionListener() {
@@ -1054,8 +1177,18 @@ public class GraficoControlador {
                 }
             }
         });
+        this.view.siGeneral.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(view.siGeneral.isSelected()){
+                    anioParaSumaTodosLosNucleos();
+                    view.noGeneral.setEnabled(false);
+                }else{
+                    view.noGeneral.setEnabled(true);
+                }
+            }
+        });
 
     }
-
 
 }

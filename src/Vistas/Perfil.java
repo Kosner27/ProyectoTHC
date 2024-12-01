@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 
 public class Perfil extends JFrame {
     public JMenuItem RegistrarInstitucion;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem Reducir;
@@ -32,6 +32,8 @@ public class Perfil extends JFrame {
     public JMenuItem MasInformacion;
     public JMenuItem perfil;
     public JMenuItem VerPerfiles;
+    public JMenuItem verInstitucion;
+
     public Perfil (){
         setTitle("Ver perfil");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -25,7 +25,7 @@ public class RegistrarUsuario extends JFrame{
     public RegistrarUsuario(){
         setTitle("Registrar Usuario");
         setVisible(true);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 600);
         setLocationRelativeTo(null);
         setContentPane(Principal);

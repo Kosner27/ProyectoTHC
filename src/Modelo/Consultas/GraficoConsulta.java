@@ -20,14 +20,14 @@ public class GraficoConsulta {
         this.conn = conexion.getConection();
     }
 
-    public List<GraficorModelo> GraficoPorAlcance(String nombreInstitucion, String anioBase, String NombreMunicipio) {
+    public List<GraficorModelo> GraficoPorAlcance(String nombreInstitucion, int anioBase, String NombreMunicipio) {
         List<GraficorModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoAlcance(?, ?,?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMunicipio);
             rs = ps.executeQuery();
 
@@ -50,14 +50,14 @@ public class GraficoConsulta {
         return datos;
     }
 
-    public List<GraficorModelo> GraficoPorAlcanceNucleo(String nombreInstitucion, String anioBase, String NombreMunicipio,String nucleo ) {
+    public List<GraficorModelo> GraficoPorAlcanceNucleo(String nombreInstitucion, int anioBase, String NombreMunicipio,String nucleo ) {
         List<GraficorModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoAlcanceNucleo(?, ?, ?, ?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMunicipio);
             ps.setString(4,nucleo);
             rs = ps.executeQuery();
@@ -82,14 +82,14 @@ public class GraficoConsulta {
     }
 
 
-    public List<CalcularModelo> GraficoPorFuente(String nombreInstitucion, String anioBase, String NombreMuncicipio) {
+    public List<CalcularModelo> GraficoPorFuente(String nombreInstitucion, int anioBase, String NombreMuncicipio) {
         List<CalcularModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoFuente(?, ?,?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMuncicipio);
             rs = ps.executeQuery();
 
@@ -112,14 +112,14 @@ public class GraficoConsulta {
         return datos;
     }
 
-    public List<CalcularModelo> GraficoPorFuenteNucleo(String nombreInstitucion, String anioBase, String NombreMuncicipio, String nucleo) {
+    public List<CalcularModelo> GraficoPorFuenteNucleo(String nombreInstitucion, int anioBase, String NombreMuncicipio, String nucleo) {
         List<CalcularModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoFuenteNucleo(?, ?, ?, ?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMuncicipio);
             ps.setString(4, nucleo);
             rs = ps.executeQuery();
@@ -143,14 +143,14 @@ public class GraficoConsulta {
         return datos;
     }
 
-    public List<GraficorModelo> GraficoPorAlcanceNucleoSumaTodosNucleos(String nombreInstitucion, String anioBase, String NombreMunicipio) {
+    public List<GraficorModelo> GraficoPorAlcanceNucleoSumaTodosNucleos(String nombreInstitucion, int anioBase, String NombreMunicipio) {
         List<GraficorModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoAlcanceNucleoSumaTodosNucleos(?, ?, ?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMunicipio);
             rs = ps.executeQuery();
 
@@ -173,14 +173,14 @@ public class GraficoConsulta {
         return datos;
     }
 
-    public List<CalcularModelo> GraficoPorFuenteNucleoSumaTodosNucleos(String nombreInstitucion, String anioBase, String NombreMuncicipio) {
+    public List<CalcularModelo> GraficoPorFuenteNucleoSumaTodosNucleos(String nombreInstitucion, int anioBase, String NombreMuncicipio) {
         List<CalcularModelo> datos = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("CALL LlenarGraficoFuenteNucleoSumaTodosNucleo(?, ?, ?)");
             ps.setString(1, nombreInstitucion);
-            ps.setString(2, anioBase);
+            ps.setInt(2, anioBase);
             ps.setString(3, NombreMuncicipio);
             rs = ps.executeQuery();
 

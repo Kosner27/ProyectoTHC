@@ -6,7 +6,7 @@ import javax.swing.table.DefaultTableModel;
 public class VerPerfiles extends JFrame {
     public JMenuBar bar;
     public JMenuItem RegistrarInstitucion;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem Reducir;
@@ -26,6 +26,10 @@ public class VerPerfiles extends JFrame {
     public JPanel Main;
     public JScrollPane tblUsuario;
     public JButton eliminarButton;
+    public JMenuItem verInstitucion;
+    public JButton limpiarCamposButton;
+    public JButton actualizarTablaButton;
+    public JButton registrarUsuarioButton;
 
     public VerPerfiles(){
             setTitle("Ver perfiles");

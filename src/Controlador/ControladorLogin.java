@@ -7,15 +7,16 @@ import Vistas.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-
-/**
- * Controlador para la funcionalidad de inicio de sesión.
- */
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ControladorLogin {
-    private final Usuario user;// Modelo de usuario
-    private final LogIn view;//Vista de inicio de sesión
-    private final ConsultaUsuario consul;// Consulta de usuarios
+    private final Usuario user; // Modelo de usuario
+    private final LogIn view; // Vista de inicio de sesión
+    private final ConsultaUsuario consul; // Consulta de usuarios
+    private int intentosFallidos = 0; // Contador de intentos fallidos
+    private static final int MAX_INTENTOS = 3; // Número máximo de intentos
+    private MonitoreoInactividad monitoreo;
 
     /**
      * Constructor del controlador.
@@ -29,12 +30,23 @@ public class ControladorLogin {
         this.view = view;
         this.consul = consul;
 
+        monitoreo = new MonitoreoInactividad(() -> {
+            JOptionPane.showMessageDialog(null, "Se detectó inactividad. La aplicación se cerrará.");
+            System.exit(0); // Cerrar la aplicación
+        });
         // Agregar listeners para eventos
         this.view.iniciarSesionButton.addActionListener(this::actionPerformed);
         this.view.addEnterKeyListener(this::actionPerformed);
         this.view.inicioButton.addActionListener(this::actionPerformed);
         this.view.clickAquiButton.addActionListener(this::actionPerformed);
         this.view.olvidasteTuContrasenaButton.addActionListener(this::actionPerformed);
+
+        this.view.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                monitoreo.reiniciar(); // Reiniciar el tiempo de inactividad al presionar cualquier tecla
+            }
+        });
     }
 
     /**
@@ -43,6 +55,7 @@ public class ControladorLogin {
     public void Iniciar() {
         view.setTitle("Login");
         view.setLocationRelativeTo(null);
+        monitoreo.iniciar();
     }
 
     /**
@@ -55,18 +68,22 @@ public class ControladorLogin {
                 event.getSource() == view.Contrasena ||
                 event.getSource() == view.Correo) {
             iniciarSesion();
+            monitoreo.detener();
         }
         if (event.getSource() == view.inicioButton) {
             inicio();
+            monitoreo.detener();
         }
         if (event.getSource() == view.clickAquiButton) {
             abrirRegistro();
+            monitoreo.detener();
         }
         if (event.getSource() == view.olvidasteTuContrasenaButton) {
             recordarContrasena();
+            monitoreo.reiniciar();
         }
-
     }
+
     /**
      * Abre la vista principal.
      */
@@ -77,6 +94,7 @@ public class ControladorLogin {
         contro.Iniciar();
         view.dispose();
     }
+
     /**
      * Abre la vista de registro.
      */
@@ -89,6 +107,7 @@ public class ControladorLogin {
         contro.iniciar();
         view.dispose();
     }
+
     /**
      * Abre la vista para recordar contraseña.
      */
@@ -101,14 +120,21 @@ public class ControladorLogin {
         control.inicio();
         view.dispose();
     }
+
     /**
      * Maneja el proceso de inicio de sesión.
      */
-    private void iniciarSesion(){
+    private void iniciarSesion() {
         InstitucionModelo ins = new InstitucionModelo();
         Municipio m = new Municipio();
         String pass = new String(view.Contrasena.getPassword());
         String usuario = view.Correo.getText();
+
+        // Verificar si los intentos fallidos superan el máximo permitido
+        if (intentosFallidos == MAX_INTENTOS) {
+            JOptionPane.showMessageDialog(null, "Demasiados intentos fallidos. La aplicación se cerrará.");
+            System.exit(0); // Cierra la aplicación
+        }
 
         if (validarCredenciales(usuario, pass)) {
             user.setCorreo(usuario);
@@ -119,17 +145,20 @@ public class ControladorLogin {
                 controladoInicio.inicio();
                 view.dispose();
                 JOptionPane.showMessageDialog(null, "Datos correctos");
+                intentosFallidos = 0; // Restablecer los intentos fallidos
             } else {
-                JOptionPane.showMessageDialog(null, "Datos incorrectos");
+                intentosFallidos++; // Incrementar los intentos fallidos
+                JOptionPane.showMessageDialog(null, "Datos incorrectos. Intento " + intentosFallidos + " de " + MAX_INTENTOS);
             }
         } else {
             JOptionPane.showMessageDialog(null, "Debe ingresar sus credenciales");
         }
     }
+
     /**
      * Validar las credenciales ingresadas.
      *
-     * @param usuario Nombre de usuario
+     * @param usuario   Nombre de usuario
      * @param contrasena Contraseña
      * @return true si son válidas, false en caso contrario.
      */

@@ -9,6 +9,7 @@ public class NucleoView extends JFrame{
     public JButton cancelarButton;
     public JButton guardarButton;
     public JPanel Principal;
+    public JTextField hectareas;
 
     public NucleoView(){
         setTitle("Registrar Nucleo");

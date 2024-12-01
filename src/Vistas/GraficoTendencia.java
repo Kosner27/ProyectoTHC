@@ -20,7 +20,7 @@ public class GraficoTendencia extends  JFrame {
     public JPanel content;
     public JLabel titulo;
     public JButton descargarButton;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem perfil;
@@ -32,6 +32,7 @@ public class GraficoTendencia extends  JFrame {
     public JCheckBox noCheckBox;
     public JComboBox comboNucleo;
     public JLabel Nucleo;
+    public JMenuItem verInstitucion;
 
     public GraficoTendencia() {
         setTitle("Historico");

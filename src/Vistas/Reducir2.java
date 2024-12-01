@@ -19,23 +19,23 @@ public class Reducir2 extends JFrame {
     public JComboBox municipio;
     public JButton Descargar;
     public JMenuBar bar;
-    public JMenuItem RegistrarEmisión;
+    public JMenuItem RegistrarEmision;
     public JMenuItem Calcular;
     public JMenuItem Informes;
     public JMenuItem Reducir;
     public JMenuItem MasInformacion;
     public JMenuItem perfil;
     public JMenuItem VerPerfiles;
-    public JCheckBox SICheckBox;
-    public JCheckBox NOCheckBox;
     public JComboBox comboNucleo;
     public JLabel Nucleo;
+    public JMenuItem verInstitucion;
+    public JComboBox comoInstitucion;
 
     public Reducir2() {
         setTitle("Reducir");
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         Font font = new Font("Arial", Font.PLAIN, 14);
         titulo.setFont(font);

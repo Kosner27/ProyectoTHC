@@ -20,14 +20,13 @@ public class ControladorMain {
     public ControladorMain( Main view, Usuario mod) {
         this.view = view;
         this.mod2 = mod;
-        this.view.iniciarComoInvitadoButton.addActionListener(this::actionPerformed);
         this.view.iniciarSesionButton.addActionListener(this::actionPerformed);
         this.view.registrarseButton.addActionListener(this::actionPerformed);
     }
     public void Iniciar(){
         view.setTitle("Inicio");
         view.setVisible(true);
-        view.setSize(500, 500);
+        view.setSize(400, 300);
         view.setLocationRelativeTo(null);
         view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }

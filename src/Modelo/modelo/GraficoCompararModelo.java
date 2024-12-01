@@ -5,9 +5,18 @@ public class GraficoCompararModelo {
     private String Nombrefuente;
     private String Alcance;
     private Double total;
+    private String nucleo;
 
     public GraficoCompararModelo() {
 
+    }
+
+    public String getNucleo() {
+        return nucleo;
+    }
+
+    public void setNucleo(String nucleo) {
+        this.nucleo = nucleo;
     }
 
     public Double getTotal() {

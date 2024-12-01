@@ -10,8 +10,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +28,7 @@ public class VerPerfilesControlador {
     JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
     JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
     JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+
     // Constructor
     public VerPerfilesControlador(Usuario user, InstitucionModelo ins,
                                   Municipio m, VerPerfiles view, ConsultaUsuario consulUser) {
@@ -38,7 +37,6 @@ public class VerPerfilesControlador {
         this.m = m;
         this.view = view;
         this.consulUser = consulUser;
-        this.previousData = new HashMap<>();
         Listeners(); // Inicia los listeners
     }
 
@@ -57,65 +55,50 @@ public class VerPerfilesControlador {
             }
         }
     }
-        // Método para iniciar la vista de perfiles
-    public void Iniciar() {
-        // Agregar elementos al menú de gráficos
-        view.Graficos.add(GraficoPrincipal);
-        view.Graficos.add(GraficosCompararInstitucion);
-        view.Graficos.add(GraficoHistorico);
-        view.setVisible(true);
-        view.setTitle("Ver Perfiles");
-        // Cargar datos de usuarios desde la base de datos
-        Map<String, Usuario> datosMap = new HashMap<>();
-        List<Usuario> datos = consulUser.datos();
 
-        for (Usuario user : datos) {
-            datosMap.put(user.getCorreo(), user); // Usa el correo como clave
+    // Método para iniciar la vista de perfiles
+    public void Iniciar() {
+        switch (user.getTipoUsuario()) {
+            case "Superadmin":
+                CargarDatos();
+                CamposInhabilitados();
+                deshabilitarEdicionTabla();
+                break;
+            case "Administrador":
+                CargarDatosAdministradorSede();
+                CamposInhabilitados();
+                deshabilitarEdicionTabla();
+                view.verInstitucion.setVisible(false);
+                break;
+
         }
 
-        CargarDatos(datosMap);// Carga los datos en la tabla
-        CamposInhabilitados();// Inhabilita los campos de entrada
-        startPolling();// Inicia el polling para actualizaciones
-
-        // Agregar action listeners para los elementos del menú
+        ;// Inhabilita los campos de entrada (excepto correo)
+        // Asignar el ActionListener para el botón de búsqueda
+        //view.buscarButton.addActionListener(e -> buscarUsuario());
+        // Asigna los ActionListeners a los botones
         GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
         GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
         GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
+        view.limpiarCamposButton.setEnabled(false);
     }
+
     // Maneja las acciones de los botones
-    public void actionPerformed(ActionEvent e) {
-        String Correo = view.correoUser.getText();
+    private void actionPerformed(ActionEvent e) {
+
         if (e.getSource() == view.buscarButton) {
-            view.correoUser.setEditable(true);
+            buscarPorCorreo();
         }
         if (e.getSource() == view.editarButton) {
             // Permite editar los campos de rol
-            view.correoUser.setEditable(false);
-            view.rolUser.setEditable(true);
-            if (!Correo.isEmpty()) {
-                // Validación y búsqueda del usuario
-                if (consulUser.esEmail(Correo)) {
-                    if (consulUser.ExisteUsuario(Correo) > 0) {
-                        List<Usuario> datos = consulUser.BuscarUsuario(Correo);
-                        for (Usuario mod : datos) {
-                            view.nombreUser.setText(mod.getNombre());
-                            view.apellidoUser.setText(mod.getApellido());
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "El usuario no existe");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "No es un correo válido");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Campo Correo vacío");
-            }
+            editarPrivilegios();
+            view.limpiarCamposButton.setEnabled(true);
         }
         if (e.getSource() == view.guardarCambiosButton) {
-            guardarCambios(); // Guarda los cambios realizados
+             guardarCambios(); // Guarda los cambios realizados
         }
         if (e.getSource() == view.eliminarButton) {
-            eliminar(); // Elimina el usuario
+             eliminar(); // Elimina el usuario
         }
         if (e.getSource() == view.inicioButton) {
             BotonInicio(); // Vuelve a la pantalla de inicio
@@ -126,7 +109,7 @@ public class VerPerfilesControlador {
         if (e.getSource() == view.Calcular) {
             vistaCalcular(); // Muestra la vista de calcular
         }
-        if (e.getSource() == view.RegistrarEmisión) {
+        if (e.getSource() == view.RegistrarEmision) {
             vistaRegistrarEmision(); // Muestra la vista de registrar emisión
         }
         if (e.getSource() == view.Informes) {
@@ -138,11 +121,382 @@ public class VerPerfilesControlador {
         if (e.getSource() == view.Reducir) {
             vistaReducir(); // Muestra la vista para reducir emisiones
         }
+        if(e.getSource() == view.limpiarCamposButton){
+            limpiarCampos();
+            view.correoUser.setFocusable(true);
+
+        }
+       if(e.getSource()== view.actualizarTablaButton){
+           if(user.getTipoUsuario().equals("Superadmin")){
+               actualizarButton();
+                CargarDatos();
+           }else{
+               actualizarButton();
+               CargarDatosAdministradorSede();
+           }
+
+       }
+       if(e.getSource() == view.verInstitucion){
+           vistaVerInstitucion();
+       }
+        if(e.getSource() == view.registrarUsuarioButton){
+            registrarUsuario();
+        }
     }
 
 
     // Método para guardar cambios en los privilegios del usuario
-    private void guardarCambios() {
+
+
+    // Método para cargar datos en la tabla
+    private void CargarDatos() {
+        DefaultTableModel tableModel;
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // Asegurar que las celdas no sean editables
+            }
+        };
+        tableModel.setRowCount(0);
+        tableModel = (DefaultTableModel) view.user.getModel();
+        List<Usuario> datos = consulUser.datos();
+
+        for (Usuario a : datos) {
+            Object[] rowData = {
+                    a.getNombre(),
+                    a.getApellido(),
+                    a.getCorreo(),
+                    a.getTipoUsuario(),
+                    a.getDescripcion(),
+                    a.getNombreInstticion(),
+                    a.getMunicipio()
+            };
+            tableModel.addRow(rowData); // Agregar una fila por cada usuario
+        }
+
+        // Configura los anchos de columna
+
+        view.user.getColumnModel().getColumn(0).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(2).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(3).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(4).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(5).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(6).setPreferredWidth(150);
+        view.user.repaint();
+        view.user.setModel(tableModel);
+        view.user.setVisible(true);
+        view.tblUsuario.setVisible(true);
+    }
+
+    private void CargarDatosAdministradorSede() {
+        String municipio = m.getNombreM();
+        String institucion = ins.getNombreInstitucion();
+        DefaultTableModel tableModel;
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // Asegurar que las celdas no sean editables
+            }
+        };
+        tableModel.setRowCount(0);
+        tableModel = (DefaultTableModel) view.user.getModel();
+        List<Usuario> datos = consulUser.datosAdministradorDeSede(municipio, institucion);
+
+        for (Usuario a : datos) {
+            Object[] rowData = {
+                    a.getNombre(),
+                    a.getApellido(),
+                    a.getCorreo(),
+                    a.getTipoUsuario(),
+                    a.getDescripcion(),
+                    a.getNombreInstticion(),
+                    a.getMunicipio()
+            };
+            tableModel.addRow(rowData); // Agregar una fila por cada usuario
+        }
+
+        // Configura los anchos de columna
+
+        view.user.getColumnModel().getColumn(0).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(2).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(3).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(4).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(5).setPreferredWidth(150);
+        view.user.getColumnModel().getColumn(6).setPreferredWidth(150);
+        view.user.repaint();
+        view.user.setModel(tableModel);
+        view.user.setVisible(true);
+        view.tblUsuario.setVisible(true);
+    }
+
+
+    private void llenarFormularioDesdeTabla() {
+        // Obtener la fila seleccionada
+        int selectedRow = view.user.getSelectedRow();
+
+        if (selectedRow != -1) { // Verifica que se haya seleccionado una fila
+            // Obtener el modelo de la tabla
+            DefaultTableModel tableModel = (DefaultTableModel) view.user.getModel();
+
+            // Obtener los valores de la fila seleccionada
+            String nombreUsuario = tableModel.getValueAt(selectedRow, 0).toString();
+            String apellidoUsuario = tableModel.getValueAt(selectedRow, 1).toString();
+            String correo = tableModel.getValueAt(selectedRow, 2).toString();
+            String rol = tableModel.getValueAt(selectedRow, 3).toString();
+            String institucion = tableModel.getValueAt(selectedRow, 4).toString();
+            String sede = tableModel.getValueAt(selectedRow, 5).toString();
+
+            // Llenar los campos del formulario con los valores obtenidos
+            view.nombreUser.setText(nombreUsuario);
+            view.apellidoUser.setText(apellidoUsuario);
+            view.correoUser.setText(correo);
+            view.rolUser.setText(rol);
+
+        }
+    }
+
+    // Método para inhabilitar campos de texto
+    private void CamposInhabilitados() {
+        view.apellidoUser.setEditable(false);
+        view.nombreUser.setEditable(false);
+        view.rolUser.setEditable(false);
+
+    }
+
+    private void buscarPorCorreo() {
+        DefaultTableModel tableModel = (DefaultTableModel) view.user.getModel();
+        tableModel.setRowCount(0);
+        String correo = view.correoUser.getText().trim().toUpperCase();
+        if (correo.isEmpty()) {
+            JOptionPane.showMessageDialog(view, "Por favor ingrese un nombre de la institucion.");
+            return;
+        }
+        List<Usuario> datos = consulUser.BuscarUsuario(correo);
+        if (datos.isEmpty()) {
+            JOptionPane.showMessageDialog(view, "No se encontraron usuarios con el correo ingresado.");
+        } else {
+            // Agregar los resultados encontrados al modelo de la tabla
+            for (Usuario a : datos) {
+                Object[] rowData = {
+                        a.getNombre(),
+                        a.getApellido(),
+                        a.getCorreo(),
+                        a.getTipoUsuario(),
+                        a.getDescripcion(),
+                        a.getNombreInstticion(),
+                        a.getMunicipio()
+                };
+                tableModel.addRow(rowData); // Agregar una fila por cada usuario
+            }
+
+        }
+        view.user.repaint();
+        view.user.setModel(tableModel);
+        view.user.setVisible(true);
+        view.tblUsuario.setVisible(true);
+
+
+    }
+
+    // Limpia los campos de texto
+    private void limpiarCampos() {
+        view.rolUser.setText("");
+        view.correoUser.setText("");
+        view.nombreUser.setText("");
+        view.apellidoUser.setText("");
+        view.correoUser.setEditable(true);
+    }
+
+    private void BotonInicio() {
+        ControladoInicio control = new ControladoInicio(ins, user, m);
+        control.inicio();// Llama al controlador de inicio
+        view.dispose();// Cierra la vista actual
+    }
+
+    // Métodos para abrir diferentes vistas
+    private void vistaPerfil() {
+        Conexion conn = new Conexion();
+        Perfil per = new Perfil();
+        ConsultaUsuario cons = new ConsultaUsuario(conn);
+        PerfilCOntrolador control = new PerfilCOntrolador(user, per, ins, m, cons);
+        control.Iniciar();
+        per.setVisible(true);
+        view.dispose();
+    }
+
+    private void vistaCalcular() {
+        Conexion con = new Conexion();
+        Vistas.Calcular viewCal = new Calcular();
+        CalcularModelo mod = new CalcularModelo();
+        CalcularConsultas consul = new CalcularConsultas(con);
+        ConsultaUsuario consultaUsuario = new ConsultaUsuario(con);
+        CalcularControlador controlador = new CalcularControlador(mod, consul, viewCal, ins, consultaUsuario, user, m);
+        controlador.iniciar();
+        viewCal.setVisible(true);
+        view.dispose();
+    }
+
+    private void vistaRegistrarEmision() {
+        Emision emisionView = new Emision();
+        EmisionModelo mod = new EmisionModelo();
+        ConsultasEmision consul = new ConsultasEmision();
+        EmisionControlador controlador = new EmisionControlador(mod, consul, emisionView, ins, m, user);
+        controlador.iniciar();
+        emisionView.setVisible(true);
+        view.dispose();
+    }
+
+    private void vistaInforme() {
+        Conexion con = new Conexion();
+        ConsultaInforme consul = new ConsultaInforme(con);
+        ModeloInforme mod = new ModeloInforme();
+        Informe viewInfo = new Informe();
+        ControladorInforme contro = new ControladorInforme(viewInfo, mod, consul, m, ins, user);
+        contro.iniciar();
+        viewInfo.setVisible(true);
+        view.dispose();
+    }
+
+    private void vistaGraficoPrincipal() {
+        Conexion con = new Conexion();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        Vistas.Graficos viewGraf = new Graficos();
+        GraficorModelo mod = new GraficorModelo();
+        InstitucionModelo modelo = new InstitucionModelo();
+        GraficoControlador contro = new GraficoControlador(mod, consul, viewGraf, modelo, m, user, ins);
+        contro.iniciar();
+        viewGraf.setVisible(true);
+        view.dispose();
+    }
+
+    private void vistaCompararInstituciones() {
+        CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
+        GraficoComparar viewGraf = new GraficoComparar();
+        Conexion conn = new Conexion();
+        GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
+        GraficoCompararModelo mod = new GraficoCompararModelo();
+        ComparaInstitucion contro = new ComparaInstitucion(mod, consultas, comIns, viewGraf, ins, m, user);
+        contro.iniciar();
+        view.dispose();
+    }
+
+    private void vistaGraficoHistorico() {
+        Conexion con = new Conexion();
+        TendenciaModelo mod = new TendenciaModelo();
+        ConsultasTendencias consult = new ConsultasTendencias(con);
+        GraficoTendencia viewGraf = new GraficoTendencia();
+        TendenciaControlador control = new TendenciaControlador(mod, consult, viewGraf, m, ins, user);
+        viewGraf.setVisible(true);
+        control.iniciar();
+        view.dispose();
+    }
+
+    private void vistaActualizarInstitucion() {
+        ConsultasInstitucion consul = new ConsultasInstitucion();
+        VerDatosInstitucion viewIns = new VerDatosInstitucion();
+        InstitucionModelo mod = new InstitucionModelo();
+        InstitucionControlador control = new InstitucionControlador(ins, m, viewIns, consul, mod, user);
+        viewIns.setVisible(true);
+        control.iniciar();
+        view.dispose();
+
+    }
+
+    private void vistaReducir() {
+        Conexion con = new Conexion();
+        Reducir2 vista = new Reducir2();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        ControladorReducir redu = new ControladorReducir(ins, consul, vista, m, user);
+        redu.Iniciar();
+        view.dispose();
+    }
+
+    private void Listeners() {
+        this.view.editarButton.addActionListener(this::actionPerformed);
+        this.view.guardarCambiosButton.addActionListener(this::actionPerformed);
+        this.view.buscarButton.addActionListener(this::actionPerformed);
+        this.view.eliminarButton.addActionListener(this::actionPerformed);
+        this.view.inicioButton.addActionListener(this::actionPerformed);
+        this.view.Calcular.addActionListener(this::actionPerformed);
+        this.view.perfil.addActionListener(this::actionPerformed);
+        this.view.RegistrarEmision.addActionListener(this::actionPerformed);
+        this.view.Informes.addActionListener(this::actionPerformed);
+        this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
+        this.view.Reducir.addActionListener(this::actionPerformed);
+        this.view.limpiarCamposButton.addActionListener(this::actionPerformed);
+        this.view.user.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.view.actualizarTablaButton.addActionListener(this::actionPerformed);
+        this.view.verInstitucion.addActionListener(this::actionPerformed);
+        this.view.user.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 1) { // Verifica que sea un doble clic
+                    llenarFormularioDesdeTabla();
+                }
+            }
+        });
+
+        view.rolUser.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                actualizar2();
+            }// Actualiza el texto al insertar
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                actualizar2();
+            } // Actualiza el texto al eliminar
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                actualizar2();
+            }// Actualiza el texto al cambiar
+        });
+        this.view.registrarUsuarioButton.addActionListener(this::actionPerformed);
+    }
+
+    private void deshabilitarEdicionTabla() {
+        DefaultTableModel tableModel = (DefaultTableModel) view.user.getModel();
+
+        // Deshabilitar la edición en la tabla
+        view.user.setDefaultEditor(Object.class, null);
+
+        // Deshabilitar la selección de celdas
+        view.user.setCellSelectionEnabled(false);
+
+        // Deshabilitar la selección de filas para que no se puedan editar las celdas
+        view.user.setRowSelectionAllowed(false);
+        view.user.setColumnSelectionAllowed(false);
+
+        // Opcional: cambiar el color de fondo de la tabla para hacerla visualmente "bloqueada"
+        view.user.setBackground(new java.awt.Color(240, 240, 240));
+    }
+
+    private void editarPrivilegios() {
+        String Correo = view.correoUser.getText();
+        view.correoUser.setEditable(false);
+        view.rolUser.setEditable(true);
+        if (!Correo.isEmpty()) {
+            // Validación y búsqueda del usuario
+            if (consulUser.esEmail(Correo)) {
+                if (consulUser.ExisteUsuario(Correo) > 0) {
+                    List<Usuario> datos = consulUser.BuscarUsuario(Correo);
+                    for (Usuario mod : datos) {
+                        view.nombreUser.setText(mod.getNombre());
+                        view.apellidoUser.setText(mod.getApellido());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "El usuario no existe");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "No es un correo válido");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Campo Correo vacío");
+        }
+    }
+
+    private void guardarCambios(){
         String correo = view.correoUser.getText(); // Obtener el correo del usuario a actualizar
         String rol = view.rolUser.getText();
 
@@ -151,7 +505,7 @@ public class VerPerfilesControlador {
             // Determinar el privilegio basado en el rol
             if (rol.equals("Administrador")) {
                 privilegio = 9;
-            } else if (rol.equals("SuperAdmin")) {
+            } else if (rol.equals("Superadmin")) {
                 privilegio = 10;
             } else {
                 JOptionPane.showMessageDialog(null, "Rol no válido");
@@ -161,7 +515,6 @@ public class VerPerfilesControlador {
             // Llamar a EditarPrivilegios con el correo del usuario que quieres actualizar
             if (consulUser.EditarPrivilegios(correo, privilegio)) {
                 JOptionPane.showMessageDialog(null, "Privilegios actualizados para el usuario con el correo " + correo);
-                limpiarCampos(); // Limpia los campos
                 CamposInhabilitados(); // Inhabilita campos
             } else {
                 JOptionPane.showMessageDialog(null, "Error en la consulta");
@@ -171,8 +524,6 @@ public class VerPerfilesControlador {
         }
     }
 
-
-    // Método para eliminar un usuario
     private void eliminar() {
         String correo = view.correoUser.getText();
         if (!correo.isEmpty()) {
@@ -190,237 +541,34 @@ public class VerPerfilesControlador {
         }
     }
 
-    // Método para cargar datos en la tabla
-    public void CargarDatos(Map<String, Usuario> data) {
+    private void actualizarButton(){
         DefaultTableModel tableModel = (DefaultTableModel) view.user.getModel();
-        tableModel.setRowCount(0); // Limpiar filas existentes
 
-        for (Usuario a : data.values()) {
-            Object[] rowData = {
-                    a.getNombre(),
-                    a.getApellido(),
-                    a.getCorreo(),
-                    a.getTipoUsuario(),
-                    a.getDescripcion(),
-                    a.getNombreInstticion(),
-                    a.getMunicipio()
-            };
-            tableModel.addRow(rowData);
-        }
+        // Limpiar cualquier dato existente en la tabla
+        tableModel.setRowCount(0);
 
-        // Configura los anchos de columna
-        SwingUtilities.invokeLater(() -> {
-            view.user.getColumnModel().getColumn(0).setPreferredWidth(150);
-            view.user.getColumnModel().getColumn(2).setPreferredWidth(150);
-            view.user.getColumnModel().getColumn(3).setPreferredWidth(150);
-            view.user.getColumnModel().getColumn(4).setPreferredWidth(150);
-            view.user.getColumnModel().getColumn(5).setPreferredWidth(150);
-            view.user.getColumnModel().getColumn(6).setPreferredWidth(150);
-            view.user.repaint();
-        });
-
-        view.user.setVisible(true);
-        view.tblUsuario.setVisible(true);
     }
 
-    // Método para inhabilitar campos de texto
-    public void CamposInhabilitados() {
-        view.apellidoUser.setEditable(false);
-        view.nombreUser.setEditable(false);
-        view.correoUser.setEditable(false);
-        view.rolUser.setEditable(false);
-    }
-
-    // Inicia el polling para actualizaciones cada 5 segundos
-    public void startPolling() {
-        timer = new Timer(5000, new ActionListener() { // Intervalo de 5 segundos
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                checkForUpdates();
-            }
-        });
-        timer.start();
-    }
-
-
-    // Comprueba si hay actualizaciones en los datos
-    private void checkForUpdates() {
-        // Consulta la base de datos para obtener los datos actuales
-        List<Usuario> datos = consulUser.datos();
-
-        // Crea un mapa para los datos nuevos
-        Map<String, Usuario> currentData = new HashMap<>();
-        for (Usuario user : datos) {
-            currentData.put(user.getCorreo(), user); // Usa el correo como clave
-        }
-
-        // Compara los datos anteriores con los nuevos
-        if (isDataChanged(currentData)) {
-            CargarDatos(currentData);
-            previousData = currentData; // Actualiza los datos anteriores
-        }
-    }
-
-    // Compara datos antiguos con los nuevos para detectar cambios
-    private boolean isDataChanged(Map<String, Usuario> newData) {
-        if (previousData.size() != newData.size()) {
-            return true; // El tamaño de los datos ha cambiado, lo que indica un cambio
-        }
-
-        // Compara cada registro para detectar cambios
-        for (Map.Entry<String, Usuario> entry : newData.entrySet()) {
-            Usuario newUser = entry.getValue();
-            Usuario oldUser = previousData.get(entry.getKey());
-
-            if (oldUser == null || !oldUser.equals(newUser)) {
-                return true; // Hay cambios en el registro
-            }
-        }
-
-        return false; // No hay cambios
-    }
-
-    // Limpia los campos de texto
-    private void limpiarCampos() {
-        view.rolUser.setText("");
-        view.correoUser.setText("");
-        view.nombreUser.setText("");
-        view.apellidoUser.setText("");
-    }
-
-    private void BotonInicio() {
-        ControladoInicio control = new ControladoInicio(ins, user, m);
-        control.inicio();// Llama al controlador de inicio
-        view.dispose();// Cierra la vista actual
-    }
-    // Métodos para abrir diferentes vistas
-    public void vistaPerfil() {
-        Conexion conn = new Conexion();
-        Perfil per = new Perfil();
-        ConsultaUsuario cons = new ConsultaUsuario(conn);
-        PerfilCOntrolador control = new PerfilCOntrolador(user, per, ins, m, cons);
-        control.Iniciar();
-        per.setVisible(true);
-        view.dispose();
-    }
-
-    public void vistaCalcular() {
+    private void vistaVerInstitucion(){
         Conexion con = new Conexion();
-        Vistas.Calcular viewCal = new Calcular();
-        CalcularModelo mod = new CalcularModelo();
-        CalcularConsultas consul = new CalcularConsultas(con);
-        ConsultaUsuario consultaUsuario = new ConsultaUsuario(con);
-        CalcularControlador controlador = new CalcularControlador(mod, consul, viewCal, ins, consultaUsuario, user, m);
-        controlador.iniciar();
-        viewCal.setVisible(true);
-        view.dispose();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        InstitucionModelo institucionModelo = new InstitucionModelo();
+        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion,consultaNucleo,
+                institucionModelo,verInstituciones,user,m);
+        contraladorVerInstituciones.iniciar();
+        //view.dispose();
     }
 
-    public void vistaRegistrarEmision() {
-        Emision emisionView = new Emision();
-        EmisionModelo mod = new EmisionModelo();
-        ConsultasEmision consul = new ConsultasEmision();
-        EmisionControlador controlador = new EmisionControlador(mod, consul, emisionView, ins, m, user);
-        controlador.iniciar();
-        emisionView.setVisible(true);
-        view.dispose();
+    private void registrarUsuario(){
+        Conexion conexion = new Conexion();
+        RegistrarUsuario registrarUsuario = new RegistrarUsuario();
+        ConsultaUsuario consultaUsuario = new ConsultaUsuario(conexion);
+        Usuario usuario = new Usuario();
+        ControladoRegistrarUsuario controladoRegistrarUsuario = new ControladoRegistrarUsuario(usuario, registrarUsuario, consultaUsuario);
+        controladoRegistrarUsuario.iniciar();
     }
 
-    public void vistaInforme() {
-        Conexion con = new Conexion();
-        ConsultaInforme consul = new ConsultaInforme(con);
-        ModeloInforme mod = new ModeloInforme();
-        Informe viewInfo = new Informe();
-        ControladorInforme contro = new ControladorInforme(viewInfo, mod, consul, m, ins, user);
-        contro.iniciar();
-        viewInfo.setVisible(true);
-        view.dispose();
-    }
-
-    public void vistaGraficoPrincipal() {
-        Conexion con = new Conexion();
-        GraficoConsulta consul = new GraficoConsulta(con);
-        Vistas.Graficos viewGraf = new Graficos();
-        GraficorModelo mod = new GraficorModelo();
-        InstitucionModelo modelo = new InstitucionModelo();
-        GraficoControlador contro = new GraficoControlador(mod, consul, viewGraf, modelo, m, user, ins);
-        contro.iniciar();
-        viewGraf.setVisible(true);
-        view.dispose();
-    }
-
-    public void vistaCompararInstituciones() {
-        CompararOtrarInstituciones comIns = new CompararOtrarInstituciones();
-        GraficoComparar viewGraf = new GraficoComparar();
-        Conexion conn = new Conexion();
-        GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
-        GraficoCompararModelo mod = new GraficoCompararModelo();
-        ComparaInstitucion contro = new ComparaInstitucion(mod, consultas, comIns, viewGraf, ins, m, user);
-        contro.iniciar();
-        view.dispose();
-    }
-
-    public void vistaGraficoHistorico() {
-        Conexion con = new Conexion();
-        TendenciaModelo mod = new TendenciaModelo();
-        ConsultasTendencias consult = new ConsultasTendencias(con);
-        GraficoTendencia viewGraf = new GraficoTendencia();
-        TendenciaControlador control = new TendenciaControlador(mod, consult, viewGraf, m, ins, user);
-        viewGraf.setVisible(true);
-        control.iniciar();
-        view.dispose();
-    }
-
-    public void vistaActualizarInstitucion() {
-        ConsultasInstitucion consul = new ConsultasInstitucion();
-        RegistrarInstitucion viewIns = new RegistrarInstitucion();
-        InstitucionModelo mod = new InstitucionModelo();
-        InstitucionControlador control = new InstitucionControlador(ins, m, viewIns, consul, mod, user);
-        viewIns.setVisible(true);
-        control.iniciar();
-        view.dispose();
-
-    }
-
-    public void vistaReducir() {
-        Conexion con = new Conexion();
-        Reducir2 vista = new Reducir2();
-        GraficoConsulta consul = new GraficoConsulta(con);
-        ControladorReducir redu = new ControladorReducir(ins, consul, vista, m, user);
-        redu.Iniciar();
-        view.dispose();
-    }
-    // Configura los listeners para los botones de la vista
-    public void Listeners() {
-        this.view.editarButton.addActionListener(this::actionPerformed);
-        this.view.guardarCambiosButton.addActionListener(this::actionPerformed);
-        this.view.buscarButton.addActionListener(this::actionPerformed);
-        this.view.eliminarButton.addActionListener(this::actionPerformed);
-        this.view.inicioButton.addActionListener(this::actionPerformed);
-        this.view.Calcular.addActionListener(this::actionPerformed);
-        this.view.perfil.addActionListener(this::actionPerformed);
-        this.view.RegistrarEmisión.addActionListener(this::actionPerformed);
-        this.view.Informes.addActionListener(this::actionPerformed);
-        this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
-        this.view.Reducir.addActionListener(this::actionPerformed);
-        view.rolUser.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                actualizar2();
-            }// Actualiza el texto al insertar
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                actualizar2();
-            } // Actualiza el texto al eliminar
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                actualizar2();
-            }// Actualiza el texto al cambiar
-        });
-
-
-    }
 
 }

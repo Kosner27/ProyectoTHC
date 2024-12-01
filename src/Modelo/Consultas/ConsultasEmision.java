@@ -48,7 +48,8 @@ public class ConsultasEmision {
     public List<EmisionModelo> dato() {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
-        String sql = "Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, factorEmision from emision order by NombreFuente";
+        String sql = "Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, " +
+                "factorEmision from emision where Activo = 1 order by NombreFuente ";
         ResultSet rs = null;
         PreparedStatement ps = null;
         List<EmisionModelo> emisionModeloList = null;
@@ -107,7 +108,8 @@ public class ConsultasEmision {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, factorEmision from emision where NombreFuente=? ");
+            ps = conn.prepareStatement("Select Emision, NombreFuente, EstadoFuente, unidadMedida, " +
+                    "alcance, factorEmision from emision where NombreFuente=?  and Activo = 1");
             ps.setString(1, nombre);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -152,7 +154,7 @@ public class ConsultasEmision {
     public boolean eliminarFuente(String nombreE) {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
-        String sql = "Delete from emision where NombreFuente = ? ";
+        String sql = "Update emision set Activo = 0 where NombreFuente = ? ";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nombreE);
             ps.execute();
