@@ -15,7 +15,7 @@ public class LogIn extends JFrame {
 
     public  LogIn(){
 
-    setTitle("Registrar Usuario");
+    setTitle("Registrar ModeloUsuario");
     setVisible(true);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     setSize(500, 600);

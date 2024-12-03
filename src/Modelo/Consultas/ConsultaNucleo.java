@@ -3,7 +3,6 @@ package Modelo.Consultas;
 import Modelo.Conexion;
 import Modelo.modelo.*;
 
-import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +17,13 @@ public class ConsultaNucleo {
         this.conn = conexion.getConection();
     }
 
-    public boolean RegistrarNucleo(Nucleo nucleo, Municipio municipio, InstitucionModelo ins) {
+    public boolean RegistrarNucleo(ModeloNucleo modeloNucleo, ModeloMunicipio modeloMunicipio, ModeloInstitucion ins) {
         String sql = "CALL EmisionNucleo(?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nucleo.getNombreNucleo());
-            ps.setString(2, municipio.getNombreM());
+            ps.setString(1, modeloNucleo.getNombreNucleo());
+            ps.setString(2, modeloMunicipio.getNombreM());
             ps.setString(3, ins.getNombreInstitucion());
-            ps.setInt(4, nucleo.getHectareas());
+            ps.setInt(4, modeloNucleo.getHectareas());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -33,10 +32,10 @@ public class ConsultaNucleo {
         }
     }
 
-    public int ExisteNucleo(Nucleo nucleo) {
+    public int ExisteNucleo(ModeloNucleo modeloNucleo) {
         String sql = "SELECT COUNT(*) FROM nucleoinstitucion WHERE NombreNucleo = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nucleo.getNombreNucleo());
+            ps.setString(1, modeloNucleo.getNombreNucleo());
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : 0;
             }
@@ -46,14 +45,14 @@ public class ConsultaNucleo {
         }
     }
 
-    public boolean InsertarCalculoConNucleo(CalcularModelo calcularModelo, Nucleo nucleo) {
+    public boolean InsertarCalculoConNucleo(ModeloEmisionCalcular modeloCalcular, ModeloNucleo modeloNucleo) {
         String sql = "CALL InsertarCalculoConNucleo(?,?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nucleo.getNombreNucleo());
-            ps.setInt(2, calcularModelo.getAnioBase());
-            ps.setDouble(3, calcularModelo.getCantidadConsumidad());
-            ps.setString(4, calcularModelo.getNombreFuente());
-            ps.setDouble(5, calcularModelo.getTotal1());
+            ps.setString(1, modeloNucleo.getNombreNucleo());
+            ps.setInt(2, modeloCalcular.getAnioBase());
+            ps.setDouble(3, modeloCalcular.getCantidadConsumidad());
+            ps.setString(4, modeloCalcular.getNombreFuente());
+            ps.setDouble(5, modeloCalcular.getTotal1());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -76,7 +75,7 @@ public class ConsultaNucleo {
 
     public int TieneNucleo(String ins) {
         String sql = "SELECT COUNT(nu.IdNucleo) FROM nucleoinstitucion nu " +
-                "INNER JOIN municipio m ON nu.idMunicipio = m.idMunicipio " +
+                "INNER JOIN modeloMunicipio m ON nu.idMunicipio = m.idMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.idMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.IdInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? GROUP BY nu.NombreNucleo";
@@ -95,7 +94,7 @@ public class ConsultaNucleo {
     public List<String> cargarNucleos(String nombreInstitucion) {
         List<String> nucleos = new ArrayList<>();
         String sql = "SELECT nu.NombreNucleo FROM nucleoinstitucion nu " +
-                "INNER JOIN municipio m ON nu.idMunicipio = m.idMunicipio " +
+                "INNER JOIN modeloMunicipio m ON nu.idMunicipio = m.idMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.idMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.IdInstitucionAuto = mi.IdInstitucion " +
                 "WHERE nu.Activo = 1 AND i.NombreInstitucion = ? GROUP BY nu.NombreNucleo";
@@ -116,7 +115,7 @@ public class ConsultaNucleo {
         List<String> anosBase = new ArrayList<>();
         String sql = "SELECT anioBase FROM emisionnucleo en " +
                 "INNER JOIN nucleoinstitucion n ON n.IdNucleo = en.idNucleo " +
-                "INNER JOIN municipio m ON m.IdMunicipio = n.IdMunicipio " +
+                "INNER JOIN modeloMunicipio m ON m.IdMunicipio = n.IdMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.IdMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? AND n.NombreNucleo = ? " +
@@ -136,7 +135,7 @@ public class ConsultaNucleo {
         return anosBase;
     }
 
-    // Método que consulta los años base de las emisiones según la institución y municipio
+    // Método que consulta los años base de las emisiones según la institución y modeloMunicipio
     public List<String> obteneranioParaSumaTodosLosNucleos(String nombreInstitucion, String nombreMunicipio) {
         List<String> aniosBase = new ArrayList<>();
         Conexion conexion = new Conexion();
@@ -146,7 +145,7 @@ public class ConsultaNucleo {
         String sql = "SELECT en.anioBase " +
                 "FROM emisionnucleo en " +
                 "INNER JOIN nucleoinstitucion n ON n.IdNucleo = en.idNucleo " +
-                "INNER JOIN municipio m ON m.IdMunicipio = n.IdMunicipio " +
+                "INNER JOIN modeloMunicipio m ON m.IdMunicipio = n.IdMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.IdMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? " +
@@ -159,7 +158,7 @@ public class ConsultaNucleo {
             if (conn != null) {
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setString(1, nombreInstitucion); // Establecer el valor de la institución
-                    ps.setString(2, nombreMunicipio); // Establecer el valor del municipio
+                    ps.setString(2, nombreMunicipio); // Establecer el valor del modeloMunicipio
 
                     rs = ps.executeQuery(); // Ejecutar la consulta
 

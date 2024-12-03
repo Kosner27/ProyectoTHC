@@ -17,8 +17,8 @@ public class CalcularConsultas {
         this.conn = conexion.getConection();
     }
 
-    public List<EmisionModelo> getEmisiones(String fuenteSeleccionada) {
-        List<EmisionModelo> emisiones = new ArrayList<>();
+    public List<ModeloEmision> getEmisiones(String fuenteSeleccionada) {
+        List<ModeloEmision> emisiones = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -26,7 +26,7 @@ public class CalcularConsultas {
             ps.setString(1, fuenteSeleccionada);
             rs = ps.executeQuery();
             while (rs.next()) {
-                EmisionModelo mod = new EmisionModelo();
+                ModeloEmision mod = new ModeloEmision();
                 mod.setNombreFuente(rs.getString("NombreFuente"));
                 mod.setEstadoFuente(rs.getString("EstadoFuente"));
                 mod.setUnidadMedidad(rs.getString("UnidadMedida"));
@@ -47,7 +47,7 @@ public class CalcularConsultas {
         return emisiones;
     }
 
-    public boolean registrarCargaAmbientaInstitucionSinNucleo(CalcularModelo mod, InstitucionModelo nombreInstitucion,  Municipio nombreMunicipio) {
+    public boolean registrarCargaAmbientaInstitucionSinNucleo(ModeloEmisionCalcular mod, ModeloInstitucion nombreInstitucion, ModeloMunicipio nombreModeloMunicipio) {
         PreparedStatement ps = null;
         try {
             System.out.println("Año Base: " + mod.getAnioBase());
@@ -55,14 +55,14 @@ public class CalcularConsultas {
             System.out.println("Nombre Institución: " + nombreInstitucion.getNombreInstitucion());
             System.out.println("Nombre Fuente: " + mod.getNombreFuente());
             System.out.println("Total 1: " + mod.getTotal1());
-            System.out.println("Nombre Municipio: " + nombreMunicipio.getNombreM());
+            System.out.println("Nombre ModeloMunicipio: " + nombreModeloMunicipio.getNombreM());
             ps = conn.prepareStatement("CALL insertarCalculoSinNucleo(?,?,?,?,?,?)");
             ps.setInt(1, mod.getAnioBase());
             ps.setDouble(2, mod.getCantidadConsumidad());
             ps.setString(3, nombreInstitucion.getNombreInstitucion());
             ps.setString(4, mod.getNombreFuente());
             ps.setDouble(5, mod.getTotal1());
-            ps.setString(6, nombreMunicipio.getNombreM());
+            ps.setString(6, nombreModeloMunicipio.getNombreM());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -85,7 +85,7 @@ public class CalcularConsultas {
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("Select i.NombreInstitucion, m.NombreMunicipio from institucion i  inner join  municipioinstitiucion mi \n" +
-                    "on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on mi.idMuncipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
+                    "on i.idInstitucionAuto = mi.IdInstitucion inner join modeloMunicipio m on mi.idMuncipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
             ps.setString(1, ins);
             ps.setString(2, m);
             rs = ps.executeQuery();

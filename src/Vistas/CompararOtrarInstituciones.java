@@ -50,7 +50,7 @@
             setContentPane(PanelMain);
             Instituciones.setPreferredScrollableViewportSize(new Dimension(500, 300));
             Instituciones.setFillsViewportHeight(true);
-            String[] columnNames = {"Nombre de la Institución", "NIT", "Departamento", "Municipio", "Campus", "Alcance", "Año Base"};
+            String[] columnNames = {"Nombre de la Institución", "NIT", "Departamento", "ModeloMunicipio", "Campus", "Alcance", "Año Base"};
             DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
             Instituciones.setModel(tableModel);
 

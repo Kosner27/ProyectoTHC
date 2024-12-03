@@ -12,7 +12,7 @@ public class NucleoView extends JFrame{
     public JTextField hectareas;
 
     public NucleoView(){
-        setTitle("Registrar Nucleo");
+        setTitle("Registrar ModeloNucleo");
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(500, 600);

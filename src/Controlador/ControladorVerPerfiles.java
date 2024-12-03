@@ -11,18 +11,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Map;
 
-public class VerPerfilesControlador {
+
+public class ControladorVerPerfiles {
     // Variables de instancia
 
-    public Usuario user;
-    public InstitucionModelo ins;
-    public Municipio m;
+    public ModeloUsuario modeloUsuario;
+    public ModeloInstitucion modeloInstitucion;
+    public ModeloMunicipio modeloMunicipio;
     public VerPerfiles view;
-    public ConsultaUsuario consulUser;
-    private Timer timer;
-    private Map<String, Usuario> previousData;
+    public ConsultaUsuario consultaUsuario;
 
     // Elementos del menú para gráficas
     JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
@@ -30,13 +28,13 @@ public class VerPerfilesControlador {
     JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
 
     // Constructor
-    public VerPerfilesControlador(Usuario user, InstitucionModelo ins,
-                                  Municipio m, VerPerfiles view, ConsultaUsuario consulUser) {
-        this.user = user;
-        this.ins = ins;
-        this.m = m;
+    public ControladorVerPerfiles(ModeloUsuario modeloUsuario, ModeloInstitucion modeloInstitucion,
+                                  ModeloMunicipio modeloMunicipio, VerPerfiles view, ConsultaUsuario consultaUsuario) {
+        this.modeloUsuario = modeloUsuario;
+        this.modeloInstitucion = modeloInstitucion;
+        this.modeloMunicipio = modeloMunicipio;
         this.view = view;
-        this.consulUser = consulUser;
+        this.consultaUsuario = consultaUsuario;
         Listeners(); // Inicia los listeners
     }
 
@@ -58,7 +56,7 @@ public class VerPerfilesControlador {
 
     // Método para iniciar la vista de perfiles
     public void Iniciar() {
-        switch (user.getTipoUsuario()) {
+        switch (modeloUsuario.getTipoUsuario()) {
             case "Superadmin":
                 CargarDatos();
                 CamposInhabilitados();
@@ -77,9 +75,9 @@ public class VerPerfilesControlador {
         // Asignar el ActionListener para el botón de búsqueda
         //view.buscarButton.addActionListener(e -> buscarUsuario());
         // Asigna los ActionListeners a los botones
-        GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
-        GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
-        GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
+        GraficoPrincipal.addActionListener(_ -> vistaGraficoPrincipal());
+        GraficosCompararInstitucion.addActionListener(_ -> vistaCompararInstituciones());
+        GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
         view.limpiarCamposButton.setEnabled(false);
     }
 
@@ -98,7 +96,7 @@ public class VerPerfilesControlador {
              guardarCambios(); // Guarda los cambios realizados
         }
         if (e.getSource() == view.eliminarButton) {
-             eliminar(); // Elimina el usuario
+             eliminar(); // Elimina el modeloUsuario
         }
         if (e.getSource() == view.inicioButton) {
             BotonInicio(); // Vuelve a la pantalla de inicio
@@ -127,7 +125,7 @@ public class VerPerfilesControlador {
 
         }
        if(e.getSource()== view.actualizarTablaButton){
-           if(user.getTipoUsuario().equals("Superadmin")){
+           if (modeloUsuario.getTipoUsuario().equals("Superadmin")) {
                actualizarButton();
                 CargarDatos();
            }else{
@@ -145,7 +143,7 @@ public class VerPerfilesControlador {
     }
 
 
-    // Método para guardar cambios en los privilegios del usuario
+    // Método para guardar cambios en los privilegios del modeloUsuario
 
 
     // Método para cargar datos en la tabla
@@ -159,9 +157,9 @@ public class VerPerfilesControlador {
         };
         tableModel.setRowCount(0);
         tableModel = (DefaultTableModel) view.user.getModel();
-        List<Usuario> datos = consulUser.datos();
+        List<ModeloUsuario> datos = consultaUsuario.datos();
 
-        for (Usuario a : datos) {
+        for (ModeloUsuario a : datos) {
             Object[] rowData = {
                     a.getNombre(),
                     a.getApellido(),
@@ -171,7 +169,7 @@ public class VerPerfilesControlador {
                     a.getNombreInstticion(),
                     a.getMunicipio()
             };
-            tableModel.addRow(rowData); // Agregar una fila por cada usuario
+            tableModel.addRow(rowData); // Agregar una fila por cada modeloUsuario
         }
 
         // Configura los anchos de columna
@@ -189,8 +187,8 @@ public class VerPerfilesControlador {
     }
 
     private void CargarDatosAdministradorSede() {
-        String municipio = m.getNombreM();
-        String institucion = ins.getNombreInstitucion();
+        String municipio = this.modeloMunicipio.getNombreM();
+        String institucion = modeloInstitucion.getNombreInstitucion();
         DefaultTableModel tableModel;
         tableModel = new DefaultTableModel() {
             @Override
@@ -200,9 +198,9 @@ public class VerPerfilesControlador {
         };
         tableModel.setRowCount(0);
         tableModel = (DefaultTableModel) view.user.getModel();
-        List<Usuario> datos = consulUser.datosAdministradorDeSede(municipio, institucion);
+        List<ModeloUsuario> datos = consultaUsuario.datosAdministradorDeSede(municipio, institucion);
 
-        for (Usuario a : datos) {
+        for (ModeloUsuario a : datos) {
             Object[] rowData = {
                     a.getNombre(),
                     a.getApellido(),
@@ -212,7 +210,7 @@ public class VerPerfilesControlador {
                     a.getNombreInstticion(),
                     a.getMunicipio()
             };
-            tableModel.addRow(rowData); // Agregar una fila por cada usuario
+            tableModel.addRow(rowData); // Agregar una fila por cada modeloUsuario
         }
 
         // Configura los anchos de columna
@@ -271,12 +269,12 @@ public class VerPerfilesControlador {
             JOptionPane.showMessageDialog(view, "Por favor ingrese un nombre de la institucion.");
             return;
         }
-        List<Usuario> datos = consulUser.BuscarUsuario(correo);
+        List<ModeloUsuario> datos = consultaUsuario.BuscarUsuario(correo);
         if (datos.isEmpty()) {
             JOptionPane.showMessageDialog(view, "No se encontraron usuarios con el correo ingresado.");
         } else {
             // Agregar los resultados encontrados al modelo de la tabla
-            for (Usuario a : datos) {
+            for (ModeloUsuario a : datos) {
                 Object[] rowData = {
                         a.getNombre(),
                         a.getApellido(),
@@ -286,7 +284,7 @@ public class VerPerfilesControlador {
                         a.getNombreInstticion(),
                         a.getMunicipio()
                 };
-                tableModel.addRow(rowData); // Agregar una fila por cada usuario
+                tableModel.addRow(rowData); // Agregar una fila por cada modeloUsuario
             }
 
         }
@@ -308,7 +306,7 @@ public class VerPerfilesControlador {
     }
 
     private void BotonInicio() {
-        ControladoInicio control = new ControladoInicio(ins, user, m);
+        ControladorPestaniaPrincipal control = new ControladorPestaniaPrincipal(modeloInstitucion, modeloUsuario, modeloMunicipio);
         control.inicio();// Llama al controlador de inicio
         view.dispose();// Cierra la vista actual
     }
@@ -318,7 +316,7 @@ public class VerPerfilesControlador {
         Conexion conn = new Conexion();
         Perfil per = new Perfil();
         ConsultaUsuario cons = new ConsultaUsuario(conn);
-        PerfilCOntrolador control = new PerfilCOntrolador(user, per, ins, m, cons);
+        ControladorPerfil control = new ControladorPerfil(modeloUsuario, per, modeloInstitucion, modeloMunicipio, cons);
         control.Iniciar();
         per.setVisible(true);
         view.dispose();
@@ -327,10 +325,10 @@ public class VerPerfilesControlador {
     private void vistaCalcular() {
         Conexion con = new Conexion();
         Vistas.Calcular viewCal = new Calcular();
-        CalcularModelo mod = new CalcularModelo();
+        ModeloEmisionCalcular mod = new ModeloEmisionCalcular();
         CalcularConsultas consul = new CalcularConsultas(con);
         ConsultaUsuario consultaUsuario = new ConsultaUsuario(con);
-        CalcularControlador controlador = new CalcularControlador(mod, consul, viewCal, ins, consultaUsuario, user, m);
+        ControladorCalcular controlador = new ControladorCalcular(mod, consul, viewCal, modeloInstitucion, consultaUsuario, modeloUsuario, modeloMunicipio);
         controlador.iniciar();
         viewCal.setVisible(true);
         view.dispose();
@@ -338,9 +336,9 @@ public class VerPerfilesControlador {
 
     private void vistaRegistrarEmision() {
         Emision emisionView = new Emision();
-        EmisionModelo mod = new EmisionModelo();
+        ModeloEmision mod = new ModeloEmision();
         ConsultasEmision consul = new ConsultasEmision();
-        EmisionControlador controlador = new EmisionControlador(mod, consul, emisionView, ins, m, user);
+        ControladorEmision controlador = new ControladorEmision(mod, consul, emisionView, modeloInstitucion, modeloMunicipio, modeloUsuario);
         controlador.iniciar();
         emisionView.setVisible(true);
         view.dispose();
@@ -349,9 +347,9 @@ public class VerPerfilesControlador {
     private void vistaInforme() {
         Conexion con = new Conexion();
         ConsultaInforme consul = new ConsultaInforme(con);
-        ModeloInforme mod = new ModeloInforme();
+        ModeloEmisionInforme mod = new ModeloEmisionInforme();
         Informe viewInfo = new Informe();
-        ControladorInforme contro = new ControladorInforme(viewInfo, mod, consul, m, ins, user);
+        ControladorInforme contro = new ControladorInforme(viewInfo, mod, consul, modeloMunicipio, modeloInstitucion, modeloUsuario);
         contro.iniciar();
         viewInfo.setVisible(true);
         view.dispose();
@@ -361,9 +359,9 @@ public class VerPerfilesControlador {
         Conexion con = new Conexion();
         GraficoConsulta consul = new GraficoConsulta(con);
         Vistas.Graficos viewGraf = new Graficos();
-        GraficorModelo mod = new GraficorModelo();
-        InstitucionModelo modelo = new InstitucionModelo();
-        GraficoControlador contro = new GraficoControlador(mod, consul, viewGraf, modelo, m, user, ins);
+        GraficorModeloInstitucion mod = new GraficorModeloInstitucion();
+        ModeloInstitucion modelo = new ModeloInstitucion();
+        ControladorGrafico contro = new ControladorGrafico(mod, consul, viewGraf, modelo, modeloMunicipio, modeloUsuario, modeloInstitucion);
         contro.iniciar();
         viewGraf.setVisible(true);
         view.dispose();
@@ -374,18 +372,18 @@ public class VerPerfilesControlador {
         GraficoComparar viewGraf = new GraficoComparar();
         Conexion conn = new Conexion();
         GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
-        GraficoCompararModelo mod = new GraficoCompararModelo();
-        ComparaInstitucion contro = new ComparaInstitucion(mod, consultas, comIns, viewGraf, ins, m, user);
+        ModeloGraficoComparar mod = new ModeloGraficoComparar();
+        ControladorCompararInstitucion contro = new ControladorCompararInstitucion(mod, consultas, comIns, viewGraf, modeloInstitucion, modeloMunicipio, modeloUsuario);
         contro.iniciar();
         view.dispose();
     }
 
     private void vistaGraficoHistorico() {
         Conexion con = new Conexion();
-        TendenciaModelo mod = new TendenciaModelo();
+        ModeloTendencia mod = new ModeloTendencia();
         ConsultasTendencias consult = new ConsultasTendencias(con);
         GraficoTendencia viewGraf = new GraficoTendencia();
-        TendenciaControlador control = new TendenciaControlador(mod, consult, viewGraf, m, ins, user);
+        ControladorTendencia control = new ControladorTendencia(mod, consult, viewGraf, modeloMunicipio, modeloInstitucion, modeloUsuario);
         viewGraf.setVisible(true);
         control.iniciar();
         view.dispose();
@@ -394,8 +392,8 @@ public class VerPerfilesControlador {
     private void vistaActualizarInstitucion() {
         ConsultasInstitucion consul = new ConsultasInstitucion();
         VerDatosInstitucion viewIns = new VerDatosInstitucion();
-        InstitucionModelo mod = new InstitucionModelo();
-        InstitucionControlador control = new InstitucionControlador(ins, m, viewIns, consul, mod, user);
+        ModeloInstitucion mod = new ModeloInstitucion();
+        ControladorInstitucion control = new ControladorInstitucion(modeloInstitucion, modeloMunicipio, viewIns, consul, mod, modeloUsuario);
         viewIns.setVisible(true);
         control.iniciar();
         view.dispose();
@@ -406,7 +404,7 @@ public class VerPerfilesControlador {
         Conexion con = new Conexion();
         Reducir2 vista = new Reducir2();
         GraficoConsulta consul = new GraficoConsulta(con);
-        ControladorReducir redu = new ControladorReducir(ins, consul, vista, m, user);
+        ControladorReducir redu = new ControladorReducir(modeloInstitucion, consul, vista, modeloMunicipio, modeloUsuario);
         redu.Iniciar();
         view.dispose();
     }
@@ -477,16 +475,16 @@ public class VerPerfilesControlador {
         view.correoUser.setEditable(false);
         view.rolUser.setEditable(true);
         if (!Correo.isEmpty()) {
-            // Validación y búsqueda del usuario
-            if (consulUser.esEmail(Correo)) {
-                if (consulUser.ExisteUsuario(Correo) > 0) {
-                    List<Usuario> datos = consulUser.BuscarUsuario(Correo);
-                    for (Usuario mod : datos) {
+            // Validación y búsqueda del modeloUsuario
+            if (consultaUsuario.esEmail(Correo)) {
+                if (consultaUsuario.ExisteUsuario(Correo) > 0) {
+                    List<ModeloUsuario> datos = consultaUsuario.BuscarUsuario(Correo);
+                    for (ModeloUsuario mod : datos) {
                         view.nombreUser.setText(mod.getNombre());
                         view.apellidoUser.setText(mod.getApellido());
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "El usuario no existe");
+                    JOptionPane.showMessageDialog(null, "El modeloUsuario no existe");
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "No es un correo válido");
@@ -497,7 +495,7 @@ public class VerPerfilesControlador {
     }
 
     private void guardarCambios(){
-        String correo = view.correoUser.getText(); // Obtener el correo del usuario a actualizar
+        String correo = view.correoUser.getText(); // Obtener el correo del modeloUsuario a actualizar
         String rol = view.rolUser.getText();
 
         if (!correo.isEmpty() && !rol.isEmpty()) {
@@ -508,13 +506,13 @@ public class VerPerfilesControlador {
             } else if (rol.equals("Superadmin")) {
                 privilegio = 10;
             } else {
-                JOptionPane.showMessageDialog(null, "Rol no válido");
+                JOptionPane.showMessageDialog(null, "ModeloRol no válido");
                 return; // Salir del método si el rol no es válido
             }
 
-            // Llamar a EditarPrivilegios con el correo del usuario que quieres actualizar
-            if (consulUser.EditarPrivilegios(correo, privilegio)) {
-                JOptionPane.showMessageDialog(null, "Privilegios actualizados para el usuario con el correo " + correo);
+            // Llamar a EditarPrivilegios con el correo del modeloUsuario que quieres actualizar
+            if (consultaUsuario.EditarPrivilegios(correo, privilegio)) {
+                JOptionPane.showMessageDialog(null, "Privilegios actualizados para el modeloUsuario con el correo " + correo);
                 CamposInhabilitados(); // Inhabilita campos
             } else {
                 JOptionPane.showMessageDialog(null, "Error en la consulta");
@@ -528,8 +526,8 @@ public class VerPerfilesControlador {
         String correo = view.correoUser.getText();
         if (!correo.isEmpty()) {
             try {
-                if (consulUser.eliminarUsuario(correo)) {
-                    JOptionPane.showMessageDialog(null, "El usuario con el correo: " + correo + " ha sido eliminado");
+                if (consultaUsuario.eliminarUsuario(correo)) {
+                    JOptionPane.showMessageDialog(null, "El modeloUsuario con el correo: " + correo + " ha sido eliminado");
                 } else {
                     JOptionPane.showMessageDialog(null, "Error en la consulta");
                 }
@@ -554,9 +552,9 @@ public class VerPerfilesControlador {
         VerInstituciones verInstituciones = new VerInstituciones();
         ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
         ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
-        InstitucionModelo institucionModelo = new InstitucionModelo();
-        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion,consultaNucleo,
-                institucionModelo,verInstituciones,user,m);
+        ModeloInstitucion modeloInstitucion = new ModeloInstitucion();
+        ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
+                modeloInstitucion, verInstituciones, modeloUsuario, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
         //view.dispose();
     }
@@ -565,9 +563,9 @@ public class VerPerfilesControlador {
         Conexion conexion = new Conexion();
         RegistrarUsuario registrarUsuario = new RegistrarUsuario();
         ConsultaUsuario consultaUsuario = new ConsultaUsuario(conexion);
-        Usuario usuario = new Usuario();
-        ControladoRegistrarUsuario controladoRegistrarUsuario = new ControladoRegistrarUsuario(usuario, registrarUsuario, consultaUsuario);
-        controladoRegistrarUsuario.iniciar();
+        ModeloUsuario modeloUsuario = new ModeloUsuario();
+        ControladorRegistrarUsuario controladorRegistrarUsuario = new ControladorRegistrarUsuario(modeloUsuario, registrarUsuario, consultaUsuario);
+        controladorRegistrarUsuario.iniciar();
     }
 
 

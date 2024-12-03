@@ -11,7 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class ControladorLogin {
-    private final Usuario user; // Modelo de usuario
+    private final ModeloUsuario user; // Modelo de modeloUsuario
     private final LogIn view; // Vista de inicio de sesión
     private final ConsultaUsuario consul; // Consulta de usuarios
     private int intentosFallidos = 0; // Contador de intentos fallidos
@@ -21,11 +21,11 @@ public class ControladorLogin {
     /**
      * Constructor del controlador.
      *
-     * @param user   Modelo de usuario
+     * @param user   Modelo de modeloUsuario
      * @param view   Vista de inicio de sesión
      * @param consul Consultas relacionadas a usuarios
      */
-    public ControladorLogin(Usuario user, LogIn view, ConsultaUsuario consul) {
+    public ControladorLogin(ModeloUsuario user, LogIn view, ConsultaUsuario consul) {
         this.user = user;
         this.view = view;
         this.consul = consul;
@@ -89,7 +89,7 @@ public class ControladorLogin {
      */
     public void inicio() {
         Main inicio = new Main();
-        Usuario user = new Usuario();
+        ModeloUsuario user = new ModeloUsuario();
         ControladorMain contro = new ControladorMain(inicio, user);
         contro.Iniciar();
         view.dispose();
@@ -100,10 +100,10 @@ public class ControladorLogin {
      */
     public void abrirRegistro() {
         Conexion con = new Conexion();
-        Usuario user = new Usuario();
+        ModeloUsuario user = new ModeloUsuario();
         RegistrarUsuario vista = new RegistrarUsuario();
         ConsultaUsuario consul = new ConsultaUsuario(con);
-        ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(user, vista, consul);
+        ControladorRegistrarUsuario contro = new ControladorRegistrarUsuario(user, vista, consul);
         contro.iniciar();
         view.dispose();
     }
@@ -113,10 +113,10 @@ public class ControladorLogin {
      */
     public void recordarContrasena() {
         Conexion con = new Conexion();
-        Usuario user = new Usuario();
+        ModeloUsuario user = new ModeloUsuario();
         ConsultaUsuario consul = new ConsultaUsuario(con);
         RecordarContrasena record = new RecordarContrasena();
-        RecuperadorControlador control = new RecuperadorControlador(user, consul, record);
+        ControladorRecuperarContrasenia control = new ControladorRecuperarContrasenia(user, consul, record);
         control.inicio();
         view.dispose();
     }
@@ -125,8 +125,8 @@ public class ControladorLogin {
      * Maneja el proceso de inicio de sesión.
      */
     private void iniciarSesion() {
-        InstitucionModelo ins = new InstitucionModelo();
-        Municipio m = new Municipio();
+        ModeloInstitucion ins = new ModeloInstitucion();
+        ModeloMunicipio m = new ModeloMunicipio();
         String pass = new String(view.Contrasena.getPassword());
         String usuario = view.Correo.getText();
 
@@ -141,8 +141,8 @@ public class ControladorLogin {
             user.setContrasena(HASH.sha1(pass));
 
             if (consul.LogIn(user, ins, m)) {
-                ControladoInicio controladoInicio = new ControladoInicio(ins, user, m);
-                controladoInicio.inicio();
+                ControladorPestaniaPrincipal controladorPestaniaPrincipal = new ControladorPestaniaPrincipal(ins, user, m);
+                controladorPestaniaPrincipal.inicio();
                 view.dispose();
                 JOptionPane.showMessageDialog(null, "Datos correctos");
                 intentosFallidos = 0; // Restablecer los intentos fallidos
@@ -158,7 +158,7 @@ public class ControladorLogin {
     /**
      * Validar las credenciales ingresadas.
      *
-     * @param usuario   Nombre de usuario
+     * @param usuario   Nombre de modeloUsuario
      * @param contrasena Contraseña
      * @return true si son válidas, false en caso contrario.
      */

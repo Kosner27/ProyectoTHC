@@ -16,12 +16,9 @@ public class Conexion {
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Intentamos establecer la conexión
             this.conn = DriverManager.getConnection(url, user, password);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (ClassNotFoundException e) {
-            System.err.println("Error al cargar el controlador de MySQL");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.err.println("Error al conectar a la base de datos");
             e.printStackTrace();
         }
         return conn;
@@ -35,9 +32,7 @@ public class Conexion {
         if (conn != null) {
             try {
                 conn.close();
-                System.out.println("Conexión cerrada");
             } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión");
                 e.printStackTrace();
             }
         }

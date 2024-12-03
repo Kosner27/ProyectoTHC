@@ -1,6 +1,6 @@
 package Modelo.modelo;
 
-public class InstitucionModelo {
+public class ModeloInstitucion {
     private String Nit;
     private String NombreInstitucion;
     private String departamento;
@@ -9,7 +9,7 @@ public class InstitucionModelo {
     private int hectareas;
     private int hectareasNucleo;
 
-    public InstitucionModelo() {
+    public ModeloInstitucion() {
     }
 
     public String getNucleo() {

@@ -1,6 +1,6 @@
 package Modelo.modelo;
 
-public class Usuario {
+public class ModeloUsuario {
     private String Nombre;
     private String Apellido;
     private String Correo;
@@ -28,7 +28,7 @@ public class Usuario {
         this.nombreInstticion = nombreInstticion;
     }
 
-    public Usuario() {
+    public ModeloUsuario() {
     }
 
     public String getApellido() {

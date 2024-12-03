@@ -32,7 +32,7 @@ public class MonitoreoInactividad {
     }
 
     /**
-     * Reinicia el timer de inactividad cada vez que haya actividad del usuario.
+     * Reinicia el timer de inactividad cada vez que haya actividad del modeloUsuario.
      */
     public void reiniciar() {
         timer.restart();

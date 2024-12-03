@@ -1,13 +1,13 @@
 package Modelo.modelo;
 
-public class TendenciaModelo {
+public class ModeloTendencia {
     private String Nombre;
     private Integer AnioBase;
     private Double co2;
     private String alcance;
 
 
-    public TendenciaModelo() {
+    public ModeloTendencia() {
 
     }
 

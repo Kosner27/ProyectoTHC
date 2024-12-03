@@ -2,9 +2,7 @@ package Controlador;
 
 import Modelo.Conexion;
 import Modelo.Consultas.ConsultaUsuario;
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.Usuario;
-import Modelo.modelo.Municipio;
+import Modelo.modelo.ModeloUsuario;
 import Vistas.LogIn;
 import Vistas.Main;
 import Vistas.RegistrarUsuario;
@@ -12,43 +10,72 @@ import Vistas.RegistrarUsuario;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Controlador principal para manejar la interacción con la vista Main.
+ * Este controlador gestiona las acciones de los botones de la vista Main,
+ * como iniciar sesión y registrarse, redirigiendo a las vistas correspondientes.
+ */
 public class ControladorMain {
-    private Usuario mod2;
-    private  Main view;
+    private ModeloUsuario modeloUsuario;  // Objeto que maneja los datos del modeloUsuario
+    private Main view;     // Vista principal
 
-
-    public ControladorMain( Main view, Usuario mod) {
+    /**
+     * Constructor que inicializa el controlador con la vista principal y el modelo de modeloUsuario.
+     * Asocia los eventos de los botones a sus respectivas acciones.
+     * @param view Vista principal (Main).
+     * @param mod Modelo de modeloUsuario.
+     */
+    public ControladorMain(Main view, ModeloUsuario mod) {
         this.view = view;
-        this.mod2 = mod;
+        this.modeloUsuario = mod;
+        // Asocia los botones con las acciones
         this.view.iniciarSesionButton.addActionListener(this::actionPerformed);
         this.view.registrarseButton.addActionListener(this::actionPerformed);
     }
-    public void Iniciar(){
-        view.setTitle("Inicio");
-        view.setVisible(true);
-        view.setSize(400, 300);
-        view.setLocationRelativeTo(null);
-        view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+    /**
+     * Método para iniciar la vista principal (Main).
+     * Configura la ventana de la vista y la hace visible.
+     */
+    public void Iniciar() {
+        view.setTitle("Inicio");  // Título de la ventana
+        view.setVisible(true);    // Hace la ventana visible
+        view.setSize(400, 300);   // Establece el tamaño de la ventana
+        view.setLocationRelativeTo(null);  // Centra la ventana en la pantalla
+        view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);  // Cierra la aplicación al cerrar la ventana
     }
-    public void actionPerformed(ActionEvent e){
-        if(e.getSource()==view.iniciarSesionButton){
+
+    /**
+     * Método que maneja los eventos de acción para los botones de la vista principal.
+     * Dependiendo del botón presionado, redirige al modeloUsuario a la vista de login o registro.
+     * @param e Evento generado por los botones.
+     */
+    public void actionPerformed(ActionEvent e) {
+        // Si el modeloUsuario hace clic en el botón "Iniciar sesión"
+        if (e.getSource() == view.iniciarSesionButton) {
+            // Crea una nueva instancia de la vista de login
             LogIn inicio = new LogIn();
-            Conexion conn = new Conexion();
-            Usuario mod = new Usuario();
-            ConsultaUsuario consul = new ConsultaUsuario(conn);
-            ControladorLogin login = new ControladorLogin (mod,inicio, consul);
-            login.Iniciar();
-            view.dispose();
-        }if(e.getSource()== view.registrarseButton){
-            RegistrarUsuario registro = new RegistrarUsuario();
-            Conexion conn = new Conexion();
-            Usuario mod = new Usuario();
-            ConsultaUsuario consul = new ConsultaUsuario(conn);
-            ControladoRegistrarUsuario contro = new ControladoRegistrarUsuario(mod,registro, consul);
-            contro.iniciar();
-            registro.setVisible(true);
-            view.dispose();
+            Conexion conn = new Conexion();  // Establece la conexión a la base de datos
+            ModeloUsuario mod = new ModeloUsuario();    // Crea un objeto modelo de modeloUsuario
+            ConsultaUsuario consul = new ConsultaUsuario(conn);  // Crea un objeto de consultas de modeloUsuario
+            // Crea el controlador de login y lo inicializa
+            ControladorLogin login = new ControladorLogin(mod, inicio, consul);
+            login.Iniciar();  // Inicia la vista de login
+            view.dispose();   // Cierra la vista principal
         }
 
+        // Si el modeloUsuario hace clic en el botón "Registrarse"
+        if (e.getSource() == view.registrarseButton) {
+            // Crea una nueva instancia de la vista de registro
+            RegistrarUsuario registro = new RegistrarUsuario();
+            Conexion conn = new Conexion();  // Establece la conexión a la base de datos
+            ModeloUsuario mod = new ModeloUsuario();    // Crea un objeto modelo de modeloUsuario
+            ConsultaUsuario consul = new ConsultaUsuario(conn);  // Crea un objeto de consultas de modeloUsuario
+            // Crea el controlador de registro y lo inicializa
+            ControladorRegistrarUsuario contro = new ControladorRegistrarUsuario(mod, registro, consul);
+            contro.iniciar();  // Inicia la vista de registro
+            registro.setVisible(true);  // Hace visible la vista de registro
+            view.dispose();   // Cierra la vista principal
+        }
     }
 }

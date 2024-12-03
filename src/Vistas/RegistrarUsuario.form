@@ -26,7 +26,7 @@
             <properties>
               <background color="-2104859"/>
               <foreground color="-14474704"/>
-              <text value="Registrar usuario "/>
+              <text value="Registrar modeloUsuario "/>
             </properties>
           </component>
           <component id="17c7b" class="javax.swing.JLabel">
@@ -159,7 +159,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="69aec" class="javax.swing.JComboBox" binding="municipio">
+      <component id="69aec" class="javax.swing.JComboBox" binding="modeloMunicipio">
         <constraints>
           <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

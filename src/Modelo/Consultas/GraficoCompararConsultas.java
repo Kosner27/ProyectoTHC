@@ -2,9 +2,9 @@ package Modelo.Consultas;
 
 
 import Modelo.Conexion;
-import Modelo.modelo.GraficoCompararModelo;
-import Modelo.modelo.InstitucionModelo;
-import Modelo.modelo.Nucleo;
+import Modelo.modelo.ModeloGraficoComparar;
+import Modelo.modelo.ModeloInstitucion;
+import Modelo.modelo.ModeloNucleo;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,14 +19,14 @@ public class GraficoCompararConsultas {
         this.conn = conexion.getConection();
     }
 
-    public List<InstitucionModelo> llenarTabla(String NombreSeleccionado, String nombreMunicipio) {
-        List<InstitucionModelo> Comparar = new ArrayList<>();
+    public List<ModeloInstitucion> llenarTabla(String NombreSeleccionado, String nombreMunicipio) {
+        List<ModeloInstitucion> Comparar = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("Select * from institucion i inner join  " +
                     "municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join " +
-                    " municipio m on mi.idMuncipio = m.idMunicipio inner join " +
+                    " modeloMunicipio m on mi.idMuncipio = m.idMunicipio inner join " +
                     "Departamento d on m.idDepartamento = d.idDepartamento " +
                     "where m.NombreMunicipio = ? and i.NombreInstitucion = ? ");
             ps.setString(1, nombreMunicipio);
@@ -34,7 +34,7 @@ public class GraficoCompararConsultas {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                InstitucionModelo dato = new InstitucionModelo();
+                ModeloInstitucion dato = new ModeloInstitucion();
                 dato.setNombreInstitucion(rs.getString("NombreInstitucion"));
                 dato.setNit(rs.getString("Nit"));
                 dato.setMunicipio(rs.getString("NombreMunicipio"));
@@ -56,8 +56,8 @@ public class GraficoCompararConsultas {
         return Comparar;
 
     }
-    public List<Nucleo> llenarTablaConNucleo(String NombreSeleccionado, String municipio , String Nucleo) {
-        List<Nucleo> Comparar = new ArrayList<>();
+    public List<ModeloNucleo> llenarTablaConNucleo(String NombreSeleccionado, String municipio , String Nucleo) {
+        List<ModeloNucleo> Comparar = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -65,7 +65,7 @@ public class GraficoCompararConsultas {
                     " from nucleoinstitucion n\n" +
                     "INNER JOIN institucion i ON i.idInstitucionAuto = n.idInstitucion\n" +
                     "inner join municipioinstitiucion mi on mi.IdInstitucion= i.idInstitucionAuto\n" +
-                    "inner join municipio m on m.idMunicipio = mi.idMuncipio\n" +
+                    "inner join modeloMunicipio m on m.idMunicipio = mi.idMuncipio\n" +
                     "inner join Departamento d on d.idDepartamento=m.idDepartamento\n" +
                     "where i.NombreInstitucion = ? and n.NombreNucleo = ? and m.NombreMunicipio = ?;");
             ps.setString(1, NombreSeleccionado);
@@ -74,7 +74,7 @@ public class GraficoCompararConsultas {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Nucleo dato = new Nucleo();
+                ModeloNucleo dato = new ModeloNucleo();
                 dato.setNombreNucleo(rs.getString("NombreNucleo"));
                 dato.setNombreIns(rs.getString("NombreInstitucion"));
                 dato.setIdInstitucion(rs.getString("Nit"));
@@ -98,8 +98,8 @@ public class GraficoCompararConsultas {
 
     }
 
-    public List<GraficoCompararModelo> LlenarGrafico(String instituciones, String anio, String alcance, String campus) {
-        List<GraficoCompararModelo> resultados = new ArrayList<>();
+    public List<ModeloGraficoComparar> LlenarGrafico(String instituciones, String anio, String alcance, String campus) {
+        List<ModeloGraficoComparar> resultados = new ArrayList<>();
         CallableStatement cs = null;
         ResultSet rs = null;
 
@@ -156,12 +156,12 @@ public class GraficoCompararConsultas {
 
             // Procesar resultados
             while (rs.next()) {
-                GraficoCompararModelo dato = new GraficoCompararModelo();
+                ModeloGraficoComparar dato = new ModeloGraficoComparar();
                 dato.setAlcance(rs.getString("Alcance"));
                 dato.setNombrefuente(rs.getString("NombreFuente"));
                 dato.setNombreInstitucion(rs.getString("NombreInstitucion"));
                 dato.setTotal(rs.getDouble("Co2Aportado"));
-                dato.setNucleo(rs.getString("Nucleo")); // Lista de núcleos
+                dato.setNucleo(rs.getString("ModeloNucleo")); // Lista de núcleos
                 resultados.add(dato);
             }
 

@@ -1,7 +1,7 @@
 package Modelo.Consultas;
 
 import Modelo.Conexion;
-import Modelo.modelo.ModeloInforme;
+import Modelo.modelo.ModeloEmisionInforme;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,8 +17,8 @@ public class ConsultaInforme {
         this.conn = conexion.getConection();
     }
 
-    public List<ModeloInforme> tablaInforme(String nombre, Integer anioBase, String municipio) {
-        List<ModeloInforme> tabla = new ArrayList<>();
+    public List<ModeloEmisionInforme> tablaInforme(String nombre, Integer anioBase, String municipio) {
+        List<ModeloEmisionInforme> tabla = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -33,7 +33,7 @@ public class ConsultaInforme {
 
             while (rs.next()) {
                 rowCount++;
-                ModeloInforme mod = new ModeloInforme();
+                ModeloEmisionInforme mod = new ModeloEmisionInforme();
                 mod.setNombreFuente(rs.getString("NombreFuente"));
                 mod.setTipoFuente(rs.getString("Emision"));
                 mod.setCantidadConsumidad(rs.getDouble("cargaAmbiental"));
@@ -61,8 +61,8 @@ public class ConsultaInforme {
         }
         return tabla;
     }
-    public List<ModeloInforme> tablaInformeNucleo(String nombre, Integer anioBase, String municipio , String nucleo) {
-        List<ModeloInforme> tabla = new ArrayList<>();
+    public List<ModeloEmisionInforme> tablaInformeNucleo(String nombre, Integer anioBase, String municipio , String nucleo) {
+        List<ModeloEmisionInforme> tabla = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -78,7 +78,7 @@ public class ConsultaInforme {
 
             while (rs.next()) {
                 rowCount++;
-                ModeloInforme mod = new ModeloInforme();
+                ModeloEmisionInforme mod = new ModeloEmisionInforme();
                 mod.setNombreFuente(rs.getString("NombreFuente"));
                 mod.setTipoFuente(rs.getString("Emision"));
                 mod.setCantidadConsumidad(rs.getDouble("cargaAmbiental"));
@@ -107,15 +107,15 @@ public class ConsultaInforme {
         return tabla;
     }
 
-    public List<ModeloInforme> datos(String nombre, String municipio) {
+    public List<ModeloEmisionInforme> datos(String nombre, String municipio) {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<ModeloInforme> instituciones = new ArrayList<>();
+        List<ModeloEmisionInforme> instituciones = new ArrayList<>();
 
         try {
             ps = conn.prepareStatement("Select * from institucion i \n" +
                     "inner join municipioinstitiucion mi on i.IdInstitucionAuto = mi.IdInstitucion\n" +
-                    "inner join municipio m on mi.idMuncipio = m.idMunicipio \n" +
+                    "inner join modeloMunicipio m on mi.idMuncipio = m.idMunicipio \n" +
                     "inner join Departamento d \n" +
                     "on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
             ps.setString(1, municipio);
@@ -123,7 +123,7 @@ public class ConsultaInforme {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                ModeloInforme institucion = new ModeloInforme();
+                ModeloEmisionInforme institucion = new ModeloEmisionInforme();
                 institucion.setMunicipio(rs.getString("NombreMunicipio"));
                 institucion.setDepartamento(rs.getString("NombreDepartamento"));
                 institucion.setNit(rs.getString("Nit"));

@@ -2,8 +2,8 @@ package Controlador;
 
 import Modelo.Conexion;
 import Modelo.modelo.HASH;
-import Modelo.modelo.Municipio;
-import Modelo.modelo.Usuario;
+import Modelo.modelo.ModeloMunicipio;
+import Modelo.modelo.ModeloUsuario;
 import Vistas.Main;
 import Vistas.RegistrarUsuario;
 import Modelo.Consultas.ConsultaUsuario;
@@ -16,21 +16,21 @@ import java.sql.*;
 /**
  * Controlador para la funcionalidad de registro de usuarios.
  */
-public class ControladoRegistrarUsuario {
-    private final Usuario mod; // Modelo de usuario
-    private final RegistrarUsuario view; // Vista para registrar usuario
-    private final ConsultaUsuario consul; // Consulta de usuarios
+public class ControladorRegistrarUsuario {
+    private final ModeloUsuario user; // Modelo de modeloUsuario
+    private final RegistrarUsuario view; // Vista para registrar modeloUsuario
+    private final ConsultaUsuario consultaUsuario; // Consulta de usuarios
     private MonitoreoInactividad monitoreo;
     /**
      * Constructor del controlador.
-     * @param mod Modelo de usuario
-     * @param view Vista para registrar usuario
-     * @param consul Consultas relacionadas a usuarios
+     * @param user Modelo de modeloUsuario
+     * @param view Vista para registrar modeloUsuario
+     * @param consultaUsuario Consultas relacionadas a usuarios
      */
-    public ControladoRegistrarUsuario(Usuario mod, RegistrarUsuario view, ConsultaUsuario consul) {
-        this.mod = mod;
+    public ControladorRegistrarUsuario(ModeloUsuario user, RegistrarUsuario view, ConsultaUsuario consultaUsuario) {
+        this.user = user;
         this.view = view;
-        this.consul = consul;
+        this.consultaUsuario = consultaUsuario;
         monitoreo = new MonitoreoInactividad(() -> {
             JOptionPane.showMessageDialog(null, "Se detectó inactividad. La aplicación se cerrará.");
             System.exit(0); // Cerrar la aplicación
@@ -82,7 +82,7 @@ public class ControladoRegistrarUsuario {
      */
     private void abrirInicio(){
         Main inicio = new Main();
-        Usuario user = new Usuario();
+        ModeloUsuario user = new ModeloUsuario();
         ControladorMain contro = new ControladorMain(inicio, user);
         contro.Iniciar();
         view.dispose();
@@ -148,7 +148,7 @@ public class ControladoRegistrarUsuario {
         }
     }
     /**
-     * Carga las instituciones de acuerdo al municipio seleccionado.
+     * Carga las instituciones de acuerdo al modeloMunicipio seleccionado.
      */
     private void cargarInstitucion() {
         String municipioSeleccionado = (String) view.municipio.getSelectedItem();
@@ -172,7 +172,7 @@ public class ControladoRegistrarUsuario {
         }
     }
     /**
-     * Registra un nuevo usuario en la base de datos.
+     * Registra un nuevo modeloUsuario en la base de datos.
      */
     private void registrarUsuario() {
         String nombre = view.Nombre.getText();
@@ -186,24 +186,24 @@ public class ControladoRegistrarUsuario {
         String rol = "Administrador";
 
         if (validarCampos(nombre, apellido, correo, departamento, municipio, institucion, contrasena, nuevaContrasena)) {
-            Municipio m = new Municipio();
+            ModeloMunicipio m = new ModeloMunicipio();
             m.setNombreM(municipio);
-            mod.setCorreo(correo);
-            if (contrasena.equals(nuevaContrasena) && consul.ExisteUsuario(correo) == 0) {
-                if (consul.esEmail(mod.getCorreo())) {
+            user.setCorreo(correo);
+            if (contrasena.equals(nuevaContrasena) && consultaUsuario.ExisteUsuario(correo) == 0) {
+                if (consultaUsuario.esEmail(user.getCorreo())) {
                     String contrasenaCifrada = HASH.sha1(contrasena);
-                    mod.setNombre(nombre);
-                    mod.setApellido(apellido);
-                    mod.setCorreo(correo);
-                    mod.setContrasena(contrasenaCifrada);
-                    mod.setIdInstitucion(institucion);
-                    mod.setTipoUsuario(rol);
+                    user.setNombre(nombre);
+                    user.setApellido(apellido);
+                    user.setCorreo(correo);
+                    user.setContrasena(contrasenaCifrada);
+                    user.setIdInstitucion(institucion);
+                    user.setTipoUsuario(rol);
 
-                    if (consul.insertarUsuario(m, mod)) {
-                        JOptionPane.showMessageDialog(null, "Usuario registrado: " + nombre);
+                    if (consultaUsuario.insertarUsuario(m, user)) {
+                        JOptionPane.showMessageDialog(null, "ModeloUsuario registrado: " + nombre);
                         Limpiar();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Error al registrar usuario");
+                        JOptionPane.showMessageDialog(null, "Error al registrar modeloUsuario");
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "El correo no tiene un formato válido");

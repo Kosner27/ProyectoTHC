@@ -1,15 +1,13 @@
 package Modelo.modelo;
 
-import java.util.List;
-
-public class Rol {
+public class ModeloRol {
     private String tipoUsuario;
     private String Descripcion;
 
-    public Rol() {
+    public ModeloRol() {
     }
 
-    public Rol(String tipoUsuario, String descripcion) {
+    public ModeloRol(String tipoUsuario, String descripcion) {
         this.tipoUsuario = tipoUsuario;
         Descripcion = descripcion;
     }

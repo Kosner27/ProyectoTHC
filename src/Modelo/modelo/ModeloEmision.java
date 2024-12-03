@@ -1,6 +1,6 @@
 package Modelo.modelo;
 
-public class EmisionModelo {
+public class ModeloEmision {
     private String NombreFuente;
     private String TipoFuente;
     private String EstadoFuente;
@@ -8,7 +8,7 @@ public class EmisionModelo {
     private Double FactorEmision;
     private String UnidadMedidad;
 
-    public EmisionModelo() {
+    public ModeloEmision() {
 
     }
 

@@ -1,13 +1,13 @@
 package Modelo.modelo;
 
-public class GraficoCompararModelo {
+public class ModeloGraficoComparar {
     private String NombreInstitucion;
     private String Nombrefuente;
     private String Alcance;
     private Double total;
     private String nucleo;
 
-    public GraficoCompararModelo() {
+    public ModeloGraficoComparar() {
 
     }
 

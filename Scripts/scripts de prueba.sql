@@ -4,18 +4,18 @@ on en.IdNucleo = ni.IdNucleo inner join institucion i
 on ni.idInstitucion = i.idInstitucionAuto where i.NombreInstitucion = ? 
 group by NombreNucleo;
 
-Select nu.NombreNucleo from nucleoinstitucion nu inner join  municipio m on nu.idMunicipio = m.idMunicipio 
+Select nu.NombreNucleo from nucleoinstitucion nu inner join  modeloMunicipio m on nu.idMunicipio = m.idMunicipio
 inner join municipioinstitiucion mi on m.idMunicipio = mi.idMuncipio inner join institucion i on i.IdInstitucionAuto=mi.IdInstitucion
 where i.NombreInstitucion = ? group by nu.NombreNucleo;
 
-Select count(nu.IdNucleo) from nucleoinstitucion nu inner join  municipio m on nu.idMunicipio = m.idMunicipio 
+Select count(nu.IdNucleo) from nucleoinstitucion nu inner join  modeloMunicipio m on nu.idMunicipio = m.idMunicipio
 inner join municipioinstitiucion mi on m.idMunicipio = mi.idMuncipio inner join institucion i on i.IdInstitucionAuto=mi.IdInstitucion
 where i.NombreInstitucion = 'INSTITUCION UNIVERSITARIA DE Envigado' group by nu.NombreNucleo;
 
 
  INSERT INTO emisionnucleo ( idEmision, IdNucleo, anioBase,cargaAmbiental,Co2Aportado) 
 	VALUES (42,null,000, 11,  11);
-Select * from municipio;
+Select * from modeloMunicipio;
 Select * from emision;
 Select * from emisionnucleo;
 Select * from nucleoinstitucion;
@@ -36,41 +36,41 @@ values(44,null,12334,112,123);
 
 select * from Institucion i inner join municipioinstitiucion 
 mi on i.IdInstitucionAuto = mi.IdInstitucion 
-inner join municipio m on mi.idMuncipio= m.idMunicipio 
+inner join modeloMunicipio m on mi.idMuncipio= m.idMunicipio
 inner join emisionnucleo en on i.IdInstitucionAuto = en.IdInstitucion;
 
 
 select NombreNucleo from Institucion i inner join municipioinstitiucion 
 mi on i.IdInstitucionAuto = mi.IdInstitucion 
-inner join municipio m on mi.idMuncipio= m.idMunicipio 
+inner join modeloMunicipio m on mi.idMuncipio= m.idMunicipio
 inner join nucleoinstitucion nu on mi.idMuncipio= nu.idMunicipio
 where i.NombreInstitucion = ? group by NombreNucleo;
 
 call ObtenerIdMunicipio('Envigado', @id);
 select @id;
-SHOW FULL COLUMNS FROM municipio;
+SHOW FULL COLUMNS FROM modeloMunicipio;
  
  SELECT idMunicipio, NombreMunicipio
-FROM municipio
+FROM modeloMunicipio
 WHERE NombreMunicipio = 'Envigado';
 
-Select idMunicipio  from municipio where NombreMunicipio = 'Envigado';
+Select idMunicipio  from modeloMunicipio where NombreMunicipio = 'Envigado';
 
 Select anioBase from emisionnucleo en 
 inner join nucleoinstitucion n on n.IdNucleo = en.idNucleo
-inner join municipio m on m.IdMunicipio = n.IdMunicipio
+inner join modeloMunicipio m on m.IdMunicipio = n.IdMunicipio
 inner join municipioinstitiucion mi ON m.IdMunicipio = mi.idMuncipio
 INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion
 WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? AND n.NombreNucleo = ?
 ORDER BY en.anioBase;
-Select * from usuario;
+Select * from modeloUsuario;
 Select * from roles;
 
 Select n.NombreNucleo,  i.NombreInstitucion, i.Nit, m.NombreMunicipio, d.NombreDepartamento
  from nucleoinstitucion n
 INNER JOIN institucion i ON i.idInstitucionAuto = n.idInstitucion
 inner join municipioinstitiucion mi on mi.IdInstitucion= i.idInstitucionAuto
-inner join municipio m on m.idMunicipio = mi.idMuncipio
+inner join modeloMunicipio m on m.idMunicipio = mi.idMuncipio
 inner join Departamento d on d.idDepartamento=m.idDepartamento
 where i.NombreInstitucion = ? and n.NombreNucleo = ? and n.NombreMunicipio = ?;
 

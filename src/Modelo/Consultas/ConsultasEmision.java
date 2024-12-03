@@ -1,7 +1,7 @@
 package Modelo.Consultas;
 
 import Modelo.Conexion;
-import Modelo.modelo.EmisionModelo;
+import Modelo.modelo.ModeloEmision;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultasEmision {
-    public boolean registrarEmision(EmisionModelo mod) {
+    public boolean registrarEmision(ModeloEmision mod) {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         String sql = "CALL insertarEmision(?, ?, ?, ?, ?, ?)";
@@ -45,27 +45,27 @@ public class ConsultasEmision {
         }
     }
 
-    public List<EmisionModelo> dato() {
+    public List<ModeloEmision> dato() {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         String sql = "Select Emision, NombreFuente, EstadoFuente, unidadMedida, alcance, " +
                 "factorEmision from emision where Activo = 1 order by NombreFuente ";
         ResultSet rs = null;
         PreparedStatement ps = null;
-        List<EmisionModelo> emisionModeloList = null;
+        List<ModeloEmision> modeloEmisionList = null;
         try {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
-            emisionModeloList = new ArrayList<>();
+            modeloEmisionList = new ArrayList<>();
             while (rs.next()) {
-                EmisionModelo mod = new EmisionModelo();
+                ModeloEmision mod = new ModeloEmision();
                 mod.setTipoFuente(rs.getString(1));
                 mod.setNombreFuente(rs.getString(2));
                 mod.setEstadoFuente(rs.getString(3));
                 mod.setUnidadMedidad(rs.getString(4));
                 mod.setAlcance(rs.getString(5));
                 mod.setFactorEmision(rs.getDouble(6));
-                emisionModeloList.add(mod);
+                modeloEmisionList.add(mod);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -77,7 +77,7 @@ public class ConsultasEmision {
                 e.printStackTrace();
             }
         }
-        return emisionModeloList;
+        return modeloEmisionList;
     }
 
     public int ExisteEmision(String nombreEmision) {
@@ -101,10 +101,10 @@ public class ConsultasEmision {
         }
     }
 
-    public List<EmisionModelo> buscarEmision(String nombre) {
+    public List<ModeloEmision> buscarEmision(String nombre) {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
-        ArrayList<EmisionModelo> dato = new ArrayList<>();
+        ArrayList<ModeloEmision> dato = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -113,7 +113,7 @@ public class ConsultasEmision {
             ps.setString(1, nombre);
             rs = ps.executeQuery();
             while (rs.next()) {
-                EmisionModelo mod = new EmisionModelo();
+                ModeloEmision mod = new ModeloEmision();
                 mod.setNombreFuente(rs.getString("NombreFuente"));
                 mod.setEstadoFuente(rs.getString("EstadoFuente"));
                 mod.setAlcance(rs.getString("alcance"));

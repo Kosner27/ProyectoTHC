@@ -4,7 +4,7 @@ Create table Departamento(
 idDepartamento int Primary Key,
 NombreDepartamento nvarchar(34)
 );
-Create table municipio(
+Create table modeloMunicipio(
 idMunicipio int Primary Key,
 NombreMunicipio nvarchar(34),
 idDepartamento int,
@@ -14,7 +14,7 @@ Create table Institucion(
 Nit int primary key,
 NombreInstitucion nvarchar(34),
 idMunicipio int,
-Foreign key (idMunicipio) references municipio (idMunicipio)
+Foreign key (idMunicipio) references modeloMunicipio (idMunicipio)
 );
 use ProyectoTHDC;
 insert into Departamento values (05,'Antioquia');
@@ -49,7 +49,7 @@ insert into Departamento values(81, 'Arauca'),
 (97, 'Vaupés'),
 (99, 'Vichada');
 use ProyectoTHDC;
-insert into municipio (idMunicipio, NombreMunicipio,idDepartamento)values (91001, 'Leticia', 91),
+insert into modeloMunicipio (idMunicipio, NombreMunicipio,idDepartamento)values (91001, 'Leticia', 91),
 (91263, 'Puerto Nariño', 91),
 (91536, 'El Encanto', 91),
 (91669, 'La Chorrera', 91),
@@ -60,7 +60,7 @@ insert into municipio (idMunicipio, NombreMunicipio,idDepartamento)values (91001
 (91460, 'Puerto Arica', 91),
 (91530, 'Puerto Santander', 91),
 (91540, 'Tarapacá', 91);
-insert into municipio values(5001, 'Medellín', 05),
+insert into modeloMunicipio values(5001, 'Medellín', 05),
 (5002, 'Abejorral', 05),
 (5004, 'Abriaquí', 05),
 (5021, 'Alejandría', 05),
@@ -185,14 +185,14 @@ insert into municipio values(5001, 'Medellín', 05),
 (5862,'Yolombo',05),
 (5863,'Yondo',05),
 (5864,'Zaragoza',05);
-INSERT INTO municipio VALUES(81001, 'Arauca', 81),
+INSERT INTO modeloMunicipio VALUES(81001, 'Arauca', 81),
 (81065, 'Arauquita', 81),
 (81220, 'Cravo Norte', 81),
 (81300, 'Fortul', 81),
 (81591, 'Puerto Rondón', 81),
 (81736, 'Saravena', 81),
 (81794, 'Tame', 81);
-INSERT INTO municipio VALUES (8001, 'Barranquilla', 08),
+INSERT INTO modeloMunicipio VALUES (8001, 'Barranquilla', 08),
 (8005, 'Baranoa', 08),
 (8009, 'Campo de la Cruz', 08),
 (8013, 'Candelaria', 08),
@@ -215,7 +215,7 @@ INSERT INTO municipio VALUES (8001, 'Barranquilla', 08),
 (8078, 'Suán', 08),
 (8083, 'Tubará', 08),
 (8086, 'Usiacurí', 08);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (13001, 'Cartagena de Indias', 13),
 (13006, 'Achí', 13),
 (13030, 'Altos del Rosario', 13),
@@ -261,7 +261,7 @@ INSERT INTO municipio VALUES
 (13838, 'Turbaná', 13),
 (13873, 'Villanueva', 13),
 (13894, 'Zambrano', 13);
-insert into municipio values (15001, 'Tunja', 15),
+insert into modeloMunicipio values (15001, 'Tunja', 15),
 (15022, 'Almeida', 15),
 (15047, 'Aquitania', 15),
 (15051, 'Arcabuco', 15),
@@ -382,7 +382,7 @@ insert into municipio values (15001, 'Tunja', 15),
 (15839, 'Ventaquemada', 15),
 (15842, 'Viracachá', 15),
 (15861, 'Zetaquira', 15);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (17001, 'Manizales', 17),
 (17013, 'Aguadas', 17),
 (17042, 'Anserma', 17),
@@ -410,7 +410,7 @@ INSERT INTO municipio VALUES
 (17867, 'Victoria', 17),
 (17873, 'Villamaría', 17),
 (17877, 'Viterbo', 17);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (18001, 'Florencia', 18),
 (18029, 'Albania', 18),
 (18094, 'Belén de los Andaquíes', 18),
@@ -427,7 +427,7 @@ INSERT INTO municipio  VALUES
 (18756, 'Solano', 18),
 (18785, 'Solita', 18),
 (18860, 'Valparaíso', 18);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (8501, 'Yopal', 85),
 (85010, 'Aguazul', 85),
 (85015, 'Chameza', 85),
@@ -447,7 +447,7 @@ INSERT INTO municipio  VALUES
 (85410, 'Tauramena', 85),
 (85430, 'Trinidad', 85),
 (85440, 'Villanueva', 85);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (19001, 'Popayán', 19),
 (19022, 'Almaguer', 19),
 (19050, 'Argelia', 19),
@@ -490,7 +490,7 @@ INSERT INTO municipio VALUES
 (19821, 'Toribio', 19),
 (19824, 'Totoró', 19),
 (19845, 'Villa Rica', 19);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (20001, 'Valledupar', 20),
 (20011, 'Aguachica', 20),
 (20013, 'Agustín Codazzi', 20),
@@ -516,7 +516,7 @@ INSERT INTO municipio  VALUES
 (20750, 'San Diego', 20),
 (20770, 'San Martín', 20),
 (20787, 'Tamalameque', 20);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (27001, 'Quibdó', 27),
 (27006, 'Acandí', 27),
 (27025, 'Alto Baudo', 27),
@@ -547,7 +547,7 @@ INSERT INTO municipio VALUES
 (27787, 'Tadó', 27),
 (27800, 'Unguía', 27),
 (27810, 'Unión Panamericana', 27);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (23001, 'Montería', 23),
 (23068, 'Ayapel', 23),
 (23079, 'Buenavista', 23),
@@ -576,7 +576,7 @@ INSERT INTO municipio  VALUES
 (23686, 'San Pelayo', 23),
 (23807, 'Tierralta', 23),
 (23815, 'Valencia', 23);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (25001, 'Bogotá D.C.', 25),
 (25019, 'Agua de Dios', 25),
 (25035, 'Albán', 25),
@@ -694,7 +694,7 @@ INSERT INTO municipio  VALUES
 (25878, 'Yacopí', 25),
 (25885, 'Zipacón', 25),
 (25898, 'Zipaquirá', 25);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (94001, 'Inírida', 94),
 (94883, 'Barranco Minas', 94),
 (94884, 'Mapiripana', 94),
@@ -703,12 +703,12 @@ INSERT INTO municipio VALUES
 (94887, 'La Guadalupe', 94),
 (94888, 'Cacahual', 94),
 (94889, 'Pana Pana', 94);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (95001, 'San José del Guaviare', 95),
 (95015, 'Calamar', 95),
 (95025, 'El Retorno', 95),
 (95200, 'Miraflores', 95);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (41001, 'Neiva', 41),
 (41006, 'Acevedo', 41),
 (41013, 'Agrado', 41),
@@ -746,7 +746,7 @@ INSERT INTO municipio VALUES
 (41807, 'Timaná', 41),
 (41872, 'Villavieja', 41),
 (41885, 'Yaguará', 41);
-INSERT INTO municipio  VALUES
+INSERT INTO modeloMunicipio  VALUES
 (44001, 'Riohacha', 44),
 (44035, 'Albania', 44),
 (44078, 'Barrancas', 44),
@@ -762,7 +762,7 @@ INSERT INTO municipio  VALUES
 (44847, 'Uribia', 44),
 (44855, 'Urumita', 44),
 (44874, 'Villanueva', 44);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (47001, 'Santa Marta', 47),
 (47030, 'Algarrobo', 47),
 (47053, 'Aracataca', 47),
@@ -793,7 +793,7 @@ INSERT INTO municipio VALUES
 (47798, 'Tenerife', 47),
 (47960, 'Zapayán', 47),
 (47980, 'Zona Bananera', 47);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (50001, 'Villavicencio', 50),
 (50006, 'Acacías', 50),
 (50110, 'Barranca de Upía', 50),
@@ -823,7 +823,7 @@ INSERT INTO municipio VALUES
 (50686, 'San Juanito', 50),
 (50689, 'San Martín', 50),
 (50711, 'Vistahermosa', 50);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (52001, 'Pasto', 52),
 (52019, 'Albán', 52),
 (52022, 'Aldana', 52),
@@ -888,7 +888,7 @@ INSERT INTO municipio VALUES
 (52835, 'Tumaco', 52),
 (52838, 'Túquerres', 52),
 (52885, 'Yacuanquer', 52);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (54001, 'Cúcuta', 54),
 (54003, 'Abrego', 54),
 (54051, 'Arboledas', 54),
@@ -929,7 +929,7 @@ INSERT INTO municipio VALUES
 (54820, 'Toledo', 54),
 (54871, 'Villa Caro', 54),
 (54874, 'Villa del Rosario', 54);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (86001, 'Mocoa', 86),
 (86219, 'Colón', 86),
 (86320, 'Orito', 86),
@@ -943,7 +943,7 @@ INSERT INTO municipio VALUES
 (86760, 'Santiago', 86),
 (86865, 'Valle del Guamuez', 86),
 (86885, 'Villagarzón', 86);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (63001, 'Armenia', 63),
 (63111, 'Buenavista', 63),
 (63130, 'Calarcá', 63),
@@ -956,7 +956,7 @@ INSERT INTO municipio VALUES
 (63548, 'Pijao', 63),
 (63594, 'Quimbaya', 63),
 (63690, 'Salento', 63);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (66001, 'Pereira', 66),
 (66045, 'Apía', 66),
 (66075, 'Balboa', 66),
@@ -971,9 +971,9 @@ INSERT INTO municipio VALUES
 (66594, 'Quinchía', 66),
 (66682, 'Santa Rosa de Cabal', 66),
 (66687, 'Santuario', 66);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (88001, 'San Andrés', 88);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (68001, 'Bucaramanga', 68),
 (68013, 'Aguada', 68),
 (68020, 'Albania', 68),
@@ -1061,7 +1061,7 @@ INSERT INTO municipio VALUES
 (68867, 'Vetas', 68),
 (68872, 'Villanueva', 68),
 (68895, 'Zapatoca', 68);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (70001, 'Sincelejo', 70),
 (70110, 'Buenavista', 70),
 (70124, 'Caimito', 70),
@@ -1088,7 +1088,7 @@ INSERT INTO municipio VALUES
 (70771, 'Sucre', 70),
 (70820, 'Santiago de Tolú', 70),
 (70823, 'Tolú Viejo', 70);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (73001, 'Ibagué', 73),
 (73024, 'Alpujarra', 73),
 (73026, 'Alvarado', 73),
@@ -1136,7 +1136,7 @@ INSERT INTO municipio VALUES
 (73861, 'Venadillo', 73),
 (73870, 'Villahermosa', 73),
 (73873, 'Villarrica', 73);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (76001, 'Cali', 76),
 (76020, 'Alcalá', 76),
 (76036, 'Andalucía', 76),
@@ -1179,17 +1179,17 @@ INSERT INTO municipio VALUES
 (76863, 'Yotoco', 76),
 (76869, 'Yumbo', 76),
 (76890, 'Zarzal', 76);
-INSERT INTO municipio VALUES
+INSERT INTO modeloMunicipio VALUES
 (97001, 'Mitú', 97),
 (97161, 'Carurú', 97),
 (97511, 'Pacoa', 97),
 (97666, 'Taraira', 97);
-INSERT INTO municipio VALUES (99001, 'Puerto Carreño', 99),
+INSERT INTO modeloMunicipio VALUES (99001, 'Puerto Carreño', 99),
 (99524, 'La Primavera', 99),
 (99624, 'Santa Rosalía', 99),
 (99773, 'Cumaribo', 99);
 use  ProyectoTHDC;
-select * from  institucion inner join municipio on institucion.idMunicipio=municipio.idMunicipio ;
+select * from  institucion inner join modeloMunicipio on institucion.idMunicipio=modeloMunicipio.idMunicipio ;
 
 CALL SeleccionarDepartamento();
 CALL BuscarMunicipio('Guaviare');

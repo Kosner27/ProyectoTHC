@@ -10,27 +10,27 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-public class ContraladorVerInstituciones {
+public class ControladorVerInstituciones {
     public ConsultasInstitucion consultasInstitucion;
     public ConsultaNucleo consultaNucleo;
-    public InstitucionModelo institucionModelo;
+    public ModeloInstitucion modeloInstitucion;
     public VerInstituciones viewVerInstitucion;
-    public Usuario user;
-    public Municipio m;
+    public ModeloUsuario user;
+    public ModeloMunicipio modeloMunicipio;
     public Conexion conn = new Conexion();
 
     JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
     JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
     JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
 
-    public ContraladorVerInstituciones(ConsultasInstitucion consultasInstitucion, ConsultaNucleo consultaNucleo,
-                                       InstitucionModelo institucionModelo,
-                                       VerInstituciones viewVerInstitucion, Usuario user, Municipio m) {
+    public ControladorVerInstituciones(ConsultasInstitucion consultasInstitucion, ConsultaNucleo consultaNucleo,
+                                       ModeloInstitucion modeloInstitucion,
+                                       VerInstituciones viewVerInstitucion, ModeloUsuario user, ModeloMunicipio modeloMunicipio) {
         this.consultasInstitucion = consultasInstitucion;
         this.consultaNucleo = consultaNucleo;
-        this.institucionModelo = institucionModelo;
+        this.modeloInstitucion = modeloInstitucion;
         this.viewVerInstitucion = viewVerInstitucion;
-        this.m = m;
+        this.modeloMunicipio = modeloMunicipio;
         this.user = user;
         listeners();
 
@@ -106,9 +106,9 @@ public class ContraladorVerInstituciones {
         Conexion con = new Conexion();
         GraficoConsulta consul = new GraficoConsulta(con);
         Vistas.Graficos viewGraf = new Graficos();
-        GraficorModelo mod = new GraficorModelo();
-        InstitucionModelo modelo = new InstitucionModelo();
-        GraficoControlador contro = new GraficoControlador(mod, consul, viewGraf, modelo, m, user, institucionModelo);
+        GraficorModeloInstitucion mod = new GraficorModeloInstitucion();
+        ModeloInstitucion modelo = new ModeloInstitucion();
+        ControladorGrafico contro = new ControladorGrafico(mod, consul, viewGraf, modelo, modeloMunicipio, user, modeloInstitucion);
         contro.iniciar();
         viewGraf.setVisible(true);
         viewVerInstitucion.dispose();
@@ -116,10 +116,10 @@ public class ContraladorVerInstituciones {
 
     public void vistaGraficoHistorico() {
         Conexion con = new Conexion();
-        TendenciaModelo mod = new TendenciaModelo();
+        ModeloTendencia mod = new ModeloTendencia();
         ConsultasTendencias consult = new ConsultasTendencias(con);
         GraficoTendencia viewGraf = new GraficoTendencia();
-        TendenciaControlador control = new TendenciaControlador(mod, consult, viewGraf, m, institucionModelo, user);
+        ControladorTendencia control = new ControladorTendencia(mod, consult, viewGraf, modeloMunicipio, modeloInstitucion, user);
         viewGraf.setVisible(true);
         control.iniciar();
         viewVerInstitucion.dispose();
@@ -130,8 +130,8 @@ public class ContraladorVerInstituciones {
         GraficoComparar viewGraf = new GraficoComparar();
         Conexion conn = new Conexion();
         GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
-        GraficoCompararModelo mod = new GraficoCompararModelo();
-        ComparaInstitucion contro = new ComparaInstitucion(mod, consultas, comIns, viewGraf, institucionModelo, m, user);
+        ModeloGraficoComparar mod = new ModeloGraficoComparar();
+        ControladorCompararInstitucion contro = new ControladorCompararInstitucion(mod, consultas, comIns, viewGraf, modeloInstitucion, modeloMunicipio, user);
         contro.iniciar();
         viewVerInstitucion.dispose();
     }
@@ -165,9 +165,9 @@ public class ContraladorVerInstituciones {
         };
         tableModel.setRowCount(0);
         tableModel = (DefaultTableModel) viewVerInstitucion.instituciontbl.getModel();
-        List<InstitucionModelo> datos = consultasInstitucion.LlenarTablas();
+        List<ModeloInstitucion> datos = consultasInstitucion.LlenarTablas();
 
-        for (InstitucionModelo dato : datos) {
+        for (ModeloInstitucion dato : datos) {
             Object[] rowData = {
                     dato.getNombreInstitucion(),
                     dato.getNit(),
@@ -195,7 +195,11 @@ public class ContraladorVerInstituciones {
 
 
 
-    // Buscar por NIT
+    // Métodos para buscar, guardar, limpiar y actualizar datos
+
+    /**
+     * Realiza la búsqueda de instituciones por nombre (NIT).
+     */
     public void BuscarPorNit() {
         // Obtener el modelo actual de la tabla
         DefaultTableModel tableModel = (DefaultTableModel) viewVerInstitucion.instituciontbl.getModel();
@@ -203,7 +207,7 @@ public class ContraladorVerInstituciones {
         // Limpiar cualquier dato existente en la tabla
         tableModel.setRowCount(0);
 
-        // Obtener el NIT ingresado por el usuario
+        // Obtener el NIT ingresado por el modeloUsuario
         String nombreBuscado = viewVerInstitucion.nombreInstitucion.getText().trim().toUpperCase();
 
         if (nombreBuscado.isEmpty()) {
@@ -212,13 +216,13 @@ public class ContraladorVerInstituciones {
         }
 
         // Buscar instituciones con el NIT proporcionado
-        List<InstitucionModelo> institucionesEncontradas = consultasInstitucion.BuscarPorNIT(nombreBuscado);
+        List<ModeloInstitucion> institucionesEncontradas = consultasInstitucion.BuscarPorNIT(nombreBuscado);
 
         if (institucionesEncontradas.isEmpty()) {
             JOptionPane.showMessageDialog(viewVerInstitucion, "No se encontraron instituciones con el nombre  proporcionado.");
         } else {
             // Agregar los resultados encontrados al modelo de la tabla
-            for (InstitucionModelo institucion : institucionesEncontradas) {
+            for (ModeloInstitucion institucion : institucionesEncontradas) {
                 Object[] rowData = {
                         institucion.getNombreInstitucion(),
                         institucion.getNit(),
@@ -241,6 +245,9 @@ public class ContraladorVerInstituciones {
     }
 
 
+    /**
+     * Deshabilita los campos de edición de los datos de la institución.
+     */
     private void CamposInhabilitados() {
         viewVerInstitucion.campus.setEditable(false);
         viewVerInstitucion.departamento.setEditable(false);
@@ -316,7 +323,11 @@ public class ContraladorVerInstituciones {
         this.viewVerInstitucion.eliminarButton.addActionListener(this::actionPerformed);
         this.viewVerInstitucion.registrarNucleoButton.addActionListener(this::actionPerformed);
     }
+    // Métodos para guardar y eliminar
 
+    /**
+     * Guarda los cambios realizados en una institución.
+     */
     private void guardar() {
         String nit = viewVerInstitucion.nit.getText();
         int hectareas = Integer.parseInt(viewVerInstitucion.hectareas.getText());
@@ -345,8 +356,8 @@ public class ContraladorVerInstituciones {
 
     private void registrasInstitucion(){
         RegistrarInstitucion view = new RegistrarInstitucion();
-        RegistrarInstitucionControlador registrarInstitucionControlador = new RegistrarInstitucionControlador(view,institucionModelo,consultasInstitucion,m);
-        registrarInstitucionControlador.inicio();
+        ControladorRegistrarInstitucion controladorRegistrarInstitucion = new ControladorRegistrarInstitucion(view, modeloInstitucion,consultasInstitucion, modeloMunicipio);
+        controladorRegistrarInstitucion.inicio();
     }
 
     private void eliminar(){
@@ -381,18 +392,18 @@ public class ContraladorVerInstituciones {
         // Si nit está vacío, no hacemos nada más y mostramos el mensaje
         if (nit.isEmpty()) {
             JOptionPane.showMessageDialog(viewVerInstitucion.Main,
-                    "Para registrar un campus y/o nucleo debes seleccionar una institución primero");
+                    "Para registrar un campus y/o modeloNucleo debes seleccionar una institución primero");
             return; // Detenemos la ejecución aquí, sin crear la vista
         }
 
         // Si nit no está vacío, procedemos con la creación de la vista y el controlador
         NucleoView view = new NucleoView();
-        Nucleo nucleo = new Nucleo();
-        ControladorNucleo controladorNucleo = new ControladorNucleo(view, consultaNucleo, m, institucionModelo, nucleo);
+        ModeloNucleo modeloNucleo = new ModeloNucleo();
+        ControladorNucleo controladorNucleo = new ControladorNucleo(view, consultaNucleo, this.modeloMunicipio, modeloInstitucion, modeloNucleo);
 
         // Establecemos los datos y mostramos la vista
-        institucionModelo.setNombreInstitucion(nombreInstitucion);
-        m.setNombreM(municipio);
+        modeloInstitucion.setNombreInstitucion(nombreInstitucion);
+        this.modeloMunicipio.setNombreM(municipio);
         controladorNucleo.establecerDatos(nombreInstitucion, municipio);
         controladorNucleo.inicio(); // Aquí se muestra la vista
 

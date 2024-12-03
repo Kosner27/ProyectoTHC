@@ -1,13 +1,13 @@
 package Modelo.modelo;
 
-public class Municipio {
+public class ModeloMunicipio {
     private String nombreM;
 
-    public Municipio(String nombreM) {
+    public ModeloMunicipio(String nombreM) {
         this.nombreM = nombreM;
     }
 
-    public Municipio() {
+    public ModeloMunicipio() {
     }
 
     public String getNombreM() {

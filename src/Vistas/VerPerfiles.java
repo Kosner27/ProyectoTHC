@@ -38,7 +38,7 @@ public class VerPerfiles extends JFrame {
             setSize(1000, 600);
             setLocationRelativeTo(null);
             setContentPane(Main);
-            String [] columnNames = {"Nombre Usuario","Apellido usuario","Correo Usuario", "Nivel de privilegio","Descripción","Institucion a la que pertenece", "Sede" };
+            String [] columnNames = {"Nombre ModeloUsuario","Apellido modeloUsuario","Correo ModeloUsuario", "Nivel de privilegio","Descripción","Institucion a la que pertenece", "Sede" };
             DefaultTableModel tableModel = new DefaultTableModel(columnNames,0);
             user.setModel(tableModel);
             user.setSize(1000, 304);

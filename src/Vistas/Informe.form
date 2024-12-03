@@ -78,10 +78,10 @@
               <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Seleccione el municipio donde esta ubicada la sede"/>
+              <text value="Seleccione el modeloMunicipio donde esta ubicada la sede"/>
             </properties>
           </component>
-          <component id="e4589" class="javax.swing.JComboBox" binding="municipio">
+          <component id="e4589" class="javax.swing.JComboBox" binding="modeloMunicipio">
             <constraints>
               <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -105,7 +105,7 @@
               <visible value="false"/>
             </properties>
           </component>
-          <component id="f0e60" class="javax.swing.JLabel" binding="nucleo">
+          <component id="f0e60" class="javax.swing.JLabel" binding="modeloNucleo">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

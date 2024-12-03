@@ -1,10 +1,10 @@
 package Modelo.modelo;
 
-public class GraficorModelo extends InstitucionModelo {
+public class GraficorModeloInstitucion extends ModeloInstitucion {
     public String Alcance;
     public Double Total;
 
-    public GraficorModelo() {
+    public GraficorModeloInstitucion() {
         super();
     }
 

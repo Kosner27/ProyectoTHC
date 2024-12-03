@@ -1,6 +1,6 @@
 package Modelo.modelo;
 
-public class ModeloInforme extends EmisionModelo {
+public class ModeloEmisionInforme extends ModeloEmision {
     private Double CantidadConsumidad;
     private Double CargaAmnbiental;
     private Integer AnioBase;
@@ -10,7 +10,7 @@ public class ModeloInforme extends EmisionModelo {
     private String Departamento;
     private String nit;
 
-    public ModeloInforme() {
+    public ModeloEmisionInforme() {
         super();
     }
 

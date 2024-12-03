@@ -7,67 +7,75 @@ import Vistas.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class PerfilCOntrolador {
+/**
+ * ControladorPerfil es la clase encargada de gestionar las acciones y lógica asociadas a la vista de perfil de un modeloUsuario.
+ * Dependiendo del tipo de modeloUsuario (Administrador, Superadmin, Invitado), configura las opciones y funcionalidades
+ * que estarán disponibles para el modeloUsuario en la interfaz gráfica, como la posibilidad de editar su perfil, ver gráficos,
+ * comparar instituciones, y gestionar emisiones, entre otros.
+ * <p>
+ * Además, gestiona la interacción entre la vista, el modelo y la base de datos, realizando actualizaciones y acciones de acuerdo
+ * a las entradas del modeloUsuario.
+ */
+public class ControladorPerfil {
 
-    private final Usuario mod;
-    private final Perfil view;
-    private final InstitucionModelo ins;
-    private final Municipio m;
-    private final ConsultaUsuario cons;
-    JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");
-    JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");
-    JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");
+    // Atributos
+    private final ModeloUsuario mod;  // Modelo del modeloUsuario
+    private final Perfil view;  // Vista de perfil del modeloUsuario
+    private final ModeloInstitucion ins;  // Modelo de la institución asociada al modeloUsuario
+    private final ModeloMunicipio m;  // Modelo del modeloMunicipio
+    private final ConsultaUsuario cons;  // Consultas relacionadas con el modeloUsuario
+    private final JMenuItem GraficosCompararInstitucion = new JMenuItem("comparar con otras instituciones");  // Menú para comparar instituciones
+    private final JMenuItem GraficoPrincipal = new JMenuItem("Ver graficos por alcance y fuente");  // Menú para ver gráficos por alcance
+    private final JMenuItem GraficoHistorico = new JMenuItem("Ver grafico historico de la huella de carbono");  // Menú para ver gráfico histórico
 
-    public PerfilCOntrolador(Usuario mod, Perfil view,
-                             InstitucionModelo ins, Municipio m, ConsultaUsuario cons) {
+    /**
+     * Constructor de la clase ControladorPerfil.
+     *
+     * @param mod  Modelo de modeloUsuario
+     * @param view Vista del perfil
+     * @param ins  Modelo de la institución
+     * @param m    Modelo del modeloMunicipio
+     * @param cons Consultas relacionadas con el modeloUsuario
+     */
+    public ControladorPerfil(ModeloUsuario mod, Perfil view,
+                             ModeloInstitucion ins, ModeloMunicipio m, ConsultaUsuario cons) {
         this.mod = mod;
         this.view = view;
         this.ins = ins;
         this.m = m;
         this.cons = cons;
-        listeners();
+        listeners();  // Registra los listeners de los eventos
     }
 
+    /**
+     * Inicializa la vista de perfil dependiendo del tipo de modeloUsuario.
+     * Configura las opciones disponibles para cada tipo de modeloUsuario y agrega los listeners correspondientes.
+     */
     public void Iniciar() {
 
+        // Dependiendo del tipo de modeloUsuario, se configurarán las opciones y funcionalidades disponibles en la vista.
         switch (mod.getTipoUsuario()) {
             case "Administrador":
+                // Configuración para el administrador
                 view.setTitle("Perfil");
                 Load();
                 view.setLocationRelativeTo(null);
                 view.setVisible(true);
                 view.VerPerfiles.setVisible(true);
                 view.verInstitucion.setVisible(false);
-                view.setLocationRelativeTo(null);
                 view.Graficos.add(GraficoPrincipal);
                 view.Graficos.add(GraficosCompararInstitucion);
                 view.Graficos.add(GraficoHistorico);
                 view.setVisible(true);
                 view.setLocationRelativeTo(null);
-                GraficoPrincipal.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoPrincipal();
-                    }
-                });
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaCompararInstituciones();
-                    }
-                });
-                GraficoHistorico.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoHistorico();
-
-                    }
-
-                });
+                GraficoPrincipal.addActionListener(_ -> vistaGraficoPrincipal());
+                GraficosCompararInstitucion.addActionListener(_ -> vistaCompararInstituciones());
+                GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
                 break;
+
             case "Superadmin":
+                // Configuración para el superadmin
                 view.setTitle("Perfil");
                 Load();
                 view.setLocationRelativeTo(null);
@@ -76,28 +84,13 @@ public class PerfilCOntrolador {
                 view.Graficos.add(GraficoHistorico);
                 view.setVisible(true);
                 view.setLocationRelativeTo(null);
-                GraficoPrincipal.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoPrincipal();
-                    }
-                });
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaCompararInstituciones();
-                    }
-                });
-                GraficoHistorico.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoHistorico();
-
-                    }
-
-                });
+                GraficoPrincipal.addActionListener(_ -> vistaGraficoPrincipal());
+                GraficosCompararInstitucion.addActionListener(_ -> vistaCompararInstituciones());
+                GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
                 break;
+
             case "Invitado":
+                // Configuración para el invitado
                 view.setVisible(true);
                 view.setTitle("Perfil");
                 System.out.println(ins.getNombreInstitucion() + " Vista Perfil");
@@ -109,54 +102,37 @@ public class PerfilCOntrolador {
                 view.perfil.setVisible(true);
                 view.setLocationRelativeTo(null);
                 Load();
-                GraficoPrincipal.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoPrincipal();
-                    }
-                });
-                GraficosCompararInstitucion.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaCompararInstituciones();
-                    }
-                });
-                GraficoHistorico.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        vistaGraficoHistorico();
-
-                    }
-
-                });
+                GraficoPrincipal.addActionListener(_ -> vistaGraficoPrincipal());
+                GraficosCompararInstitucion.addActionListener(_ -> vistaCompararInstituciones());
+                GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
                 break;
+
             default:
-                JOptionPane.showMessageDialog(null, "Usuario no definido en el sistema");
+                JOptionPane.showMessageDialog(null, "ModeloUsuario no definido en el sistema");
                 break;
-
         }
-
-
-        GraficoPrincipal.addActionListener(e -> vistaGraficoPrincipal());
-        GraficosCompararInstitucion.addActionListener(e -> vistaCompararInstituciones());
-        GraficoHistorico.addActionListener(e -> vistaGraficoHistorico());
     }
 
+    /**
+     * Método que maneja las acciones de los botones y otros componentes en la vista de perfil.
+     *
+     * @param event Evento generado por los componentes de la vista.
+     */
     private void actionPerformed(ActionEvent event) {
+        // Lógica para habilitar/deshabilitar campos según la acción del modeloUsuario
         if (event.getSource() == view.editarButton) {
             hablitarCampos();
-
         } else {
             desahabiltarCampos();
         }
+
+        // Actualización de los datos de modeloUsuario si se modifican
         String pass = new String(view.newPass.getPassword());
         String Npass = new String(view.confirNewPass.getPassword());
         String correo = view.correo.getText();
         int id = mod.getIdUsuario();
-        System.out.println(id);
         if (!pass.isEmpty() && !Npass.isEmpty()) {
             if (pass.equals(Npass)) {
-                /* if(cons.ExisteUsuario(correo)==0) {*/
                 if (cons.esEmail(correo)) {
                     String pasCifrada = HASH.sha1(Npass);
                     mod.setCorreo(correo);
@@ -175,13 +151,12 @@ public class PerfilCOntrolador {
                 } else {
                     JOptionPane.showMessageDialog(null, "El correo no está en un formato valido");
                 }
-               /* } else {
-                    JOptionPane.showMessageDialog(null,"El correo ya se encuentra registrado");
-                }*/
             } else {
                 JOptionPane.showMessageDialog(null, "Para actualizar la contraseña deben coincidir en ambos campos");
             }
         }
+
+        // Llamadas a otros métodos según la acción realizada por el modeloUsuario
         if (event.getSource() == view.inicioButton) {
             BotonInicio();
         }
@@ -203,15 +178,15 @@ public class PerfilCOntrolador {
         if (event.getSource() == view.VerPerfiles) {
             vistaVerPerfiles();
         }
-        if(event.getSource() == view.verInstitucion){
+        if (event.getSource() == view.verInstitucion) {
             vistaVerInstitucion();
         }
     }
 
+    // Otros métodos relacionados con la configuración y actualización de la vista de perfil.
     private void Load() {
         llenarFormulario();
         desahabiltarCampos();
-
     }
 
     private void llenarFormulario() {
@@ -224,17 +199,14 @@ public class PerfilCOntrolador {
     }
 
     private void hablitarCampos() {
-        //view.apellido.setEditable(true);
-        //view.nombre.setEditable(true);
-        //view.Sede.setEditable(true);
-        //view.Uni.setEditable(true);
-        //view.rol.setEditable(true);
+        // Habilita la edición de los campos de correo y contraseña
         view.correo.setEditable(true);
         view.newPass.setEditable(true);
         view.confirNewPass.setEditable(true);
     }
 
     private void desahabiltarCampos() {
+        // Deshabilita la edición de todos los campos
         view.Sede.setEditable(false);
         view.apellido.setEditable(false);
         view.nombre.setEditable(false);
@@ -246,16 +218,16 @@ public class PerfilCOntrolador {
     }
 
     private void BotonInicio() {
-        ControladoInicio control = new ControladoInicio(ins, mod, m);
+        ControladorPestaniaPrincipal control = new ControladorPestaniaPrincipal(ins, mod, m);
         control.inicio();
         view.dispose();
     }
 
     private void vistaRegistrarEmision() {
         Emision emisionView = new Emision();
-        EmisionModelo EmisionModelo = new EmisionModelo();
+        ModeloEmision ModeloEmision = new ModeloEmision();
         ConsultasEmision consul = new ConsultasEmision();
-        EmisionControlador controlador = new EmisionControlador(EmisionModelo, consul, emisionView, ins, m, mod);
+        ControladorEmision controlador = new ControladorEmision(ModeloEmision, consul, emisionView, ins, m, mod);
         controlador.iniciar();
         emisionView.setVisible(true);
         view.dispose();
@@ -263,11 +235,11 @@ public class PerfilCOntrolador {
 
     private void vistaCalcular() {
         Conexion con = new Conexion();
-        Vistas.Calcular view2 = new Calcular();
-        CalcularModelo mod2 = new CalcularModelo();
+        Calcular view2 = new Calcular();
+        ModeloEmisionCalcular mod2 = new ModeloEmisionCalcular();
         CalcularConsultas consul = new CalcularConsultas(con);
         ConsultaUsuario consultaUsuario = new ConsultaUsuario(con);
-        CalcularControlador controlador = new CalcularControlador(mod2, consul, view2, ins, consultaUsuario, mod, m);
+        ControladorCalcular controlador = new ControladorCalcular(mod2, consul, view2, ins, consultaUsuario, mod, m);
         controlador.iniciar();
         view2.setVisible(true);
         view.dispose();
@@ -276,7 +248,7 @@ public class PerfilCOntrolador {
     private void vistaInforme() {
         Conexion con = new Conexion();
         ConsultaInforme consul = new ConsultaInforme(con);
-        ModeloInforme modInfo = new ModeloInforme();
+        ModeloEmisionInforme modInfo = new ModeloEmisionInforme();
         Informe viewInfo = new Informe();
         ControladorInforme contro = new ControladorInforme(viewInfo, modInfo, consul, m, ins, mod);
         contro.iniciar();
@@ -288,9 +260,9 @@ public class PerfilCOntrolador {
         Conexion con = new Conexion();
         GraficoConsulta consul = new GraficoConsulta(con);
         Vistas.Graficos viewGraf = new Graficos();
-        GraficorModelo modGraf = new GraficorModelo();
-        InstitucionModelo modelo = new InstitucionModelo();
-        GraficoControlador contro = new GraficoControlador(modGraf, consul, viewGraf, modelo, m, mod, ins);
+        GraficorModeloInstitucion modGraf = new GraficorModeloInstitucion();
+        ModeloInstitucion modelo = new ModeloInstitucion();
+        ControladorGrafico contro = new ControladorGrafico(modGraf, consul, viewGraf, modelo, m, mod, ins);
         contro.iniciar();
         viewGraf.setVisible(true);
         view.dispose();
@@ -301,18 +273,18 @@ public class PerfilCOntrolador {
         GraficoComparar viewGraf = new GraficoComparar();
         Conexion conn = new Conexion();
         GraficoCompararConsultas consultas = new GraficoCompararConsultas(conn);
-        GraficoCompararModelo modGraf = new GraficoCompararModelo();
-        ComparaInstitucion contro = new ComparaInstitucion(modGraf, consultas, comIns, viewGraf, ins, m, mod);
+        ModeloGraficoComparar modGraf = new ModeloGraficoComparar();
+        ControladorCompararInstitucion contro = new ControladorCompararInstitucion(modGraf, consultas, comIns, viewGraf, ins, m, mod);
         contro.iniciar();
         view.dispose();
     }
 
     private void vistaGraficoHistorico() {
         Conexion con = new Conexion();
-        TendenciaModelo modGraf = new TendenciaModelo();
+        ModeloTendencia modGraf = new ModeloTendencia();
         ConsultasTendencias consult = new ConsultasTendencias(con);
         GraficoTendencia viewGraf = new GraficoTendencia();
-        TendenciaControlador control = new TendenciaControlador(modGraf, consult, viewGraf, m, ins, mod);
+        ControladorTendencia control = new ControladorTendencia(modGraf, consult, viewGraf, m, ins, mod);
         viewGraf.setVisible(true);
         control.iniciar();
         view.dispose();
@@ -328,42 +300,39 @@ public class PerfilCOntrolador {
     }
 
     private void vistaActualizarInstitucion() {
-        Conexion con = new Conexion();
         ConsultasInstitucion consul = new ConsultasInstitucion();
         VerDatosInstitucion view2 = new VerDatosInstitucion();
-        InstitucionModelo mod2 = new InstitucionModelo();
-        InstitucionControlador control = new InstitucionControlador(ins, m, view2, consul, mod2, mod);
+        ModeloInstitucion mod2 = new ModeloInstitucion();
+        ControladorInstitucion control = new ControladorInstitucion(ins, m, view2, consul, mod2, mod);
         view2.setVisible(true);
         control.iniciar();
         view.dispose();
-
-
     }
 
     private void vistaVerPerfiles() {
         Conexion con = new Conexion();
         VerPerfiles verPerfiles = new VerPerfiles();
         ConsultaUsuario consul = new ConsultaUsuario(con);
-
-        VerPerfilesControlador verControl = new VerPerfilesControlador(mod, ins, m, verPerfiles, consul);
+        ControladorVerPerfiles verControl = new ControladorVerPerfiles(mod, ins, m, verPerfiles, consul);
         verControl.Iniciar();
         view.dispose();
     }
 
-    private void vistaVerInstitucion(){
+    private void vistaVerInstitucion() {
         Conexion con = new Conexion();
         VerInstituciones verInstituciones = new VerInstituciones();
         ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
         ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
-        InstitucionModelo institucionModelo = new InstitucionModelo();
-        ContraladorVerInstituciones contraladorVerInstituciones = new ContraladorVerInstituciones(consultasInstitucion,consultaNucleo,
-                institucionModelo,verInstituciones,mod,m);
+        ModeloInstitucion modeloInstitucion = new ModeloInstitucion();
+        ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo, modeloInstitucion, verInstituciones, mod, m);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
     }
 
-
+    /**
+     * Registra los listeners para los componentes de la vista.
+     */
     private void listeners() {
+        // Asocia eventos de los botones con los métodos correspondientes
         this.view.editarButton.addActionListener(this::actionPerformed);
         this.view.guardarCambiosButton.addActionListener(this::actionPerformed);
         this.view.verPassC.addActionListener(this::actionPerformed);
@@ -376,6 +345,5 @@ public class PerfilCOntrolador {
         this.view.RegistrarInstitucion.addActionListener(this::actionPerformed);
         this.view.VerPerfiles.addActionListener(this::actionPerformed);
         this.view.verInstitucion.addActionListener(this::actionPerformed);
-
     }
 }

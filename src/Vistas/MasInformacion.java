@@ -2,19 +2,8 @@ package Vistas;
 
 
 
-import Controlador.EmisionControlador;
-import Controlador.InstitucionControlador;
-import Modelo.Consultas.ConsultasEmision;
-import Modelo.Consultas.ConsultasInstitucion;
-import Modelo.modelo.EmisionModelo;
-import Modelo.modelo.InstitucionModelo;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class MasInformacion extends JFrame {
     private JMenuItem RegistrarInstitucion;

@@ -23,7 +23,7 @@ public class RegistrarUsuario extends JFrame{
     private JButton verPassN;
 
     public RegistrarUsuario(){
-        setTitle("Registrar Usuario");
+        setTitle("Registrar ModeloUsuario");
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(600, 600);
