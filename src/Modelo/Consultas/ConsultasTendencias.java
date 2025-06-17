@@ -86,7 +86,7 @@ public class ConsultasTendencias {
         List<ModeloEmisionInforme> instituciones = new ArrayList<>();
 
         try {
-            ps = conn.prepareStatement("Select * from institucion i inner join municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join modeloMunicipio m on mi.idMuncipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
+            ps = conn.prepareStatement("Select * from institucion i inner join municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on mi.idMuncipio = m.idMunicipio inner join Departamento d on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
             ps.setString(1, nombreM);
             ps.setString(2, nombre);
             rs = ps.executeQuery();

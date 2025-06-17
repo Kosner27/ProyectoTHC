@@ -41,6 +41,7 @@ public class Calcular extends JFrame{
     public JMenuItem verInstitucion;
     public JComboBox comboInstitucion;
     public JComboBox municipio;
+    public JButton LImpiarButton;
 
 
     public Calcular(){

@@ -362,7 +362,7 @@ public class ControladorInforme {
 
                 // Añade el nombre del núcleo al documento
                 String nombreNucleo = view.comboNucleo.getSelectedItem().toString();
-                Paragraph nNucleo = new Paragraph("Nombre del nucleo: " + nombreNucleo);
+                Paragraph nNucleo = new Paragraph("Nombre del modeloNucleo: " + nombreNucleo);
                 nNucleo.setAlignment(Element.ALIGN_LEFT);
                 document.add(new Paragraph((""))); // Añadir espacio
                 document.add(nNucleo);
@@ -455,8 +455,9 @@ public class ControladorInforme {
         // Obtiene los objetos seleccionados en los JComboBox de la vista
         Object anioObj = view.anio.getSelectedItem();
         Object InstitucionObj = view.institucion.getSelectedItem();
-        Object municipioObj = view.municipio.getSelectedItem();
+        Object municipioObj = view.modeloMunicipio.getSelectedItem();
         Object nucleoObje = view.comboNucleo.getSelectedItem();
+
 
         // Crea un modelo de tabla para la vista y define una variable para el total
         DefaultTableModel tableModel2 = (DefaultTableModel) view.Emisiones.getModel();
@@ -536,7 +537,7 @@ public class ControladorInforme {
         // Obtiene los objetos seleccionados en los JComboBox de la vista
         Object anioObj = view.anio.getSelectedItem();
         Object InstitucionObj = view.institucion.getSelectedItem();
-        Object municipioObj = view.municipio.getSelectedItem();
+        Object municipioObj = view.modeloMunicipio.getSelectedItem();
         Object nucleoObje = view.comboNucleo.getSelectedItem();
 
         // Crea un modelo de tabla para la vista y define una variable para el total
@@ -682,7 +683,7 @@ public class ControladorInforme {
     public void cargarAnioBase() {
         // Obtener la lista de años base desde el Modelo
         String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
-        String nombreMunicipio = String.valueOf(view.municipio.getSelectedItem());
+        String nombreMunicipio = String.valueOf(view.modeloMunicipio.getSelectedItem());
 
         // Consultar los años base desde el Modelo
         ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
@@ -722,21 +723,21 @@ public class ControladorInforme {
             List<String> municipios = consultasInstitucion.obtenerMunicipios(nombreInstitucion);
 
             // Limpiar el JComboBox de municipios y agregar un item vacío
-            view.municipio.removeAllItems();
-            view.municipio.addItem("");  // Añadir un item vacío como indicativo
+            view.modeloMunicipio.removeAllItems();
+            view.modeloMunicipio.addItem("");  // Añadir un item vacío como indicativo
 
             // Llenar el JComboBox con los municipios obtenidos del Modelo
             for (String municipio : municipios) {
-                view.municipio.addItem(municipio);
+                view.modeloMunicipio.addItem(municipio);
             }
 
             // Si el JComboBox tiene elementos, seleccionamos el primero
-            if (view.municipio.getItemCount() > 0) {
-                view.municipio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            if (view.modeloMunicipio.getItemCount() > 0) {
+                view.modeloMunicipio.setSelectedIndex(0); // Seleccionamos el primer elemento
             }
         } else {
             // Si la institución está vacía, limpiar el JComboBox de municipios
-            view.municipio.removeAllItems();
+            view.modeloMunicipio.removeAllItems();
         }
     }
 
@@ -781,7 +782,7 @@ public class ControladorInforme {
         Conexion conexion = new Conexion();
         ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
         String nombre = String.valueOf(view.institucion.getSelectedItem());
-        String municipio = String.valueOf(view.municipio.getSelectedItem());
+        String municipio = String.valueOf(view.modeloMunicipio.getSelectedItem());
         String nucleo = String.valueOf(view.comboNucleo.getSelectedItem());
         List<String> anioBaseNucleo = consultaNucleo.obtenerAnosBase(nombre, municipio, nucleo);
         for (String anioBase : anioBaseNucleo) {
@@ -969,7 +970,7 @@ public class ControladorInforme {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, modUser, m);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
     /**
      * Método que inicializa los listeners para los botones y componentes de la vista.
@@ -987,7 +988,7 @@ public class ControladorInforme {
 // ActionListener para el combo box de institución
         this.view.institucion.addActionListener(e -> {
             if (view.institucion.getItemCount() > 0) {
-                view.municipio.removeAllItems(); // Limpiar el combo de modeloMunicipio
+                view.modeloMunicipio.removeAllItems(); // Limpiar el combo de modeloMunicipio
                 view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos
                 cargarMunicipio(); // Cargar municipios para la institución seleccionada
                 cargarAnioBase(); // Cargar el año base para la institución
@@ -997,19 +998,19 @@ public class ControladorInforme {
             consultaNucleo = new ConsultaNucleo(conn);
             String nombreInstitucion = String.valueOf(view.institucion.getSelectedItem());
             if (consultaNucleo.TieneNucleo(nombreInstitucion) >= 1) {
-                view.nucleo.setVisible(true);
+                view.modeloNucleo.setVisible(true);
                 view.comboNucleo.setVisible(true);
                 view.anio.removeAllItems();
             } else {
                 view.comboNucleo.setVisible(false);
-                view.nucleo.setVisible(false);
+                view.modeloNucleo.setVisible(false);
                 cargarAnioBase();
             }
         });
 
         // ActionListener para el combo box de modeloMunicipio
-        this.view.municipio.addActionListener(e -> {
-            if (view.municipio.getItemCount() > 0) {
+        this.view.modeloMunicipio.addActionListener(e -> {
+            if (view.modeloMunicipio.getItemCount() > 0) {
                 view.comboNucleo.removeAllItems(); // Limpiar el combo de núcleos si está visible
                 cargarNucleosExistentes(); // Cargar núcleos si el checkbox está seleccionado
 

@@ -26,7 +26,7 @@ public class GraficoCompararConsultas {
         try {
             ps = conn.prepareStatement("Select * from institucion i inner join  " +
                     "municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion inner join " +
-                    " modeloMunicipio m on mi.idMuncipio = m.idMunicipio inner join " +
+                    " municipio m on mi.idMuncipio = m.idMunicipio inner join " +
                     "Departamento d on m.idDepartamento = d.idDepartamento " +
                     "where m.NombreMunicipio = ? and i.NombreInstitucion = ? ");
             ps.setString(1, nombreMunicipio);
@@ -65,7 +65,7 @@ public class GraficoCompararConsultas {
                     " from nucleoinstitucion n\n" +
                     "INNER JOIN institucion i ON i.idInstitucionAuto = n.idInstitucion\n" +
                     "inner join municipioinstitiucion mi on mi.IdInstitucion= i.idInstitucionAuto\n" +
-                    "inner join modeloMunicipio m on m.idMunicipio = mi.idMuncipio\n" +
+                    "inner join municipio m on m.idMunicipio = mi.idMuncipio\n" +
                     "inner join Departamento d on d.idDepartamento=m.idDepartamento\n" +
                     "where i.NombreInstitucion = ? and n.NombreNucleo = ? and m.NombreMunicipio = ?;");
             ps.setString(1, NombreSeleccionado);
@@ -144,14 +144,7 @@ public class GraficoCompararConsultas {
                 cs.setString(4, formattedCampus);   // Filtro por campus específico
             }
 
-            // Logs de depuración
-            System.out.println("Llamando al procedimiento con:");
-            System.out.println("Instituciones: " + formattedInstituciones);
-            System.out.println("Año: " + anio);
-            System.out.println("Alcance: " + alcance);
-            System.out.println("Campus (enviado): " + (formattedCampus != null ? formattedCampus : "NULL"));
 
-            // Ejecutar la consulta
             rs = cs.executeQuery();
 
             // Procesar resultados
@@ -161,7 +154,7 @@ public class GraficoCompararConsultas {
                 dato.setNombrefuente(rs.getString("NombreFuente"));
                 dato.setNombreInstitucion(rs.getString("NombreInstitucion"));
                 dato.setTotal(rs.getDouble("Co2Aportado"));
-                dato.setNucleo(rs.getString("ModeloNucleo")); // Lista de núcleos
+                dato.setNucleo(rs.getString("nucleo")); // Lista de núcleos
                 resultados.add(dato);
             }
 
@@ -179,7 +172,7 @@ public class GraficoCompararConsultas {
                 System.err.println("Error al cerrar recursos: " + e.getMessage());
             }
         }
-
+        System.out.println(resultados);
         return resultados;
     }
 

@@ -1153,7 +1153,7 @@ public class ControladorCompararInstitucion {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, user, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
 
 }

@@ -257,6 +257,7 @@ public class ControladorPestaniaPrincipal {
                 consultasInstitucion, consultaNucleo, modeloInstitucion, verInstituciones, user, m
         );
         contraladorVerInstituciones.iniciar();
+        init.dispose();
     }
 
     /**

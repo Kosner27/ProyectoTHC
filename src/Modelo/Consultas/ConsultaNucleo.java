@@ -75,7 +75,7 @@ public class ConsultaNucleo {
 
     public int TieneNucleo(String ins) {
         String sql = "SELECT COUNT(nu.IdNucleo) FROM nucleoinstitucion nu " +
-                "INNER JOIN modeloMunicipio m ON nu.idMunicipio = m.idMunicipio " +
+                "INNER JOIN municipio m ON nu.idMunicipio = m.idMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.idMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.IdInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? GROUP BY nu.NombreNucleo";
@@ -93,8 +93,9 @@ public class ConsultaNucleo {
     // Nuevo método para cargar los núcleos en un combo box
     public List<String> cargarNucleos(String nombreInstitucion) {
         List<String> nucleos = new ArrayList<>();
+        System.out.println(nombreInstitucion + " hola consulta");
         String sql = "SELECT nu.NombreNucleo FROM nucleoinstitucion nu " +
-                "INNER JOIN modeloMunicipio m ON nu.idMunicipio = m.idMunicipio " +
+                "INNER JOIN municipio m ON nu.idMunicipio = m.idMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.idMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.IdInstitucionAuto = mi.IdInstitucion " +
                 "WHERE nu.Activo = 1 AND i.NombreInstitucion = ? GROUP BY nu.NombreNucleo";
@@ -115,7 +116,7 @@ public class ConsultaNucleo {
         List<String> anosBase = new ArrayList<>();
         String sql = "SELECT anioBase FROM emisionnucleo en " +
                 "INNER JOIN nucleoinstitucion n ON n.IdNucleo = en.idNucleo " +
-                "INNER JOIN modeloMunicipio m ON m.IdMunicipio = n.IdMunicipio " +
+                "INNER JOIN municipio m ON m.IdMunicipio = n.IdMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.IdMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? AND n.NombreNucleo = ? " +
@@ -145,7 +146,7 @@ public class ConsultaNucleo {
         String sql = "SELECT en.anioBase " +
                 "FROM emisionnucleo en " +
                 "INNER JOIN nucleoinstitucion n ON n.IdNucleo = en.idNucleo " +
-                "INNER JOIN modeloMunicipio m ON m.IdMunicipio = n.IdMunicipio " +
+                "INNER JOIN municipio m ON m.IdMunicipio = n.IdMunicipio " +
                 "INNER JOIN municipioinstitiucion mi ON m.IdMunicipio = mi.idMuncipio " +
                 "INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ? " +

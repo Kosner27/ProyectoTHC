@@ -28,7 +28,6 @@
         public JCheckBox Si;
         public JCheckBox no;
         public JComboBox InstitucionNucleo;
-        public JComboBox MunicipioNucleo;
         public JComboBox nucleo;
         public JComboBox anioNucleoCombo;
         public JLabel Institucion;

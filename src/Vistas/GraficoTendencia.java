@@ -46,4 +46,6 @@ public class GraficoTendencia extends  JFrame {
 
 
     }
+
+
 }

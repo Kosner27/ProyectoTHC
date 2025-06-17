@@ -45,7 +45,7 @@ public class VerInstituciones extends JFrame{
         setContentPane(Main);
         instituciontbl.setPreferredScrollableViewportSize(new Dimension(600, 300));
         instituciontbl.setFillsViewportHeight(true);
-        String[] columnNames = {"Nombre de la Institución", "NIT", "Departamento", "ModeloMunicipio", "Campus","Hectareas", "Hectareas Del ModeloNucleo"};
+        String[] columnNames = {"Nombre de la Institución", "NIT", "Departamento", "ModeloMunicipio", "Campus","Hectareas", "Hectareas del nucleo"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         instituciontbl.setModel(tableModel);
 

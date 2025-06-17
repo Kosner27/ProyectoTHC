@@ -99,6 +99,24 @@ public class ControladorVerInstituciones {
         if(e.getSource() == viewVerInstitucion.actualizarTablaButton){
             ActulizarTabla();
 
+        } if (e.getSource() == viewVerInstitucion.perfil) {
+            vistaPerfil();
+        } else if (e.getSource() == viewVerInstitucion.Calcular) {
+            vistaCalcular();
+        } else if (e.getSource() == viewVerInstitucion.RegistrarEmision) {
+            vistaRegistrarEmision();
+        } else if (e.getSource() == viewVerInstitucion.Informes) {
+            vistaInforme();
+        } else if (e.getSource() == viewVerInstitucion.RegistrarInstitucion) {
+            vistaActualizarInstitucion();
+        } else if (e.getSource() == viewVerInstitucion.VerPerfiles) {
+            vistaVerPerfiles();
+        } else if (e.getSource() == viewVerInstitucion.Reducir) {
+            vistaReducir();
+        } else if (e.getSource() == viewVerInstitucion.verInstitucion) {
+            vistaVerInstitucion();
+        } else if (e.getSource()== viewVerInstitucion.inicioButton){
+            BotonInicio();
         }
     }
 
@@ -304,6 +322,12 @@ public class ControladorVerInstituciones {
         }
     }
 
+    private void BotonInicio() {
+        ControladorPestaniaPrincipal control = new ControladorPestaniaPrincipal(modeloInstitucion, user, modeloMunicipio);
+        control.inicio();// Llama al controlador de inicio
+        viewVerInstitucion.dispose();// Cierra la vista actual
+    }
+
     private void listeners() {
         this.viewVerInstitucion.buscarPorNombreButton.addActionListener(this::actionPerformed);
         this.viewVerInstitucion.instituciontbl.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -322,6 +346,17 @@ public class ControladorVerInstituciones {
         this.viewVerInstitucion.insertarButton.addActionListener(this::actionPerformed);
         this.viewVerInstitucion.eliminarButton.addActionListener(this::actionPerformed);
         this.viewVerInstitucion.registrarNucleoButton.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.verInstitucion.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.perfil.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.Calcular.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.RegistrarEmision.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.Informes.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.RegistrarInstitucion.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.VerPerfiles.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.Reducir.addActionListener(this::actionPerformed);
+        this.viewVerInstitucion.inicioButton.addActionListener(this::actionPerformed);
+
+
     }
     // Métodos para guardar y eliminar
 
@@ -380,7 +415,7 @@ public class ControladorVerInstituciones {
                     }
             }
         }else{
-            JOptionPane.showMessageDialog(viewVerInstitucion.Main, "Por favor seleccione una institución y/0 nucleo antes de eliminar");
+            JOptionPane.showMessageDialog(viewVerInstitucion.Main, "Por favor seleccione una institución y/0 modeloNucleo antes de eliminar");
         }
     }
 
@@ -417,4 +452,116 @@ public class ControladorVerInstituciones {
         tableModel.setRowCount(0);
 
     }
+
+
+
+    /**
+     * Abre la vista de perfil del modeloUsuario.
+     */
+    private void vistaPerfil() {
+        Conexion conn = new Conexion();
+        Perfil per = new Perfil();
+        ConsultaUsuario cons = new ConsultaUsuario(conn);
+        ControladorPerfil control = new ControladorPerfil(user, per, modeloInstitucion, modeloMunicipio, cons);
+        control.Iniciar();
+        per.setVisible(true);
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para realizar cálculos relacionados con las emisiones.
+     */
+    private void vistaCalcular() {
+        Conexion con = new Conexion();
+        Vistas.Calcular view = new Calcular();
+        ModeloEmisionCalcular mod = new ModeloEmisionCalcular();
+        CalcularConsultas consul = new CalcularConsultas(con);
+        ConsultaUsuario consultaUsuario = new ConsultaUsuario(con);
+        ControladorCalcular controlador = new ControladorCalcular(mod, consul, view, modeloInstitucion, consultaUsuario, user, modeloMunicipio);
+        controlador.iniciar();
+        view.setVisible(true);
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para registrar emisiones.
+     */
+    private void vistaRegistrarEmision() {
+        Emision emisionView = new Emision();
+        ModeloEmision mod = new ModeloEmision();
+        ConsultasEmision consul = new ConsultasEmision();
+        ControladorEmision controlador = new ControladorEmision(mod, consul, emisionView, modeloInstitucion, modeloMunicipio, user);
+        controlador.iniciar();
+        emisionView.setVisible(true);
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista de informes.
+     */
+    private void vistaInforme() {
+        Conexion con = new Conexion();
+        ConsultaInforme consul = new ConsultaInforme(con);
+        ModeloEmisionInforme mod = new ModeloEmisionInforme();
+        Informe view = new Informe();
+        ControladorInforme contro = new ControladorInforme(view, mod, consul, modeloMunicipio, modeloInstitucion, user);
+        contro.iniciar();
+        view.setVisible(true);
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para actualizar los datos de la institución.
+     */
+    private void vistaActualizarInstitucion() {
+        Conexion con = new Conexion();
+        ConsultasInstitucion consul = new ConsultasInstitucion();
+        VerDatosInstitucion view = new VerDatosInstitucion();
+        ModeloInstitucion mod = new ModeloInstitucion();
+        ControladorInstitucion control = new ControladorInstitucion(modeloInstitucion, modeloMunicipio, view, consul, mod, user);
+        view.setVisible(true);
+        control.iniciar();
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para ver los perfiles de modeloUsuario.
+     */
+    private void vistaVerPerfiles() {
+        Conexion con = new Conexion();
+        VerPerfiles verPerfiles = new VerPerfiles();
+        ConsultaUsuario consul = new ConsultaUsuario(con);
+
+        ControladorVerPerfiles verControl = new ControladorVerPerfiles(user, modeloInstitucion, modeloMunicipio, verPerfiles, consul);
+        verControl.Iniciar();
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para reducir las emisiones.
+     */
+    private void vistaReducir() {
+        Conexion con = new Conexion();
+        Reducir2 vista = new Reducir2();
+        GraficoConsulta consul = new GraficoConsulta(con);
+        ControladorReducir redu = new ControladorReducir(modeloInstitucion, consul, vista, modeloMunicipio, user);
+        redu.Iniciar();
+        viewVerInstitucion.dispose();
+    }
+
+    /**
+     * Abre la vista para ver las instituciones asociadas al modeloUsuario.
+     */
+    private void vistaVerInstitucion() {
+        Conexion con = new Conexion();
+        VerInstituciones verInstituciones = new VerInstituciones();
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(con);
+        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+        ModeloInstitucion modeloInstitucion = new ModeloInstitucion();
+        ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(
+                consultasInstitucion, consultaNucleo, modeloInstitucion, verInstituciones, user, modeloMunicipio
+        );
+        contraladorVerInstituciones.iniciar();
+    }
+
 }

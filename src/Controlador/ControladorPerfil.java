@@ -326,6 +326,7 @@ public class ControladorPerfil {
         ModeloInstitucion modeloInstitucion = new ModeloInstitucion();
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo, modeloInstitucion, verInstituciones, mod, m);
         contraladorVerInstituciones.iniciar();
+        view.dispose();
     }
 
     /**

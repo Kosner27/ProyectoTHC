@@ -20,7 +20,6 @@ public class ControladorRegistrarUsuario {
     private final ModeloUsuario user; // Modelo de modeloUsuario
     private final RegistrarUsuario view; // Vista para registrar modeloUsuario
     private final ConsultaUsuario consultaUsuario; // Consulta de usuarios
-    private MonitoreoInactividad monitoreo;
     /**
      * Constructor del controlador.
      * @param user Modelo de modeloUsuario
@@ -31,21 +30,13 @@ public class ControladorRegistrarUsuario {
         this.user = user;
         this.view = view;
         this.consultaUsuario = consultaUsuario;
-        monitoreo = new MonitoreoInactividad(() -> {
-            JOptionPane.showMessageDialog(null, "Se detectó inactividad. La aplicación se cerrará.");
-            System.exit(0); // Cerrar la aplicación
-        });
+
         // Agrega listeners para los eventos de los componentes de la vista
         this.view.Registrar.addActionListener(this::actionPerformed);
         this.view.departamento.addActionListener(e -> cargarMunicipio());
         this.view.municipio.addActionListener(e -> cargarInstitucion());
         this.view.inicio.addActionListener(this::actionPerformed);
-        this.view.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                monitoreo.reiniciar(); // Reiniciar el tiempo de inactividad al presionar cualquier tecla
-            }
-        });
+
 
     }
     /**
@@ -57,7 +48,6 @@ public class ControladorRegistrarUsuario {
         CargarDepartamento();
         cargarMunicipio();
         cargarInstitucion();
-        monitoreo.iniciar();
     }
     /**
      * Maneja los eventos de los componentes de la vista.
@@ -68,12 +58,10 @@ public class ControladorRegistrarUsuario {
         if (e.getSource() == view.Registrar) {
 
             registrarUsuario();
-            monitoreo.reiniciar();
 
         }
         if (e.getSource() == view.inicio) {
           abrirInicio();
-          monitoreo.reiniciar();
 
         }
     }
@@ -200,7 +188,7 @@ public class ControladorRegistrarUsuario {
                     user.setTipoUsuario(rol);
 
                     if (consultaUsuario.insertarUsuario(m, user)) {
-                        JOptionPane.showMessageDialog(null, "ModeloUsuario registrado: " + nombre);
+                        JOptionPane.showMessageDialog(null, "Usuario registrado: " + nombre);
                         Limpiar();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al registrar modeloUsuario");

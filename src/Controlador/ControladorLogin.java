@@ -16,7 +16,6 @@ public class ControladorLogin {
     private final ConsultaUsuario consul; // Consulta de usuarios
     private int intentosFallidos = 0; // Contador de intentos fallidos
     private static final int MAX_INTENTOS = 3; // Número máximo de intentos
-    private MonitoreoInactividad monitoreo;
 
     /**
      * Constructor del controlador.
@@ -30,10 +29,6 @@ public class ControladorLogin {
         this.view = view;
         this.consul = consul;
 
-        monitoreo = new MonitoreoInactividad(() -> {
-            JOptionPane.showMessageDialog(null, "Se detectó inactividad. La aplicación se cerrará.");
-            System.exit(0); // Cerrar la aplicación
-        });
         // Agregar listeners para eventos
         this.view.iniciarSesionButton.addActionListener(this::actionPerformed);
         this.view.addEnterKeyListener(this::actionPerformed);
@@ -41,12 +36,7 @@ public class ControladorLogin {
         this.view.clickAquiButton.addActionListener(this::actionPerformed);
         this.view.olvidasteTuContrasenaButton.addActionListener(this::actionPerformed);
 
-        this.view.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                monitoreo.reiniciar(); // Reiniciar el tiempo de inactividad al presionar cualquier tecla
-            }
-        });
+
     }
 
     /**
@@ -55,7 +45,6 @@ public class ControladorLogin {
     public void Iniciar() {
         view.setTitle("Login");
         view.setLocationRelativeTo(null);
-        monitoreo.iniciar();
     }
 
     /**
@@ -68,19 +57,19 @@ public class ControladorLogin {
                 event.getSource() == view.Contrasena ||
                 event.getSource() == view.Correo) {
             iniciarSesion();
-            monitoreo.detener();
+            //monitoreo.detener();
         }
         if (event.getSource() == view.inicioButton) {
             inicio();
-            monitoreo.detener();
+            //monitoreo.detener();
         }
         if (event.getSource() == view.clickAquiButton) {
             abrirRegistro();
-            monitoreo.detener();
+           // monitoreo.detener();
         }
         if (event.getSource() == view.olvidasteTuContrasenaButton) {
             recordarContrasena();
-            monitoreo.reiniciar();
+           // monitoreo.reiniciar();
         }
     }
 

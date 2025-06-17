@@ -78,14 +78,13 @@ public class CalcularConsultas {
     }
 
 
-
     public String Institucion(String ins, String m) {
         PreparedStatement ps = null;
         String nombre = null;
         ResultSet rs = null;
         try {
             ps = conn.prepareStatement("Select i.NombreInstitucion, m.NombreMunicipio from institucion i  inner join  municipioinstitiucion mi \n" +
-                    "on i.idInstitucionAuto = mi.IdInstitucion inner join modeloMunicipio m on mi.idMuncipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =?");
+                    "on i.idInstitucionAuto = mi.IdInstitucion inner join municipio m on mi.idMuncipio= m.idMunicipio where i.NombreInstitucion=? and m.NombreMunicipio =? and i.Activo = 1");
             ps.setString(1, ins);
             ps.setString(2, m);
             rs = ps.executeQuery();

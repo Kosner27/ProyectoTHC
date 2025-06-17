@@ -505,7 +505,9 @@ public class ControladorVerPerfiles {
                 privilegio = 9;
             } else if (rol.equals("Superadmin")) {
                 privilegio = 10;
-            } else {
+            } else if (rol.equals("Invitado")) {
+                privilegio = 11;
+            }else {
                 JOptionPane.showMessageDialog(null, "ModeloRol no válido");
                 return; // Salir del método si el rol no es válido
             }
@@ -556,7 +558,7 @@ public class ControladorVerPerfiles {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, modeloUsuario, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
 
     private void registrarUsuario(){

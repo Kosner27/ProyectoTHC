@@ -21,13 +21,13 @@ public class Informe extends JFrame {
     public JMenuItem Calcular;
     public JMenuItem Reducir;
     public JMenuItem perfil;
-   public JComboBox municipio;
+   public JComboBox modeloMunicipio;
     public JMenuBar bar;
     public JMenuItem Informes;
     public JMenuItem MasInformacion;
     public JMenuItem VerPerfiles;
     public JComboBox comboNucleo;
-    public JLabel nucleo;
+    public JLabel modeloNucleo;
     public JMenuItem verInstitucion;
 
 

@@ -147,8 +147,11 @@ public class ControladorCalcular implements ActionListener {
             if (view.comboInstitucion.getItemCount() > 0) {
                 view.municipio.removeAllItems(); // Limpiar el combo de modeloMunicipio
                 llenarComoboMunicipio(); // Llenar el combo de modeloMunicipio con nuevos datos
+                cargarComboNucleo();
             }
         });
+
+        this.view.LImpiarButton.addActionListener(this);
     }
 
     /**
@@ -169,6 +172,7 @@ public class ControladorCalcular implements ActionListener {
                 cargarInstitucion();
                 cargarFuentesPorNombre();
                 calcular();
+                view.LImpiarButton.setVisible(false);
                 view.sede.setText(modeloMunicipio.getNombreM());
                 view.setTitle("Calcular Emision");
                 view.setLocationRelativeTo(null);
@@ -185,7 +189,7 @@ public class ControladorCalcular implements ActionListener {
                 view.Institucion.setVisible(false);
                 view.sede.setVisible(false);
                 llenarComboInstitution();
-                cargarNucleoExistentes();
+                cargarComboNucleo();
                 cargarFuentesPorNombre();
                 calcular();
                 view.sede.setText(modeloMunicipio.getNombreM());
@@ -196,25 +200,7 @@ public class ControladorCalcular implements ActionListener {
                 GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
                 break;
             case "Invitado":
-                // Configuración para el modeloUsuario "Invitado"
-                view.RegistrarInstitucion.setVisible(false);
-                view.VerPerfiles.setVisible(false);
-                view.RegistrarEmision.setVisible(false);
-                view.Calcular.setVisible(false);
-                view.verInstitucion.setVisible(false);
-                view.Graficos.add(GraficoPrincipal);
-                view.Graficos.add(GraficosCompararInstitucion);
-                view.Graficos.add(GraficoHistorico);
-                cargarNucleoExistentes();
-                cargarInstitucion();
-                cargarFuentesPorNombre();
-                calcular();
-                view.sede.setText(modeloMunicipio.getNombreM());
-                view.setTitle("Calcular Emision");
-                view.setLocationRelativeTo(null);
-                GraficoPrincipal.addActionListener(_ -> vistaGraficoPrincipal());
-                GraficosCompararInstitucion.addActionListener(_ -> vistaCompararInstituciones());
-                GraficoHistorico.addActionListener(_ -> vistaGraficoHistorico());
+                view.dispose();
                 break;
             default:
                 // Mensaje de error si el tipo de modeloUsuario no está definido
@@ -392,6 +378,9 @@ public class ControladorCalcular implements ActionListener {
         // Verificar si el evento proviene del botón 'verInstitucion' y ejecutar el método correspondiente
         if (e.getSource() == view.verInstitucion) {
             vistaVerInstitution();
+        }
+        if(e.getSource()== view.LImpiarButton){
+            limpiar();
         }
     }
 
@@ -613,7 +602,7 @@ public class ControladorCalcular implements ActionListener {
      * Pasos:
      * 1. Establece una conexión con la base de datos utilizando la clase `Conexion`.
      * 2. Utiliza la clase `ConsultaNucleo` para realizar la consulta que obtiene el último registro relacionado con un núcleo.
-     * 3. Actualiza el campo de texto correspondiente en la vista (`view.nucleo`) con el valor del último registro obtenido.
+     * 3. Actualiza el campo de texto correspondiente en la vista (`view.modeloNucleo`) con el valor del último registro obtenido.
      * 4. Imprime en la consola el valor del último registro para propósitos de depuración.
      */
     private void actualizarButton() {
@@ -656,18 +645,36 @@ public class ControladorCalcular implements ActionListener {
 
         // Obtener el nombre de la institución desde el modelo
         String nombreInstitucion = modeloInstitucion.getNombreInstitucion();
-
-        // Llamar al método que carga los núcleos asociados a la institución
         List<String> nucleos = consultaNucleo.cargarNucleos(nombreInstitucion);
-
         // Agregar los núcleos recuperados al combo box
         for (String nucleo : nucleos) {
             view.comboNucleo.addItem(nucleo);
         }
 
+        // Llamar al método que carga los núcleos asociados a la institución
+
+
         // Nota: Este método podría beneficiarse de un manejo de errores para gestionar fallas en la consulta o conexión
     }
 
+    private void cargarComboNucleo() {
+        view.comboNucleo.removeAllItems();
+        view.comboNucleo.addItem(" "); // Agrega un valor vacío al inicio como opción predeterminada
+
+        // Crear una instancia de conexión a la base de datos
+        Conexion conexion = new Conexion();
+
+        // Crear una instancia de consulta para núcleos, utilizando la conexión establecida
+        ConsultaNucleo consultaNucleo = new ConsultaNucleo(conexion);
+
+        // Obtener el nombre de la institución desde el modelo
+        String nombreInstitucion = ((String) view.comboInstitucion.getSelectedItem()).toString();
+        List<String> nucleos = consultaNucleo.cargarNucleos(nombreInstitucion);
+        // Agregar los núcleos recuperados al combo box
+        for (String nucleo : nucleos) {
+            view.comboNucleo.addItem(nucleo);
+        }
+    }
     /**
      * Inicia la vista para visualizar instituciones.
      * Pasos:
@@ -684,7 +691,7 @@ public class ControladorCalcular implements ActionListener {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, user, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
 
     /**
@@ -922,5 +929,32 @@ public class ControladorCalcular implements ActionListener {
         ControladorVerPerfiles verControl = new ControladorVerPerfiles(user, modeloInstitucion, modeloMunicipio, verPerfiles, consul);
         verControl.Iniciar();
         view.dispose();
+    }
+
+    private void limpiar(){
+        view.siCheckBox.setSelected(false);
+        view.comboInstitucion.setSelectedIndex(0);
+        view.noCalculo.setSelected(false);
+        view.noRegistro.setSelected(false);
+        view.nucleo.setText(" ");
+        view.comboNucleo.setSelectedIndex(0);
+        view.fuente.setSelectedIndex(0);
+        view.anio.setText(" ");
+        view.total.setText(" ");
+        view.comboNucleo.setVisible(false);
+        view.nucleo.setText(" ");
+        view.nucleo.setVisible(false);
+        view.Nucleo.setVisible(false);
+        view.noCalculo.setEnabled(true);
+        view.siCheckBox.setEnabled(true);
+        view.siRegistro.setSelected(false);
+        view.noRegistro.setEnabled(true);
+        view.siRegistro.setEnabled(true);
+        view.siRegistro.setVisible(false);
+        view.noRegistro.setVisible(false);
+        view.Nucleo.setVisible(false);
+        view.hayNucleo.setVisible(false);
+        view.Registro.setVisible(false);
+        view.actualizarButton.setVisible(false);
     }
 }

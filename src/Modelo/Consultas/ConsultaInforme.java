@@ -115,7 +115,7 @@ public class ConsultaInforme {
         try {
             ps = conn.prepareStatement("Select * from institucion i \n" +
                     "inner join municipioinstitiucion mi on i.IdInstitucionAuto = mi.IdInstitucion\n" +
-                    "inner join modeloMunicipio m on mi.idMuncipio = m.idMunicipio \n" +
+                    "inner join municipio m on mi.idMuncipio = m.idMunicipio \n" +
                     "inner join Departamento d \n" +
                     "on m.idDepartamento = d.idDepartamento where m.NombreMunicipio = ? and i.NombreInstitucion = ?");
             ps.setString(1, municipio);

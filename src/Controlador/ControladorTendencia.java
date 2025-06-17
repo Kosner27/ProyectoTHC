@@ -407,7 +407,7 @@ public class ControladorTendencia {
     }
     /**
      * Método encargado de generar y mostrar el grafico historico basados en los datos de alcance
-     * y fuente para una institución, nucleo y modeloMunicipio seleccionados.
+     * y fuente para una institución, modeloNucleo y modeloMunicipio seleccionados.
      * <p>
      * El método valida que los valores seleccionados no estén vacíos, consulta los datos correspondientes,
      * los procesa y genera gráficos utilizando la biblioteca JFreeChart.

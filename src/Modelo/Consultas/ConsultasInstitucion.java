@@ -51,7 +51,7 @@ public class ConsultasInstitucion {
         try {
             ps = conn.prepareStatement("Select NombreInstitucion, Nit, NombreMunicipio, NombreDepartamento from " +
                     "Institucion i inner join  municipioinstitiucion mi on i.idInstitucionAuto = mi.IdInstitucion " +
-                    " inner join ModeloMunicipio m  on m.IdMunicipio = mi.idMuncipio " +
+                    " inner join municipio m  on m.IdMunicipio = mi.idMuncipio " +
                     "inner join Departamento d on m.idDepartamento = d.IdDepartamento " +
                     "where NombreInstitucion = ? and NombreMunicipio = ? ");
             ps.setString(1, nombreInst);
@@ -94,7 +94,7 @@ public class ConsultasInstitucion {
                     " COALESCE(n.NombreNucleo, '') AS NombreNucleo,  " +
                     "COALESCE(n.Hectareas, '') AS HectareasNucleo  " +
                     "FROM departamento d " +
-                    "INNER JOIN modeloMunicipio m ON d.idDepartamento = m.idDepartamento " +
+                    "INNER JOIN municipio m ON d.idDepartamento = m.idDepartamento " +
                     "INNER JOIN municipioinstitiucion mi ON m.idMunicipio = mi.idMuncipio " +
                     "INNER JOIN institucion i ON i.IdInstitucionAuto = mi.IdInstitucion " +
                     "LEFT JOIN nucleoinstitucion n ON i.IdInstitucionAuto = n.IdInstitucion " +
@@ -231,8 +231,8 @@ public class ConsultasInstitucion {
         }
     }
 
-    public boolean InsertarInstitucion(ModeloInstitucion modeloInstitucion, ModeloMunicipio modeloMunicipio) {
-        String sql = "call insertarInstitucion(?,?,?,?)";
+    public boolean InsertarInstitucion(ModeloInstitucion modeloInstitucion, ModeloMunicipio modeloMunicipio, String Departamento) {
+        String sql = "call insertarInstitucion(?,?,?,?,?)";
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -240,6 +240,7 @@ public class ConsultasInstitucion {
             ps.setString(2, modeloInstitucion.getNit());
             ps.setString(3, modeloInstitucion.getNombreInstitucion());
             ps.setInt(4, modeloInstitucion.getHectareasNucleo());
+            ps.setString(5,Departamento);
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -255,7 +256,7 @@ public class ConsultasInstitucion {
         ResultSet rs = null;
         String sql =
                 "SELECT NombreInstitucion AS NombreInstitucion " +
-                        "FROM institucion i order by NombreInstitucion "
+                        "FROM institucion i where i.Activo = 1 order by NombreInstitucion "
                         ;
 
         if (conn != null) {
@@ -287,7 +288,7 @@ public class ConsultasInstitucion {
                 "INNER JOIN institucion i ON en.idInstitucion = i.idInstitucionAuto " +
                 "INNER JOIN emision e ON en.idEmision = e.idEmision " +
                 "INNER JOIN municipioinstitiucion mi ON i.idInstitucionAuto = mi.IdInstitucion " +
-                "INNER JOIN modeloMunicipio m ON mi.IdMuncipio = m.IdMunicipio " +
+                "INNER JOIN municipio m ON mi.IdMuncipio = m.IdMunicipio " +
                 "WHERE i.NombreInstitucion = ? AND m.NombreMunicipio = ? " +
                 "GROUP BY en.anioBase";
 
@@ -319,7 +320,7 @@ public class ConsultasInstitucion {
         Conexion conexion = new Conexion();
         Connection conn = conexion.getConection();
         ResultSet rs = null;
-        String sql = "SELECT NombreMunicipio FROM modeloMunicipio m " +
+        String sql = "SELECT NombreMunicipio FROM municipio m " +
                 "INNER JOIN municipioinstitiucion mi ON mi.idMuncipio = m.idMunicipio " +
                 "INNER JOIN institucion i ON i.idInstitucionAuto = mi.IdInstitucion " +
                 "WHERE i.NombreInstitucion = ?";

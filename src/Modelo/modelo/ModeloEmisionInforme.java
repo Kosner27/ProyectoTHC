@@ -14,7 +14,8 @@ public class ModeloEmisionInforme extends ModeloEmision {
         super();
     }
 
-    public Integer getAnioBase() {
+    public Integer getAnioBase()
+    {
         return AnioBase;
     }
 

@@ -374,7 +374,7 @@ public class ControladorInstitucion implements ActionListener {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, modeloUsuario, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
 
     /**

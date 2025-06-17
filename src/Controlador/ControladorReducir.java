@@ -51,7 +51,8 @@ public class ControladorReducir {
                 cargarAnioBase();
                 cargarMunicipio();
                 llenarComboInstitucion();
-                view.comoInstitucion.setVisible(true);
+                Nucleo();
+                view.comoInstitucion.setVisible(false);
                 view.setVisible(true);
                 view.Institucio.setText(modeloInstitucion.getNombreInstitucion());
                 view.Graficos.add(GraficoPrincipal);
@@ -70,8 +71,6 @@ public class ControladorReducir {
                 cargarAnioBase();
                 cargarMunicipio();
                 Nucleo();
-                System.out.println(view.Institucio.getText() + " hola");
-                System.out.println(modeloUsuario.getTipoUsuario() +" estoy en le case");
                 view.setVisible(true);
                 view.setLocationRelativeTo(null);
                 view.Institucio.setText(modeloInstitucion.getNombreInstitucion());
@@ -84,7 +83,9 @@ public class ControladorReducir {
                 view.setTitle("Reducir");
                 cargarAnioBase();
                 cargarMunicipio();
-                Nucleo();
+                //Nucleo();
+                view.Institucio.setVisible(false);
+                view.comoInstitucion.setVisible(true);
                 view.setVisible(true);
                 llenarComboInstitucion();
                 view.comoInstitucion.setVisible(true);
@@ -209,24 +210,44 @@ public class ControladorReducir {
         // Obtener la lista de años base desde el Modelo
         String nombreInstitucion = String.valueOf(view.Institucio.getText());
         String nombreMunicipio = String.valueOf(view.municipio.getSelectedItem());
+        String nombreIns = String.valueOf(view.comoInstitucion.getSelectedItem());
+        if(view.Institucio.isVisible()){
+            ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+            List<String> aniosBase = consultasInstitucion.obtenerAnioBase(nombreInstitucion, nombreMunicipio);
 
+            // Limpiar el comboBox de años y agregar un item vacío
+            view.anio.removeAllItems();
+            view.anio.addItem("");  // Añadir un item vacío como indicativo
+
+            // Llenar el comboBox con los años base obtenidos del Modelo
+            for (String anio : aniosBase) {
+                view.anio.addItem(anio);
+            }
+
+            // Si el comboBox tiene elementos, seleccionamos el primero
+            if (view.anio.getItemCount() > 0) {
+                view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        }else{
+            ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
+            List<String> aniosBase = consultasInstitucion.obtenerAnioBase(nombreIns, nombreMunicipio);
+
+            // Limpiar el comboBox de años y agregar un item vacío
+            view.anio.removeAllItems();
+            view.anio.addItem("");  // Añadir un item vacío como indicativo
+
+            // Llenar el comboBox con los años base obtenidos del Modelo
+            for (String anio : aniosBase) {
+                view.anio.addItem(anio);
+            }
+
+            // Si el comboBox tiene elementos, seleccionamos el primero
+            if (view.anio.getItemCount() > 0) {
+                view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
+            }
+        }
         // Consultar los años base desde el Modelo
-        ConsultasInstitucion consultasInstitucion = new ConsultasInstitucion();
-        List<String> aniosBase = consultasInstitucion.obtenerAnioBase(nombreInstitucion, nombreMunicipio);
 
-        // Limpiar el comboBox de años y agregar un item vacío
-        view.anio.removeAllItems();
-        view.anio.addItem("");  // Añadir un item vacío como indicativo
-
-        // Llenar el comboBox con los años base obtenidos del Modelo
-        for (String anio : aniosBase) {
-            view.anio.addItem(anio);
-        }
-
-        // Si el comboBox tiene elementos, seleccionamos el primero
-        if (view.anio.getItemCount() > 0) {
-            view.anio.setSelectedIndex(0); // Seleccionamos el primer elemento
-        }
     }
     /**
      * Navega a la vista inicial de la aplicación.
@@ -526,100 +547,195 @@ public class ControladorReducir {
      * muestra en un área de texto en la vista.
      */
     public void InsertarEncajatexto() {
-        // Verifica si los campos de institución y modeloMunicipio no están vacíos
-        if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() &&
-                !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
+        if(view.Institucio.isVisible()){
+            if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() &&
+                    !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
+                // Obtiene los datos necesarios de la vista
+                String nombreInstitucion = view.Institucio.getText();  // Nombre de la institución
+                String anioBaseString = String.valueOf(view.anio.getSelectedItem());  // Año base seleccionado
+                int anioBase = Integer.parseInt(anioBaseString);  // Convierte el año base a entero
+                String NombreMuncipio = view.municipio.getSelectedItem().toString();  // ModeloMunicipio seleccionado
 
-            // Obtiene los datos necesarios de la vista
-            String nombreInstitucion = view.Institucio.getText();  // Nombre de la institución
-            String anioBaseString = String.valueOf(view.anio.getSelectedItem());  // Año base seleccionado
-            int anioBase = Integer.parseInt(anioBaseString);  // Convierte el año base a entero
-            String NombreMuncipio = view.municipio.getSelectedItem().toString();  // ModeloMunicipio seleccionado
+                // Consulta los datos de las emisiones para el gráfico por alcance y por fuente
+                List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcance(nombreInstitucion, anioBase, NombreMuncipio);
+                List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuente(nombreInstitucion, anioBase, NombreMuncipio);
 
-            // Consulta los datos de las emisiones para el gráfico por alcance y por fuente
-            List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcance(nombreInstitucion, anioBase, NombreMuncipio);
-            List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuente(nombreInstitucion, anioBase, NombreMuncipio);
+                // Construcción del párrafo introductorio sobre la huella de carbono
+                String parrafo1 = "Introducción " + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" +
+                        "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, " +
+                        "clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\n" +
+                        "Para calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" +
+                        "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" +
+                        "Emisiones de equipos de combustión en el campus.\n" + "\n" +
+                        "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" +
+                        "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" +
+                        "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
 
-            // Construcción del párrafo introductorio sobre la huella de carbono
-            String parrafo1 = "Introducción " + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" +
-                    "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, " +
-                    "clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\n" +
-                    "Para calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" +
-                    "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" +
-                    "Emisiones de equipos de combustión en el campus.\n" + "\n" +
-                    "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" +
-                    "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" +
-                    "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
+                // Inicializa los arreglos para almacenar los datos de alcance y los totales
+                String[] alcance = new String[datos.size()];
+                Double[] total = new Double[datos.size()];
+                StringBuilder textoAcumulado = new StringBuilder();  // Acumula el texto de los alcances
+                Double Sumar = 0.0;  // Acumulador de la suma total de emisiones
 
-            // Inicializa los arreglos para almacenar los datos de alcance y los totales
-            String[] alcance = new String[datos.size()];
-            Double[] total = new Double[datos.size()];
-            StringBuilder textoAcumulado = new StringBuilder();  // Acumula el texto de los alcances
-            Double Sumar = 0.0;  // Acumulador de la suma total de emisiones
+                // Procesa los datos de las emisiones por alcance
+                for (int i = 0; i < datos.size(); i++) {
+                    GraficorModeloInstitucion a = datos.get(i);
+                    alcance[i] = a.Alcance;
+                    total[i] = a.Total;
+                    Sumar = Sumar + total[i];  // Suma las emisiones totales
+                    textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
+                }
 
-            // Procesa los datos de las emisiones por alcance
-            for (int i = 0; i < datos.size(); i++) {
-                GraficorModeloInstitucion a = datos.get(i);
-                alcance[i] = a.Alcance;
-                total[i] = a.Total;
-                Sumar = Sumar + total[i];  // Suma las emisiones totales
-                textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
+                // Calcula la cantidad de árboles a plantar para mitigar la huella de carbono
+                double arboles = Sumar / 22;  // 22 kg de CO2 es lo que un árbol puede absorber al año
+                String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" +
+                        "Plantación de Árboles para Mitigar la Huella de Carbono\n" +
+                        "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, " +
+                        "se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" +
+                        "Cálculo de la cantidad de árboles a plantar." + "\n" +
+                        "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" +
+                        "Número de árboles recomendados a plantar: " + arboles + "\n";
+
+                // Inicializa los arreglos para los datos de las fuentes de emisión
+                String[] nombreFuente = new String[datos2.size()];
+                Double[] totalFuente = new Double[datos2.size()];
+                StringBuilder textoAcumulado2 = new StringBuilder();  // Acumula el texto de las fuentes
+
+                // Procesa los datos de las emisiones por fuente
+                for (int i = 0; i < datos2.size(); i++) {
+                    ModeloEmisionCalcular dato = datos2.get(i);
+                    nombreFuente[i] = dato.getNombreFuente();
+                    totalFuente[i] = dato.getTotal1();
+                    textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                }
+
+                // Texto adicional sobre las fuentes de emisión
+                String Fuentes = "\nA continuación verás la cantidad de CO2 emitido por cada una de las fuentes registradas en la institución\n" + "\n";
+
+                // Variable para las conclusiones (aún no utilizada en el texto final)
+                String Concluciones = "";
+
+                // Establece el texto completo en el área de texto de la vista
+                view.introduccionLaHuellaDeTextArea.setText(parrafo1);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());  // Agrega los alcances y totales
+                view.introduccionLaHuellaDeTextArea.append(Fuentes);  // Agrega las fuentes de emisión
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());  // Agrega los detalles de las fuentes
+                view.introduccionLaHuellaDeTextArea.append(text);  // Agrega el cálculo de los árboles a plantar
+                view.introduccionLaHuellaDeTextArea.append(Concluciones);  // Agrega las conclusiones (si hay)
+
+                // Configura el área de texto para que sea visible, no editable y con formato adecuado
+                view.introduccionLaHuellaDeTextArea.setVisible(true);
+                view.introduccionLaHuellaDeTextArea.setLineWrap(true);  // Ajuste de línea
+                view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);  // Ajuste de palabra
+                view.introduccionLaHuellaDeTextArea.setEditable(false);  // No editable por el modeloUsuario
+
+                // Establece la fuente del área de texto
+                Font font = new Font("Arial", Font.PLAIN, 14);
+                view.introduccionLaHuellaDeTextArea.setFont(font);
+
+                // Hace visible el contenedor que contiene el área de texto
+                view.Contenedor.setVisible(true);
+
+            } else {
+                // Muestra un mensaje de advertencia si los campos obligatorios no están llenos
+                JOptionPane.showMessageDialog(view.PanelMain, "Llene todos los campos");
             }
+        }else{
+            if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() &&
+                    !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
+                // Obtiene los datos necesarios de la vista
+                String nombreInstitucion = String.valueOf(view.comoInstitucion.getSelectedItem());  // Nombre de la institución
+                String anioBaseString = String.valueOf(view.anio.getSelectedItem());  // Año base seleccionado
+                int anioBase = Integer.parseInt(anioBaseString);  // Convierte el año base a entero
+                String NombreMuncipio = view.municipio.getSelectedItem().toString();  // ModeloMunicipio seleccionado
 
-            // Calcula la cantidad de árboles a plantar para mitigar la huella de carbono
-            double arboles = Sumar / 22;  // 22 kg de CO2 es lo que un árbol puede absorber al año
-            String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" +
-                    "Plantación de Árboles para Mitigar la Huella de Carbono\n" +
-                    "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, " +
-                    "se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" +
-                    "Cálculo de la cantidad de árboles a plantar." + "\n" +
-                    "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" +
-                    "Número de árboles recomendados a plantar: " + arboles + "\n";
+                // Consulta los datos de las emisiones para el gráfico por alcance y por fuente
+                List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcance(nombreInstitucion, anioBase, NombreMuncipio);
+                List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuente(nombreInstitucion, anioBase, NombreMuncipio);
 
-            // Inicializa los arreglos para los datos de las fuentes de emisión
-            String[] nombreFuente = new String[datos2.size()];
-            Double[] totalFuente = new Double[datos2.size()];
-            StringBuilder textoAcumulado2 = new StringBuilder();  // Acumula el texto de las fuentes
+                // Construcción del párrafo introductorio sobre la huella de carbono
+                String parrafo1 = "Introducción " + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" +
+                        "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, " +
+                        "clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\n" +
+                        "Para calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" +
+                        "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" +
+                        "Emisiones de equipos de combustión en el campus.\n" + "\n" +
+                        "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" +
+                        "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" +
+                        "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
 
-            // Procesa los datos de las emisiones por fuente
-            for (int i = 0; i < datos2.size(); i++) {
-                ModeloEmisionCalcular dato = datos2.get(i);
-                nombreFuente[i] = dato.getNombreFuente();
-                totalFuente[i] = dato.getTotal1();
-                textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                // Inicializa los arreglos para almacenar los datos de alcance y los totales
+                String[] alcance = new String[datos.size()];
+                Double[] total = new Double[datos.size()];
+                StringBuilder textoAcumulado = new StringBuilder();  // Acumula el texto de los alcances
+                Double Sumar = 0.0;  // Acumulador de la suma total de emisiones
+
+                // Procesa los datos de las emisiones por alcance
+                for (int i = 0; i < datos.size(); i++) {
+                    GraficorModeloInstitucion a = datos.get(i);
+                    alcance[i] = a.Alcance;
+                    total[i] = a.Total;
+                    Sumar = Sumar + total[i];  // Suma las emisiones totales
+                    textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
+                }
+
+                // Calcula la cantidad de árboles a plantar para mitigar la huella de carbono
+                double arboles = Sumar / 22;  // 22 kg de CO2 es lo que un árbol puede absorber al año
+                String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" +
+                        "Plantación de Árboles para Mitigar la Huella de Carbono\n" +
+                        "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, " +
+                        "se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" +
+                        "Cálculo de la cantidad de árboles a plantar." + "\n" +
+                        "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" +
+                        "Número de árboles recomendados a plantar: " + arboles + "\n";
+
+                // Inicializa los arreglos para los datos de las fuentes de emisión
+                String[] nombreFuente = new String[datos2.size()];
+                Double[] totalFuente = new Double[datos2.size()];
+                StringBuilder textoAcumulado2 = new StringBuilder();  // Acumula el texto de las fuentes
+
+                // Procesa los datos de las emisiones por fuente
+                for (int i = 0; i < datos2.size(); i++) {
+                    ModeloEmisionCalcular dato = datos2.get(i);
+                    nombreFuente[i] = dato.getNombreFuente();
+                    totalFuente[i] = dato.getTotal1();
+                    textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                }
+
+                // Texto adicional sobre las fuentes de emisión
+                String Fuentes = "\nA continuación verás la cantidad de CO2 emitido por cada una de las fuentes registradas en la institución\n" + "\n";
+
+                // Variable para las conclusiones (aún no utilizada en el texto final)
+                String Concluciones = "";
+
+                // Establece el texto completo en el área de texto de la vista
+                view.introduccionLaHuellaDeTextArea.setText(parrafo1);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());  // Agrega los alcances y totales
+                view.introduccionLaHuellaDeTextArea.append(Fuentes);  // Agrega las fuentes de emisión
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());  // Agrega los detalles de las fuentes
+                view.introduccionLaHuellaDeTextArea.append(text);  // Agrega el cálculo de los árboles a plantar
+                view.introduccionLaHuellaDeTextArea.append(Concluciones);  // Agrega las conclusiones (si hay)
+
+                // Configura el área de texto para que sea visible, no editable y con formato adecuado
+                view.introduccionLaHuellaDeTextArea.setVisible(true);
+                view.introduccionLaHuellaDeTextArea.setLineWrap(true);  // Ajuste de línea
+                view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);  // Ajuste de palabra
+                view.introduccionLaHuellaDeTextArea.setEditable(false);  // No editable por el modeloUsuario
+
+                // Establece la fuente del área de texto
+                Font font = new Font("Arial", Font.PLAIN, 14);
+                view.introduccionLaHuellaDeTextArea.setFont(font);
+
+                // Hace visible el contenedor que contiene el área de texto
+                view.Contenedor.setVisible(true);
+
+            } else {
+                // Muestra un mensaje de advertencia si los campos obligatorios no están llenos
+                JOptionPane.showMessageDialog(view.PanelMain, "Llene todos los campos");
             }
-
-            // Texto adicional sobre las fuentes de emisión
-            String Fuentes = "\nA continuación verás la cantidad de CO2 emitido por cada una de las fuentes registradas en la institución\n" + "\n";
-
-            // Variable para las conclusiones (aún no utilizada en el texto final)
-            String Concluciones = "";
-
-            // Establece el texto completo en el área de texto de la vista
-            view.introduccionLaHuellaDeTextArea.setText(parrafo1);
-            view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());  // Agrega los alcances y totales
-            view.introduccionLaHuellaDeTextArea.append(Fuentes);  // Agrega las fuentes de emisión
-            view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());  // Agrega los detalles de las fuentes
-            view.introduccionLaHuellaDeTextArea.append(text);  // Agrega el cálculo de los árboles a plantar
-            view.introduccionLaHuellaDeTextArea.append(Concluciones);  // Agrega las conclusiones (si hay)
-
-            // Configura el área de texto para que sea visible, no editable y con formato adecuado
-            view.introduccionLaHuellaDeTextArea.setVisible(true);
-            view.introduccionLaHuellaDeTextArea.setLineWrap(true);  // Ajuste de línea
-            view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);  // Ajuste de palabra
-            view.introduccionLaHuellaDeTextArea.setEditable(false);  // No editable por el modeloUsuario
-
-            // Establece la fuente del área de texto
-            Font font = new Font("Arial", Font.PLAIN, 14);
-            view.introduccionLaHuellaDeTextArea.setFont(font);
-
-            // Hace visible el contenedor que contiene el área de texto
-            view.Contenedor.setVisible(true);
-
-        } else {
-            // Muestra un mensaje de advertencia si los campos obligatorios no están llenos
-            JOptionPane.showMessageDialog(view.PanelMain, "Llene todos los campos");
         }
+        // Verifica si los campos de institución y modeloMunicipio no están vacíos
+
     }
 
     /**
@@ -628,59 +744,117 @@ public class ControladorReducir {
      * muestra en un área de texto en la vista.
      */
     public void InsertarEncajatextoConNucleo() {
-        if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() && !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
-            String nombreInstitucion = view.Institucio.getText();
-            String anioBaseString = String.valueOf(view.anio.getSelectedItem());
-            String nombreN = view.comboNucleo.getSelectedItem().toString();
-            int anioBase = Integer.parseInt(anioBaseString);
-            String NombreMuncipio = view.municipio.getSelectedItem().toString();
-            List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcanceNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
-            List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuenteNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
+        if(view.Institucio.isVisible()){
+            if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() && !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
+                String nombreInstitucion = view.Institucio.getText();
+                String anioBaseString = String.valueOf(view.anio.getSelectedItem());
+                String nombreN = view.comboNucleo.getSelectedItem().toString();
+                int anioBase = Integer.parseInt(anioBaseString);
+                String NombreMuncipio = view.municipio.getSelectedItem().toString();
+                List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcanceNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
+                List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuenteNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
 
-            String parrafo1 = "Introducción\n" + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" + "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\nPara calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" + "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" + "Emisiones de equipos de combustión en el campus.\n" + "\n" + "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" + "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" + "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
-            String[] alcance = new String[datos.size()];
-            Double[] total = new Double[datos.size()];
-            StringBuilder textoAcumulado = new StringBuilder();
-            Double Sumar = 0.0;
-            for (int i = 0; i < datos.size(); i++) {
-                GraficorModeloInstitucion a = datos.get(i);
-                alcance[i] = a.Alcance;
-                total[i] = a.Total;
-                Sumar = Sumar + total[i];
-                textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
+                String parrafo1 = "Introducción\n" + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" + "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\nPara calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" + "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" + "Emisiones de equipos de combustión en el campus.\n" + "\n" + "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" + "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" + "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
+                String[] alcance = new String[datos.size()];
+                Double[] total = new Double[datos.size()];
+                StringBuilder textoAcumulado = new StringBuilder();
+                Double Sumar = 0.0;
+                for (int i = 0; i < datos.size(); i++) {
+                    GraficorModeloInstitucion a = datos.get(i);
+                    alcance[i] = a.Alcance;
+                    total[i] = a.Total;
+                    Sumar = Sumar + total[i];
+                    textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
 
+                }
+                Double arboles = Sumar / 22;
+                String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" + "Plantación de Árboles para Mitigar la Huella de Carbono\n" + "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" + "Cálculo de la cantidad de árboles a plantar." + "\n" + "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" + "Número de árboles recomendados a plantar: " + arboles + "\n";
+                String[] nombreFuente = new String[datos2.size()];
+                Double[] totalFuente = new Double[datos2.size()];
+                StringBuilder textoAcumulado2 = new StringBuilder();
+
+                for (int i = 0; i < datos2.size(); i++) {
+                    ModeloEmisionCalcular dato = datos2.get(i);
+                    nombreFuente[i] = dato.getNombreFuente();
+                    totalFuente[i] = dato.getTotal1();
+                    textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                }
+                String Fuentes = "\nAcontinuación veras la cantidad e co2 emitad por cada una de las fuentes que han sido registadas en la institucion\n" + "\n";
+                String Concluciones = "";
+
+                view.introduccionLaHuellaDeTextArea.setText(parrafo1);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());
+                view.introduccionLaHuellaDeTextArea.append(Fuentes);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());
+                view.introduccionLaHuellaDeTextArea.append(text);
+                view.introduccionLaHuellaDeTextArea.append(Concluciones);
+                view.introduccionLaHuellaDeTextArea.setVisible(true);
+                view.introduccionLaHuellaDeTextArea.setLineWrap(true);
+                view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);
+                view.introduccionLaHuellaDeTextArea.setEditable(false);
+                Font font = new Font("Arial", Font.PLAIN, 14);
+                view.introduccionLaHuellaDeTextArea.setFont(font);
+                view.Contenedor.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(view.PanelMain, "llene todos los campos");
             }
-            Double arboles = Sumar / 22;
-            String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" + "Plantación de Árboles para Mitigar la Huella de Carbono\n" + "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" + "Cálculo de la cantidad de árboles a plantar." + "\n" + "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" + "Número de árboles recomendados a plantar: " + arboles + "\n";
-            String[] nombreFuente = new String[datos2.size()];
-            Double[] totalFuente = new Double[datos2.size()];
-            StringBuilder textoAcumulado2 = new StringBuilder();
+        }else{
+            if (!Objects.requireNonNull(view.anio.getSelectedItem()).toString().isEmpty() && !Objects.requireNonNull(view.municipio.getSelectedItem()).toString().isEmpty()) {
+                String nombreInstitucion = String.valueOf(view.comoInstitucion.getSelectedItem());
+                String anioBaseString = String.valueOf(view.anio.getSelectedItem());
+                String nombreN = view.comboNucleo.getSelectedItem().toString();
+                int anioBase = Integer.parseInt(anioBaseString);
+                String NombreMuncipio = view.municipio.getSelectedItem().toString();
+                List<GraficorModeloInstitucion> datos = graficoConsulta.GraficoPorAlcanceNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
+                List<ModeloEmisionCalcular> datos2 = graficoConsulta.GraficoPorFuenteNucleo(nombreInstitucion, anioBase, NombreMuncipio, nombreN);
 
-            for (int i = 0; i < datos2.size(); i++) {
-                ModeloEmisionCalcular dato = datos2.get(i);
-                nombreFuente[i] = dato.getNombreFuente();
-                totalFuente[i] = dato.getTotal1();
-                textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                String parrafo1 = "Introducción\n" + "La huella de carbono de una institución universitaria incluye las emisiones de gases de \n" + "efecto invernadero (GEI) generadas por sus actividades operativas. Este informe desglosa la huella de carbono de una universidad en Colombia, clasificada por alcance, y propone una estrategia para mitigar estas emisiones mediante la plantación de árboles." + "\n" + "\nPara calcular la huella de carbono, se consideran las siguientes fuentes de emisiones:\n" + "\n" + "Alcance 1: Emisiones Directas\n" + "Emisiones de vehículos universitarios.\n" + "Emisiones de equipos de combustión en el campus.\n" + "\n" + "Alcance 2: Emisiones Indirectas por Consumo de Energía\n" + "Emisiones de electricidad comprada y consumida en el campus.\n" + "\n" + "Alcance 3: Otras Emisiones Indirectas\n" + "Emisiones de viajes de estudiantes y empleados.\n" + "Emisiones de la gestión de residuos.\n" + "Emisiones de proveedores y cadena de suministro.\n" + "\n";
+                String[] alcance = new String[datos.size()];
+                Double[] total = new Double[datos.size()];
+                StringBuilder textoAcumulado = new StringBuilder();
+                Double Sumar = 0.0;
+                for (int i = 0; i < datos.size(); i++) {
+                    GraficorModeloInstitucion a = datos.get(i);
+                    alcance[i] = a.Alcance;
+                    total[i] = a.Total;
+                    Sumar = Sumar + total[i];
+                    textoAcumulado.append(alcance[i]).append(" ").append(total[i]).append("\n").append("\n");
+
+                }
+                Double arboles = Sumar / 22;
+                String text = "Suma Total: " + Sumar + " kg de CO2 por año\n" + "\n" + "Plantación de Árboles para Mitigar la Huella de Carbono\n" + "Dado que un árbol promedio puede absorber aproximadamente 22 kg de CO2 al año, se puede calcular la cantidad de árboles necesarios para neutralizar las emisiones.\n" + "Cálculo de la cantidad de árboles a plantar." + "\n" + "Número de árboles = Emisiones Totales (kg de CO2) / Absorción de CO2 por árbol (kg)" + "\n" + "Número de árboles recomendados a plantar: " + arboles + "\n";
+                String[] nombreFuente = new String[datos2.size()];
+                Double[] totalFuente = new Double[datos2.size()];
+                StringBuilder textoAcumulado2 = new StringBuilder();
+
+                for (int i = 0; i < datos2.size(); i++) {
+                    ModeloEmisionCalcular dato = datos2.get(i);
+                    nombreFuente[i] = dato.getNombreFuente();
+                    totalFuente[i] = dato.getTotal1();
+                    textoAcumulado2.append(nombreFuente[i]).append(" ").append(totalFuente[i]).append("\n").append("\n");
+                }
+                String Fuentes = "\nAcontinuación veras la cantidad e co2 emitad por cada una de las fuentes que han sido registadas en la institucion\n" + "\n";
+                String Concluciones = "";
+
+                view.introduccionLaHuellaDeTextArea.setText(parrafo1);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());
+                view.introduccionLaHuellaDeTextArea.append(Fuentes);
+                view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());
+                view.introduccionLaHuellaDeTextArea.append(text);
+                view.introduccionLaHuellaDeTextArea.append(Concluciones);
+                view.introduccionLaHuellaDeTextArea.setVisible(true);
+                view.introduccionLaHuellaDeTextArea.setLineWrap(true);
+                view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);
+                view.introduccionLaHuellaDeTextArea.setEditable(false);
+                Font font = new Font("Arial", Font.PLAIN, 14);
+                view.introduccionLaHuellaDeTextArea.setFont(font);
+                view.Contenedor.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(view.PanelMain, "llene todos los campos");
             }
-            String Fuentes = "\nAcontinuación veras la cantidad e co2 emitad por cada una de las fuentes que han sido registadas en la institucion\n" + "\n";
-            String Concluciones = "";
-
-            view.introduccionLaHuellaDeTextArea.setText(parrafo1);
-            view.introduccionLaHuellaDeTextArea.append(textoAcumulado.toString());
-            view.introduccionLaHuellaDeTextArea.append(Fuentes);
-            view.introduccionLaHuellaDeTextArea.append(textoAcumulado2.toString());
-            view.introduccionLaHuellaDeTextArea.append(text);
-            view.introduccionLaHuellaDeTextArea.append(Concluciones);
-            view.introduccionLaHuellaDeTextArea.setVisible(true);
-            view.introduccionLaHuellaDeTextArea.setLineWrap(true);
-            view.introduccionLaHuellaDeTextArea.setWrapStyleWord(true);
-            view.introduccionLaHuellaDeTextArea.setEditable(false);
-            Font font = new Font("Arial", Font.PLAIN, 14);
-            view.introduccionLaHuellaDeTextArea.setFont(font);
-            view.Contenedor.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(view.PanelMain, "llene todos los campos");
         }
+
+
     }
 
     /**
@@ -732,7 +906,7 @@ public class ControladorReducir {
 
             // Obtener el nombre del modeloMunicipio seleccionado desde un combo box
             String m = view.municipio.getSelectedItem().toString();
-            Paragraph municipio = new Paragraph("ModeloMunicipio: " + m);
+            Paragraph municipio = new Paragraph("Municipio: " + m);
             municipio.setAlignment(Element.ALIGN_LEFT);
             document.add(municipio);  // Agregar el modeloMunicipio al documento
             document.add(new Paragraph("  "));  // Añadir un espacio vacío
@@ -786,14 +960,14 @@ public class ControladorReducir {
                 document.add(new Paragraph("  "));
             }
             String m = view.municipio.getSelectedItem().toString();
-            Paragraph municipio = new Paragraph("ModeloMunicipio: " + m);
+            Paragraph municipio = new Paragraph("Municipio: " + m);
             municipio.setAlignment(Element.ALIGN_LEFT);
             document.add(municipio);
             document.add(new Paragraph("  "));
             document.add(new Paragraph(content));
 
             String nucleo = view.comboNucleo.getSelectedItem().toString();
-            Paragraph nombreN = new Paragraph("ModeloMunicipio: " + nucleo);
+            Paragraph nombreN = new Paragraph("Municipio: " + nucleo);
             nombreN.setAlignment(Element.ALIGN_LEFT);
             document.add(nombreN);
             document.add(new Paragraph("  "));
@@ -1004,7 +1178,7 @@ public class ControladorReducir {
         ControladorVerInstituciones contraladorVerInstituciones = new ControladorVerInstituciones(consultasInstitucion, consultaNucleo,
                 modeloInstitucion, verInstituciones, modeloUsuario, modeloMunicipio);
         contraladorVerInstituciones.iniciar();
-        //view.dispose();
+        view.dispose();
     }
 
     private void llenarComboInstitucion(){

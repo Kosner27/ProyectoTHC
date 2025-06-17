@@ -89,20 +89,20 @@ public class ControladorRegistrarInstitucion {
         String municipio = String.valueOf(registrarInstitucion.municipio.getSelectedItem());  // Obtiene el modeloMunicipio seleccionado
         String nit = registrarInstitucion.nit.getText();  // Obtiene el NIT de la institución
         int hectareas = Integer.parseInt(registrarInstitucion.hectareas.getText());  // Obtiene las hectáreas
-
         // Asigna los valores al modelo de institución y modeloMunicipio
         modeloInstitucion.setNombreInstitucion(nombreInst);
         modeloInstitucion.setNit(nit);
         modeloInstitucion.setHectareas(hectareas);
         modeloMunicipio1.setNombreM(municipio);
 
+
         // Valida que los campos obligatorios no estén vacíos
         if (!nombreInst.isEmpty() && !municipio.isEmpty() && !nit.isEmpty() && !departamento.isEmpty()) {
             // Intenta insertar la institución en la base de datos
-            if (consultasInstitucion.InsertarInstitucion(modeloInstitucion, modeloMunicipio1)) {
+            if (consultasInstitucion.InsertarInstitucion(modeloInstitucion, modeloMunicipio1,departamento)) {
                 JOptionPane.showMessageDialog(registrarInstitucion,
                         "La Insitución " + nombreInst + " con NIT " + nit + " \nUbicada en el departamento de " + departamento +
-                                " En el modeloMunicipio de " + municipio + " \n ha sido registrada de manera exitosa");
+                                " En el municipio de " + municipio + " \n ha sido registrada de manera exitosa");
             } else {
                 JOptionPane.showMessageDialog(registrarInstitucion, "Error en la consulta");
             }
